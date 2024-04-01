@@ -1,16 +1,22 @@
 # easy_collect
+易采天成项目
 
-A new Flutter project.
+### 生成model文件命令
+```shell
+flutter packages pub run build_runner build
+```
 
-## Getting Started
+### 运行
+```shell
+flutter run --dart-define=APP_ENV=DEV
+```
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### 打包
+Android
+```shell
+flutter build apk --dart-define=APP_ENV=PRO
+```
+IOS
+```shell
+flutter build ios --dart-define=APP_ENV=PRO
+```

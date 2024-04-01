@@ -1,7 +1,7 @@
 // 超时时间
 class HttpOptions {
   //地址域名前缀
-  static const String baseUrl = '';
+  static const String baseUrl = 'https://api.ai-ranch.com/';
   //单位时间是ms
   static const Duration connectTimeout = Duration(milliseconds: 1500);
   static const Duration receiveTimeout = Duration(milliseconds: 1500);

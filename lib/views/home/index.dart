@@ -1,29 +1,23 @@
+import 'package:easy_collect/enums/Route.dart';
+import 'package:easy_collect/enums/StorageKey.dart';
+import 'package:easy_collect/utils/storage.dart';
+import 'package:easy_collect/widgets/DropDownMenu/index.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  String version = '';
 
   @override
   void initState() {
-    getVersion();
     super.initState();
-  }
-
-  getVersion() async {
-    // String? solarmonitor = await MyApi.fetchVersionApi();
-    // if (solarmonitor != null) {
-    //   setState(() {
-    //     version = solarmonitor;
-    //   });
-    // }
   }
 
   @override
@@ -35,7 +29,7 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Container(
         padding: const EdgeInsets.all(20),
-        child: const Text('首页'),
+        child: const DropDownMenu(),
       ),
     );
   }

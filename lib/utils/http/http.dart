@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -75,7 +77,10 @@ class HttpRequest {
         queryParameters: queryParameters,
         options: options,
       );
-      return response.data;
+      if (response.data['code'] == 200) {
+        return response.data?['data'];
+      }
+      throw Exception(response.data['msg']);
     } on DioException catch (error) {
       if (showErrorMessage && error.message != null) {
         EasyLoading.showToast(error.message!);

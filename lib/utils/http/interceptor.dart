@@ -1,19 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:easy_collect/api/user.dart';
-import 'package:easy_collect/models/user/login.dart';
-import 'package:easy_collect/utils/http/http.dart';
+import 'package:easy_collect/api/my.dart';
+import 'package:easy_collect/enums/Route.dart';
+import 'package:easy_collect/enums/StorageKey.dart';
+import 'package:easy_collect/models/user/Login.dart';
+import 'package:easy_collect/router/index.dart';
 import 'package:easy_collect/utils/storage.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-
-class FailRequest {
-  RequestOptions options;
-  ErrorInterceptorHandler handlers;
-  FailRequest(this.options, this.handlers);
-}
-
-List<FailRequest> failRequests  = [];
-bool _refreshingToken = false;
+import 'package:go_router/go_router.dart';
 
 class ErrorInterceptor extends Interceptor {
   @override
@@ -26,7 +20,6 @@ class ErrorInterceptor extends Interceptor {
         EasyLoading.showToast('设备没有网络，请检查网络连接');
       }
     }
-
     handler.next(err);
   }
 }
@@ -39,11 +32,11 @@ class AuthInterceptor extends QueuedInterceptor {
 
   Future<String> refreshToken() async {
     try {
-      final String? refreshToken = SharedPreferencesManager().getString('refreshToken');
+      final String? refreshToken = SharedPreferencesManager().getString(StorageKeyEnum.refreshToken.value);
       if (refreshToken != null) {
-        TokenInfoModel tokenInfo =  await UserApi.fetchRefreshTokenApi(tokenDio, refreshToken);
-        SharedPreferencesManager().setString('refreshToken', tokenInfo.refreshToken);
-        await SharedPreferencesManager().setString('token', tokenInfo.token);
+        TokenInfoModel tokenInfo =  await MyApi.fetchRefreshTokenApi(tokenDio, refreshToken);
+        SharedPreferencesManager().setString(StorageKeyEnum.refreshToken.value, tokenInfo.refreshToken);
+        await SharedPreferencesManager().setString(StorageKeyEnum.token.value, tokenInfo.token);
         return tokenInfo.token;
       }
       throw Exception('refreshToken 为空！');
@@ -54,13 +47,11 @@ class AuthInterceptor extends QueuedInterceptor {
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    String? token = SharedPreferencesManager().getString('token');
-    if (token != null && !options.path.contains('/auth/oauth/token')) {
-      if (!options.path.contains('/auth/oauth/token')) {
-        options.headers['Authorization'] = 'Bearer $token';
-      } else {
-        // TODO: 跳转去登陆
-      }
+    String? token = SharedPreferencesManager().getString(StorageKeyEnum.token.value);
+    if (token != null || options.path.contains('/auth/b/doLogin')) {
+      options.headers['Authorization'] = 'Bearer $token';
+    } else {
+      navigatorKey.currentContext?.go(RouteEnum.login.value);
     }
     super.onRequest(options, handler);
   }

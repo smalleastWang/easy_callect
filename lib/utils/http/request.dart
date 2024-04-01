@@ -21,16 +21,15 @@ class HttpUtils {
   }
 
   /// post
-  static Future post({
-    required String path,
-    dynamic data,
+  static Future post(String path, {
+    dynamic params,
     bool showLoading = true,
     bool showErrorMessage = true,
   }) {
     return httpRequest.request(
       path: path,
       method: HttpMethod.post,
-      data: data,
+      data: params,
       showLoading: showLoading,
       showErrorMessage: showErrorMessage,
     );

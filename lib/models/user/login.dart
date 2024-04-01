@@ -1,11 +1,10 @@
 
 import 'package:json_annotation/json_annotation.dart';
 
-part 'login.g.dart';
+part 'Login.g.dart';
 
 @JsonSerializable()
 class TokenInfoModel {
-  @JsonKey(name: 'token')
   String token;
 
   @JsonKey(name: 'refresh_token')
