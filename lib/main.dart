@@ -6,7 +6,6 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SharedPreferencesManager().init();
-  String env = String.fromEnvironment('APP_ENV', defaultValue: 'DEV');
   runApp(const MyApp());
 }
 

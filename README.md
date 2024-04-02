@@ -14,9 +14,11 @@ flutter run --dart-define=APP_ENV=DEV
 ### 打包
 Android
 ```shell
-flutter build apk --dart-define=APP_ENV=PRO
+flutter build apk --dart-define=APP_ENV=DEV
+flutter build apk --dart-define=APP_ENV=PROD
 ```
 IOS
 ```shell
-flutter build ios --dart-define=APP_ENV=PRO
+flutter build ios --dart-define=APP_ENV=DEV
+flutter build ios --dart-define=APP_ENV=PROD
 ```

@@ -151,12 +151,19 @@ class _DropDownMenuState extends State<DropDownMenu> with SingleTickerProviderSt
 
   Widget _menuItem({required int index, required int rootIndex, required DictModel cate}) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: () {
         for (DictModel item in _filterList[rootIndex].list) {
           item.check = false;
         }
         _filterList[rootIndex].list[index].check = true;
         changeOverlay(index: rootIndex, reset: true);
+        _isExpanded = false;
+        _animationController.reverse();
+        Future.delayed(const Duration(milliseconds: 300)).then((value) {
+          _overlayEntry!.remove();
+          _overlayEntry = null;
+        });
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
