@@ -49,7 +49,7 @@ class AuthInterceptor extends QueuedInterceptor {
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     String? token = SharedPreferencesManager().getString(StorageKeyEnum.token.value);
     if (token != null || options.path.contains('/auth/b/doLogin')) {
-      options.headers['Authorization'] = 'Bearer $token';
+      options.headers['Token'] = token;
     } else {
       navigatorKey.currentContext?.go(RouteEnum.login.value);
     }
@@ -59,7 +59,8 @@ class AuthInterceptor extends QueuedInterceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     if (err.response?.statusCode == 401) {
-      await refreshToken();
+      navigatorKey.currentContext?.go(RouteEnum.login.value);
+      // await refreshToken();
       handler.next(err);
     }
     super.onError(err, handler);

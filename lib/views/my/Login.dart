@@ -4,6 +4,7 @@ import 'package:dart_sm/dart_sm.dart';
 import 'package:easy_collect/api/my.dart';
 import 'package:easy_collect/enums/Route.dart';
 import 'package:easy_collect/enums/StorageKey.dart';
+import 'package:easy_collect/utils/const.dart';
 import 'package:easy_collect/utils/storage.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -33,12 +34,11 @@ class _LoginPageState extends State<LoginPage> {
     SharedPreferencesManager();
     String token = await MyApi.fetchLoginApi({
       'account': _unameController.text,
-      // 'password': sha1.convert(utf8.encode(_pwdController.text)).toString()
-      'password': SM2.encrypt(_pwdController.text,'04298364ec840088475eae92a591e01284d1abefcda348b47eb324bb521bb03b0b2a5bc393f6b71dabb8f15c99a0050818b56b23f31743b93df9cf8948f15ddb54')
-      });
+      'password': SM2.encrypt(_pwdController.text, sm2PublicKey)
+    });
     SharedPreferencesManager().setString(StorageKeyEnum.token.value, token);
-    context.go(RouteEnum.home.value);
-    
+    // context.go(RouteEnum.home.value);
+    context.replace(RouteEnum.home.value);
   }
 
   @override

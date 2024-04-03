@@ -1,4 +1,6 @@
-import 'package:easy_collect/widgets/DropDownMenu/index.dart';
+import 'package:easy_collect/views/home/module.dart';
+import 'package:easy_collect/views/message/index.dart';
+import 'package:easy_collect/views/my/index.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -10,18 +12,50 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
+  int _currentIndex = 0;
+  final List<Widget> _widgetList = [
+    const MessageWidget(),
+    const ModuleWidget(),
+    const MyWidget(),
+    
+  ];
+
   @override
   void initState() {
     super.initState();
   }
 
+  List<BottomNavigationBarItem> _bottomBars() {
+    return [
+      const BottomNavigationBarItem(
+        label: '消息通知',
+        icon: Icon(Icons.chat),
+      ),
+      const BottomNavigationBarItem(
+        label: '功能模块',
+        icon: Icon(Icons.view_module),
+      ),
+      const BottomNavigationBarItem(
+        label: '用户中心',
+        icon: Icon(Icons.person),
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('首页'),
+      // body: const DropDownMenu(),
+      body: _widgetList[_currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        items: _bottomBars(),
+        currentIndex: _currentIndex,
+        onTap: (value) {
+          setState(() {
+            _currentIndex = value;
+          });
+        },
       ),
-      body: const DropDownMenu(),
     );
   }
 }

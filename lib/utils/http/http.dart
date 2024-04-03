@@ -1,7 +1,10 @@
 
 import 'package:dio/dio.dart';
+import 'package:easy_collect/enums/Route.dart';
+import 'package:easy_collect/router/index.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:go_router/go_router.dart';
 
 //辅助配置
 import 'options.dart';
@@ -78,6 +81,9 @@ class HttpRequest {
       );
       if (response.data['code'] == 200) {
         return response.data?['data'];
+      }
+      if (response.data['code'] == 401) {
+        navigatorKey.currentContext?.go(RouteEnum.login.value);
       }
       throw Exception(response.data['msg']);
     } on DioException catch (error) {

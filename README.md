@@ -22,3 +22,10 @@ IOS
 flutter build ios --dart-define=APP_ENV=DEV
 flutter build ios --dart-define=APP_ENV=PROD
 ```
+
+
+### context.go报错
+在当前文件导入 go_router
+```dart
+import 'package:go_router/go_router.dart';
+```
