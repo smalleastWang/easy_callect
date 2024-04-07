@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 
+typedef Render = Widget Function(dynamic value, Map<String, dynamic> record, ListColumnModal column);
+
 class ListColumnModal {
   String field;
   String label;
-  ListColumnModal({required this.field, required this.label});
+  Render? render;
+  ListColumnModal({required this.field, required this.label, this.render});
 }
 
 class ListItemWidget extends StatefulWidget {
@@ -49,11 +52,11 @@ class _ListItemWidgetState extends State<ListItemWidget> {
                   child: Text(e.label),
                 ),
                 Expanded(
-                  child: Text(
+                  child: e.render == null ? Text(
                     widget.rowData[e.field] ?? '-',
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.end
-                  )
+                  ) : e.render!(widget.rowData[e.field], widget.rowData, e)
                 )
               ],
             ),

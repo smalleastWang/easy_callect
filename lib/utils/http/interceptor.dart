@@ -5,6 +5,7 @@ import 'package:easy_collect/enums/Route.dart';
 import 'package:easy_collect/enums/StorageKey.dart';
 import 'package:easy_collect/models/user/Login.dart';
 import 'package:easy_collect/router/index.dart';
+import 'package:easy_collect/utils/global.dart';
 import 'package:easy_collect/utils/storage.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:go_router/go_router.dart';

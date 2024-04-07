@@ -3,7 +3,8 @@
 enum StorageKeyEnum {
 
   token('token'),
-  refreshToken('refreshToken');
+  refreshToken('refreshToken'),
+  isFirstApp('isFirstApp');
 
   const StorageKeyEnum(this.value);
 

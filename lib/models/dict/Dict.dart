@@ -12,8 +12,8 @@ class DictModel {
   String dictValue;
   String? name;
   String? parentId;
-  String? sortCode;
-  String? weight;
+  int sortCode;
+  int? weight;
   bool check;
   List<DictModel>? children;
 
@@ -25,7 +25,7 @@ class DictModel {
     required this.dictValue,
     this.name,
     this.parentId,
-    this.sortCode,
+    required this.sortCode,
     this.weight,
     required this.check,
     this.children,

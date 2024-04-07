@@ -5,9 +5,13 @@ import 'package:easy_collect/utils/http/request.dart';
 
 class CommonApi {
   // 获取字典
-  static Future<DictModel> getDictApi() async {
-    Map<String, dynamic> data = await HttpUtils.get('/dev/dict/tree');
-    return DictModel.fromJson(data);
+  static Future<List<DictModel>> getDictApi() async {
+    List<Map<String, dynamic>> data = await HttpUtils.get('/dev/dict/tree');
+    List<DictModel> list = [];
+    for (var item in data) {
+      list.add(DictModel.fromJson(item));
+    }
+    return list;
   }
   // 获取用户列
   
