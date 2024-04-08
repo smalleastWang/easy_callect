@@ -1,19 +1,13 @@
-import 'package:easy_collect/api/inventory.dart';
 import 'package:easy_collect/enums/Route.dart';
-import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
-import 'package:easy_collect/store/appState.dart';
-import 'package:easy_collect/widgets/DropDownMenu/index.dart';
-import 'package:easy_collect/widgets/List/ListItem.dart';
-import 'package:easy_collect/widgets/List/index.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 
 class ModuleListModel {
   RouteEnum route;
-  Color background;
-  ModuleListModel({required this.route, required this.background});
+  Color? background;
+  IconData icon;
+  ModuleListModel({required this.route, this.background, required this.icon});
 }
-
 
 class ModuleWidget extends StatefulWidget {
   const ModuleWidget({super.key});
@@ -23,41 +17,46 @@ class ModuleWidget extends StatefulWidget {
 }
 
 class _ModuleWidgetState extends State<ModuleWidget> {
-  final List moduleList = [
-    ModuleListModel(route: RouteEnum.inventory, background: Colors.black),
-    ModuleListModel(route: RouteEnum.performance, background: Colors.black),
-    ModuleListModel(route: RouteEnum.weight, background: Colors.black),
-    ModuleListModel(route: RouteEnum.health, background: Colors.black),
-    ModuleListModel(route: RouteEnum.position, background: Colors.black),
-    ModuleListModel(route: RouteEnum.security, background: Colors.black),
-    ModuleListModel(route: RouteEnum.pen, background: Colors.black),
+  final List<ModuleListModel> moduleList = [
+    ModuleListModel(route: RouteEnum.insurance, icon: Icons.ac_unit),
+    ModuleListModel(route: RouteEnum.finance, icon: Icons.beach_access),
+    ModuleListModel(route: RouteEnum.precisionBreeding, icon: Icons.cake),
+    ModuleListModel(route: RouteEnum.supervision, icon: Icons.free_breakfast),
   ];
   @override
   Widget build(BuildContext context) {
-    AppState appState = Provider.of<AppState>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: const Text('功能模块'),
       ),
-      body: ListWidget(
-        filterList: [
-          appState.getDictOptionsByValue('GENDER'),
-          appState.getDictOptionsByValue('BRAND'),
-          appState.getDictOptionsByValue('BILL_PAYMENTSTATUS'),
-        ].map((item) => DropDownMenuModel(
-          name: item.name ?? '',
-          layerLink: LayerLink(),
-          list: item.children?.map((e) => Option(check: false, dictLabel: e.dictLabel, dictValue: e.dictValue)).toList() ?? []
-        )).toList(),
-        api: InventoryApi.getImageApi,
-        columns: [
-          ListColumnModal(label: '模型类型', field: 'model'),
-          ListColumnModal(label: '客户唯一索引', field: 'source'),
-          ListColumnModal(label: '资源', field: 'input'),
-          ListColumnModal(label: '识别数量', field: 'resultAmount'),
-          ListColumnModal(label: '创建时间', field: 'createTime'),
-        ],
-
+      body: Padding(
+        padding: const EdgeInsets.all(15),
+        child: GridView(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            mainAxisSpacing: 15,
+            crossAxisSpacing: 15,
+            crossAxisCount: 2,
+            childAspectRatio: 1.0
+          ),
+          children: moduleList.map((e) {
+            return Container(
+              decoration: const BoxDecoration(
+                color: Colors.deepPurple
+              ),
+              child: GestureDetector(
+                behavior:  HitTestBehavior.opaque,
+                onTap: () => context.go(e.route.value),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(e.icon, size: 36, color: Colors.white),
+                    const SizedBox(height: 10),
+                    Text(e.route.title, style: const TextStyle(fontSize: 18, color: Colors.white))],
+                ),
+              ),
+            );
+          }).toList()
+        ),
       ),
     );
   }

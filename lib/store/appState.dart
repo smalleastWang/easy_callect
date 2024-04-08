@@ -12,8 +12,10 @@ class AppState with ChangeNotifier, DiagnosticableTreeMixin {
   List<DictModel> getDictsByPid(String pid) {
     return _dict.where((item) => item.parentId == pid).toList();
   }
-  DictModel getDictOptionsByValue(String val) {
+  DictModel getDictOptionsByValue(String val, String fieldName, [String? name]) {
     DictModel pDict = _dict.firstWhere((item) => item.dictValue == val);
+    pDict.fieldName = fieldName;
+    if (name != null) pDict.name = name;
     // pDict.children = _dict.where((item) => item.parentId == pDict.id).toList();
     return pDict;
   }

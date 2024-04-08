@@ -21,6 +21,7 @@ class ListWidget<T> extends StatefulWidget {
 }
 
 class _ListWidgetState<T> extends State<ListWidget> {
+  Map<String, dynamic> filterData = {};
 
   // 定义刷新控制器
   final RefreshController _refreshController = RefreshController(initialRefresh: false);
@@ -59,6 +60,7 @@ class _ListWidgetState<T> extends State<ListWidget> {
       return;
     }
     // TODO: 加入筛选参数
+    params.addAll(filterData);
 
     // 加入分页参数
     params.addAll({
@@ -75,6 +77,10 @@ class _ListWidgetState<T> extends State<ListWidget> {
     });
   }
 
+  _handleFilter(String field, dynamic value) {
+    filterData[field] = value;
+    _getList(1);
+  }
   void _onRefresh() async {
     try {
       await _getList(1);
@@ -99,7 +105,7 @@ class _ListWidgetState<T> extends State<ListWidget> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        widget.filterList != null ? SearchWidget(filterList: widget.filterList!) : const SizedBox.shrink(),
+        widget.filterList != null ? SearchWidget(filterList: widget.filterList!, onChange: _handleFilter) : const SizedBox.shrink(),
         Expanded(
           child: SmartRefresher(
             enablePullUp: true,

@@ -37,7 +37,9 @@ android {
         applicationId "com.easycollect.easy_collect"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion flutter.minSdkVersion
+        // minSdkVersion flutter.minSdkVersion
+        // camera_android 需要21以上 flutter.minSdkVersion 是 19
+        minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -61,6 +63,6 @@ flutter {
     source '../..'
 }
 
-dependencies {
-    implementation(name: 'detection_plugin-debug', ext: 'aar')
-}
+// dependencies {
+//     implementation(name: 'detection_plugin-debug', ext: 'aar')
+// }

@@ -3,6 +3,18 @@ enum RouteEnum {
   home('/home', '首页'),
   login('/login', '登录'),
 
+
+  insurance('/insurance', '智慧保险'),
+  standardVerification('standardVerification', '验标注册'),
+
+
+
+  finance('/finance', '养殖金融'),
+
+  precisionBreeding('/precisionBreeding', '精准养殖'),
+
+  supervision('/supervision', '行业监督'),
+
   inventory('/inventory', '盘点管理'),
   performance('/performance', '性能测定'),
   weight('/estimate-weight', '智能估重'),

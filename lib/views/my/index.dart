@@ -1,3 +1,4 @@
+import 'package:easy_collect/widgets/cell/index.dart';
 import 'package:flutter/material.dart';
 
 class MyWidget extends StatefulWidget {
@@ -17,13 +18,13 @@ class _MyWidgetState extends State<MyWidget> {
       body: const Column(
         children: [
           _MyHeaderWidget(version: 'sss'),
-          _MyItemWidget(icon: Icons.shop, title: '套餐展示'),
-          _MyItemWidget(icon: Icons.shopping_bag, title: '已经订购套餐'),
-          _MyItemWidget(icon: Icons.feed, title: '基本信息'),
-          _MyItemWidget(icon: Icons.download, title: '资料下载'),
-          _MyItemWidget(icon: Icons.help, title: '帮助手册'),
-          _MyItemWidget(icon: Icons.call, title: '联系我们'),
-          _MyItemWidget(icon: Icons.logout, title: '退出登录'),
+          CellWidget(icon: Icons.shop, title: '套餐展示'),
+          CellWidget(icon: Icons.shopping_bag, title: '已经订购套餐'),
+          CellWidget(icon: Icons.feed, title: '基本信息'),
+          CellWidget(icon: Icons.download, title: '资料下载'),
+          CellWidget(icon: Icons.help, title: '帮助手册'),
+          CellWidget(icon: Icons.call, title: '联系我们'),
+          CellWidget(icon: Icons.logout, title: '退出登录'),
         ],
       ),
     );
@@ -51,35 +52,6 @@ class _MyHeaderWidget extends StatelessWidget {
           ),
           Text(version),
         ],
-      ),
-    );
-  }
-}
-
-class _MyItemWidget extends StatelessWidget {
-  final String title;
-  final IconData icon;
-  final GestureTapCallback? onTap;
-  const _MyItemWidget({required this.title, required this.icon, this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        child: Row(
-          children: [
-            Icon(icon),
-            Text(' $title', style: const TextStyle(fontSize: 16)),
-            const Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [Icon(Icons.chevron_right)],
-              )
-            )
-          ],
-        ),
       ),
     );
   }

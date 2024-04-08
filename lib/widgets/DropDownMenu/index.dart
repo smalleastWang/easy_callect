@@ -9,7 +9,8 @@ class Option extends DictModel {
 
 class DropDownMenu extends StatefulWidget {
   final List<DropDownMenuModel> filterList;
-  const DropDownMenu({super.key, required this.filterList});
+  final Function(String field, String? value) onChange;
+  const DropDownMenu({super.key, required this.filterList, required this.onChange});
 
   @override
   State<DropDownMenu> createState() => _DropDownMenuState();
@@ -125,11 +126,13 @@ class _DropDownMenuState extends State<DropDownMenu> with SingleTickerProviderSt
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
-        for (Option item in widget.filterList[rootIndex].list) {
+        DropDownMenuModel formItem = widget.filterList[rootIndex];
+        for (Option item in formItem.list) {
           item.check = false;
         }
-        widget.filterList[rootIndex].list[index].check = true;
+        formItem.list[index].check = true;
         changeOverlay(index: rootIndex, reset: true);
+        widget.onChange(formItem.fieldName, formItem.list[index].dictValue);
         _isExpanded = false;
         _animationController.reverse();
         Future.delayed(const Duration(milliseconds: 300)).then((value) {

@@ -3,6 +3,8 @@ import 'package:easy_collect/enums/Route.dart';
 import 'package:easy_collect/enums/StorageKey.dart';
 import 'package:easy_collect/utils/storage.dart';
 import 'package:easy_collect/views/home/index.dart';
+import 'package:easy_collect/views/insurance/StandardVerification.dart';
+import 'package:easy_collect/views/insurance/index.dart';
 import 'package:easy_collect/views/my/Login.dart';
 import 'package:go_router/go_router.dart';
 
@@ -23,6 +25,19 @@ final List<GoRoute> routes = [
     path: RouteEnum.login.value,
     builder: (context, state) => const LoginPage(),
     routes: const []
-  )
+  ),
+  // 智慧保险
+  GoRoute(
+    path: RouteEnum.insurance.value,
+    builder: (context, state) => const InsurancePage(),
+    routes: [
+      GoRoute(
+        path: RouteEnum.standardVerification.value,
+        name: RouteEnum.standardVerification.value,
+        builder: (context, state) => const StandardVerificationPage(),
+      ),
+
+    ]
+  ),
 ];
 

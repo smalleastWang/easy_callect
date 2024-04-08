@@ -17,6 +17,8 @@ class DictModel {
   int? weight;
   @JsonKey(includeToJson: false)
   List<DictModel>? children;
+  @JsonKey(includeToJson: false)
+  String? fieldName;
 
   DictModel({
     this.id,
@@ -28,6 +30,7 @@ class DictModel {
     this.parentId,
     this.sortCode,
     this.weight,
+    this.fieldName,
     this.children,
   });
 
