@@ -1,11 +1,11 @@
 
-import 'package:easy_collect/models/dict/Dict.dart';
+import 'package:easy_collect/widgets/DropDownMenu/index.dart';
 import 'package:flutter/material.dart';
 
 class DropDownMenuModel {
   LayerLink layerLink;
   String name;
-  List<DictModel> list;
+  List<Option> list;
 
   DropDownMenuModel({
     required this.name,

@@ -1,3 +1,4 @@
+import 'package:easy_collect/utils/init.dart';
 import 'package:easy_collect/views/home/module.dart';
 import 'package:easy_collect/views/message/index.dart';
 import 'package:easy_collect/views/my/index.dart';
@@ -22,6 +23,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+    App().appInit();
     super.initState();
   }
 

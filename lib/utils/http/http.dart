@@ -1,7 +1,6 @@
 
 import 'package:dio/dio.dart';
 import 'package:easy_collect/enums/Route.dart';
-import 'package:easy_collect/router/index.dart';
 import 'package:easy_collect/utils/global.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';

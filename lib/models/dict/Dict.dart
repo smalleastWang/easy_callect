@@ -5,6 +5,7 @@ part 'Dict.g.dart';
 
 @JsonSerializable()
 class DictModel {
+  
   String? id;
   String? category;
   String? deleteFlag;
@@ -12,9 +13,9 @@ class DictModel {
   String dictValue;
   String? name;
   String? parentId;
-  int sortCode;
+  int? sortCode;
   int? weight;
-  bool check;
+  @JsonKey(includeToJson: false)
   List<DictModel>? children;
 
   DictModel({
@@ -25,9 +26,8 @@ class DictModel {
     required this.dictValue,
     this.name,
     this.parentId,
-    required this.sortCode,
+    this.sortCode,
     this.weight,
-    required this.check,
     this.children,
   });
 

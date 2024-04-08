@@ -1,4 +1,3 @@
-
 import 'package:easy_collect/api/common.dart';
 import 'package:easy_collect/enums/StorageKey.dart';
 import 'package:easy_collect/models/dict/Dict.dart';
@@ -11,19 +10,30 @@ import 'package:sqflite/sqflite.dart';
 
 
 class App {
-  int databaseVersion = 1;
+  int databaseVersion = 3;
   bool isFirstApp = true;
   String dictTableName = 'dicts';
 
   appInit() async {
-    // 初始化存储
-    await SharedPreferencesManager().init();
+    
     // 初始化数据库
     database = await openDatabase(
       join(await getDatabasesPath(), 'easy_database.db'),
       onCreate: (db, version) {
         // NULL, INTEGER=int, REAL=number, TEXT=String, BLOB=Uint8List
-        return db.execute('CREATE TABLE $dictTableName(id TEXT PRIMARY KEY, category TEXT, deleteFlag String, dictLabel String, dictValue String, name String, parentId String, sortCode INTEGER, weight INTEGER, check INTEGER)');
+        return db.execute('''
+          CREATE TABLE $dictTableName(
+            id TEXT PRIMARY KEY,
+            category TEXT,
+            deleteFlag TEXT,
+            dictLabel TEXT,
+            dictValue TEXT,
+            name TEXT,
+            parentId TEXT,
+            sortCode INTEGER,
+            weight INTEGER
+          )'''
+        );
       },
       version: databaseVersion
     );
@@ -31,11 +41,17 @@ class App {
     // 初始化字典
     if (isFirstApp) {
       await initDict();
-      // SharedPreferencesManager().setBool(StorageKeyEnum.isFirstApp.value, false);
+      SharedPreferencesManager().setBool(StorageKeyEnum.isFirstApp.value, false);
     } else {
       // 异步初始化字典
       // initDict();
-      // await database.query(dictTableName);
+      List<Map<String, dynamic>> dictMapList = await database.query(dictTableName);
+      List<DictModel> dictList = [];
+      for (var dict in dictMapList) {
+        dictList.add(DictModel.fromJson(dict));
+      }
+      AppState appState = Provider.of<AppState>(navigatorKey.currentContext!, listen: false);
+      appState.setDict(listToTree(dictList));
     }
   }
   // 获取借口字典并存储到数据库
@@ -50,17 +66,16 @@ class App {
     }
     await databaseBatch.commit();
     // 设置字典
-    Future.delayed(const Duration(milliseconds: 100)).then((value) {
-      AppState appState = Provider.of<AppState>(navigatorKey.currentContext!, listen: false);
-      appState.setDict(dictList);
-    });
+    AppState appState = Provider.of<AppState>(navigatorKey.currentContext!, listen: false);
+    appState.setDict(dictTree);
   }
   // 字典 Tree 转 List
   List<DictModel> treeToList(List<DictModel> dict) {
-    const List<DictModel> result = [];
+    List<DictModel> result = [];
     loop(List<DictModel>  data) {
       for (var item in data) {
-        result.add(item);
+        DictModel resultItem = item;
+        result.add(resultItem);
         if (item.children != null) {
           loop(item.children!);
         }
@@ -70,5 +85,28 @@ class App {
     return result;
   }
 
+
+  // 字典 Tree 转 List
+  List<DictModel> listToTree(List<DictModel> dict) {
+    Map<String, DictModel> dictMap = {};
+    List<DictModel> result = [];
+    for (var item in dict) {
+      dictMap[item.id!] = item;
+    }
+    for (var item in dict) {
+      DictModel? parent = dictMap[item.parentId];
+      if (parent == null) {
+        result.add(item);
+      } else {
+        parent.children != null ? parent.children!.add(item) : parent.children = [item];
+      }
+    }
+    return result;
+  }
+
+
+  widgetInit() {
+
+  }
   
 }

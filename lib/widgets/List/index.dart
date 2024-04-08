@@ -1,4 +1,5 @@
 import 'package:easy_collect/models/PageVo.dart';
+import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
 import 'package:easy_collect/widgets/List/ListItem.dart';
 import 'package:easy_collect/widgets/Search/index.dart';
 import 'package:flutter/material.dart';
@@ -8,11 +9,12 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 typedef Api<T> = Future<PageVoModel> Function(Map<String, dynamic> params);
 
 class ListWidget<T> extends StatefulWidget {
+  final List<DropDownMenuModel>? filterList;
   final List<ListColumnModal> columns;
   final List<Map<String, dynamic>>? data;
   final Api<T>? api;
   final Map<String, dynamic>? params;
-  const ListWidget({super.key, required this.columns, this.data, required this.api, this.params});
+  const ListWidget({super.key, required this.columns, this.data, required this.api, this.params, this.filterList});
 
   @override
   State<ListWidget> createState() => _ListWidgetState<T>();
@@ -97,7 +99,7 @@ class _ListWidgetState<T> extends State<ListWidget> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const SearchWidget(),
+        widget.filterList != null ? SearchWidget(filterList: widget.filterList!) : const SizedBox.shrink(),
         Expanded(
           child: SmartRefresher(
             enablePullUp: true,
