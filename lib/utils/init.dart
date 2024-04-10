@@ -1,6 +1,7 @@
 import 'package:easy_collect/api/common.dart';
 import 'package:easy_collect/enums/StorageKey.dart';
 import 'package:easy_collect/models/dict/Dict.dart';
+import 'package:easy_collect/router/index.dart';
 import 'package:easy_collect/store/appState.dart';
 import 'package:easy_collect/utils/global.dart';
 import 'package:easy_collect/utils/storage.dart';
@@ -50,7 +51,7 @@ class App {
       for (var dict in dictMapList) {
         dictList.add(DictModel.fromJson(dict));
       }
-      AppState appState = Provider.of<AppState>(navigatorKey.currentContext!, listen: false);
+      AppState appState = Provider.of<AppState>(routeKey.currentContext!, listen: false);
       appState.setDict(listToTree(dictList));
     }
   }
@@ -66,7 +67,7 @@ class App {
     }
     await databaseBatch.commit();
     // 设置字典
-    AppState appState = Provider.of<AppState>(navigatorKey.currentContext!, listen: false);
+    AppState appState = Provider.of<AppState>(routeKey.currentContext!, listen: false);
     appState.setDict(dictTree);
   }
   // 字典 Tree 转 List

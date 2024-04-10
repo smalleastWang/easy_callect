@@ -4,7 +4,7 @@ import 'package:easy_collect/api/my.dart';
 import 'package:easy_collect/enums/Route.dart';
 import 'package:easy_collect/enums/StorageKey.dart';
 import 'package:easy_collect/models/user/Login.dart';
-import 'package:easy_collect/utils/global.dart';
+import 'package:easy_collect/router/index.dart';
 import 'package:easy_collect/utils/storage.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:go_router/go_router.dart';
@@ -51,7 +51,7 @@ class AuthInterceptor extends QueuedInterceptor {
     if (token != null || options.path.contains('/auth/b/doLogin')) {
       options.headers['Token'] = token;
     } else {
-      navigatorKey.currentContext?.go(RouteEnum.login.value);
+      routeKey.currentContext?.go(RouteEnum.login.value);
     }
     super.onRequest(options, handler);
   }
@@ -59,7 +59,7 @@ class AuthInterceptor extends QueuedInterceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     if (err.response?.statusCode == 401) {
-      navigatorKey.currentContext?.go(RouteEnum.login.value);
+      routeKey.currentContext?.go(RouteEnum.login.value);
       // await refreshToken();
       handler.next(err);
     }

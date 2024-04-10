@@ -34,6 +34,6 @@ import 'package:go_router/go_router.dart';
 - 在 /emums/Route.dart 下添加路由名
 - 在 /Router/routes.dart 添加路由
 - 页面跳转 context.go(RouteEnum.home.value)
-- 无 context 情况 navigatorKey.currentContext!.go(RouteEnum.home.value)
+- 无 context 情况 routeKey.currentContext!.go(RouteEnum.home.value)
 
 
