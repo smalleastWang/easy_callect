@@ -18,6 +18,33 @@ class _MyWidgetState extends State<MyWidget> {
     await SharedPreferencesManager().setString(StorageKeyEnum.token.value, '');
     context.replace(RouteEnum.login.value);
   }
+  void _showLogoutConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('提示'),
+          content: const Text('确认退出当前用户？'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('取消'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                _logoutAndNavigateToLogin();
+              },
+              child: const Text('确定'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +60,7 @@ class _MyWidgetState extends State<MyWidget> {
           const _MyItemWidget(icon: Icons.download, title: '资料下载'),
           const _MyItemWidget(icon: Icons.help, title: '帮助手册'),
           const _MyItemWidget(icon: Icons.call, title: '联系我们'),
-          _MyItemWidget(icon: Icons.logout, title: '退出登录', onTap: _logoutAndNavigateToLogin),
+          _MyItemWidget(icon: Icons.logout, title: '退出登录', onTap: _showLogoutConfirmationDialog),
         ],
       ),
     );
