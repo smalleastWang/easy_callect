@@ -27,5 +27,11 @@ class MyApi {
     Map<String, dynamic> data = await HttpUtils.get('/auth/b/getLoginUser');
     return UserInfoModel.fromJson(data);
   }
+  // 退出登录
+  static Future<String> logoutApi() async {
+    // params.addAll({'device': 'mobile app'});
+    String data = await HttpUtils.get('/auth/b/doLogout');
+    return data;
+  }
 
 }
