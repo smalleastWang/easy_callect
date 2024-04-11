@@ -1,5 +1,10 @@
 import 'package:easy_collect/widgets/cell/index.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_collect/api/my.dart';
+import 'package:easy_collect/enums/Route.dart';
+import 'package:go_router/go_router.dart';
+import 'package:easy_collect/utils/storage.dart';
+import 'package:easy_collect/enums/StorageKey.dart';
 
 class MyWidget extends StatefulWidget {
   const MyWidget({super.key});
@@ -9,22 +14,54 @@ class MyWidget extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<MyWidget> {
+  void _logoutAndNavigateToLogin() async {
+    await MyApi.logoutApi(); // Call logout API
+    await SharedPreferencesManager().remove(StorageKeyEnum.token.value);
+    context.replace(RouteEnum.login.path);
+  }
+  void _showLogoutConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('提示'),
+          content: const Text('确认退出当前用户？'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('取消'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                _logoutAndNavigateToLogin();
+              },
+              child: const Text('确定'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('用户中心'),
       ),
-      body: const Column(
+      body: Column(
         children: [
-          _MyHeaderWidget(version: 'sss'),
-          CellWidget(icon: Icons.shop, title: '套餐展示'),
-          CellWidget(icon: Icons.shopping_bag, title: '已经订购套餐'),
-          CellWidget(icon: Icons.feed, title: '基本信息'),
-          CellWidget(icon: Icons.download, title: '资料下载'),
-          CellWidget(icon: Icons.help, title: '帮助手册'),
-          CellWidget(icon: Icons.call, title: '联系我们'),
-          CellWidget(icon: Icons.logout, title: '退出登录'),
+          const _MyHeaderWidget(version: 'sss'),
+          const CellWidget(icon: Icons.shop, title: '套餐展示'),
+          const CellWidget(icon: Icons.shopping_bag, title: '已经订购套餐'),
+          const CellWidget(icon: Icons.feed, title: '基本信息'),
+          const CellWidget(icon: Icons.download, title: '资料下载'),
+          const CellWidget(icon: Icons.help, title: '帮助手册'),
+          const CellWidget(icon: Icons.call, title: '联系我们'),
+          CellWidget(icon: Icons.logout, title: '退出登录', onTap: _showLogoutConfirmationDialog),
         ],
       ),
     );

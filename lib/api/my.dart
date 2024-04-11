@@ -4,6 +4,8 @@ import 'package:dio/dio.dart';
 import 'package:easy_collect/models/user/Login.dart';
 import 'package:easy_collect/models/user/UserInfo.dart';
 import 'package:easy_collect/utils/http/request.dart';
+import 'package:easy_collect/enums/StorageKey.dart';
+import 'package:easy_collect/utils/storage.dart';
 
 class MyApi {
   // 刷新token
@@ -26,6 +28,17 @@ class MyApi {
   static Future<UserInfoModel> getUserInfoApi() async {
     Map<String, dynamic> data = await HttpUtils.get('/auth/b/getLoginUser');
     return UserInfoModel.fromJson(data);
+  }
+  // 退出登录
+  static Future<void> logoutApi() async {
+    // params.addAll({'device': 'mobile app'});
+    String? token = SharedPreferencesManager().getString(StorageKeyEnum.token.value);
+    // 获取当前时间
+    DateTime now = DateTime.now();
+    // 将当前时间转换为毫秒级时间戳（13位）
+    int timestamp = now.millisecondsSinceEpoch;
+
+    await HttpUtils.get('/auth/b/doLogout?token=$token&_=$timestamp');
   }
 
 }
