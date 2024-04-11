@@ -1,4 +1,5 @@
 import 'package:easy_collect/router/index.dart';
+import 'package:easy_collect/utils/global.dart';
 import 'package:easy_collect/utils/storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -8,6 +9,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // 初始化存储
   await SharedPreferencesManager().init();
+  await DatabaseManager().init();
   runApp(const ProviderScope(
     child: MyApp(),
   ));

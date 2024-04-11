@@ -1,26 +1,28 @@
 import 'package:easy_collect/models/PageVo.dart';
 import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
 import 'package:easy_collect/widgets/List/ListItem.dart';
+import 'package:easy_collect/widgets/LoadingWidget.dart';
 import 'package:easy_collect/widgets/Search/index.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 
 typedef Api<T> = Future<PageVoModel> Function(Map<String, dynamic> params);
 
-class ListWidget<T> extends StatefulWidget {
+class ListWidget<T> extends ConsumerStatefulWidget {
   final List<DropDownMenuModel>? filterList;
   final List<ListColumnModal> columns;
-  final List<Map<String, dynamic>>? data;
-  final Api<T>? api;
+  // final Api<T>? api;
+  final T provider;
   final Map<String, dynamic>? params;
-  const ListWidget({super.key, required this.columns, this.data, required this.api, this.params, this.filterList});
+  const ListWidget({super.key, required this.columns, required this.provider, this.params, this.filterList});
 
   @override
-  State<ListWidget> createState() => _ListWidgetState<T>();
+  ConsumerState<ConsumerStatefulWidget> createState() => _ListWidgetState<T>();
 }
 
-class _ListWidgetState<T> extends State<ListWidget> {
+class _ListWidgetState<T> extends ConsumerState<ListWidget> {
   Map<String, dynamic> filterData = {};
 
   // 定义刷新控制器
@@ -36,18 +38,10 @@ class _ListWidgetState<T> extends State<ListWidget> {
 
   @override
   void initState() {
-    if (widget.data == null) {
-      if (widget.api == null) {
-        throw Exception('List组件data和api参数必传一个');
-      }
-      Future.delayed(const Duration(milliseconds: 100)).then((value) {
-        _getList();
-      });
-    } else {
-      setState(() {
-        pageData = PageVoModel(current: 1, pages: 1, size: widget.data?.length ?? 1, total: widget.data?.length ?? 1, records: widget.data!);
-      });
-    }
+    // _getList();
+    // ref.listenManual(widget.provider(filterData), (previous, next) {
+
+    // });
     super.initState();
   }
 
@@ -67,14 +61,15 @@ class _ListWidgetState<T> extends State<ListWidget> {
       'current': current ?? pageData.current + 1,
       'size': pageData.size
     });
-    PageVoModel res = await widget.api!(params);
-    // 不是第一页在前面插入原数据
-    if (current != 1) {
-      res.records.insertAll(0, pageData.records);
-    }
-    setState(() {
-      pageData = res;
-    });
+    // PageVoModel res = await widget.api!(params);
+    final AsyncValue<PageVoModel> res =  ref.refresh(widget.provider(filterData));
+    if (res.hasError) throw Exception(res.error);
+
+    pageData.current = res.value!.current;
+    pageData.pages = res.value!.pages;
+    pageData.size = res.value!.size;
+    pageData.total = res.value!.total;
+    
   }
 
   _handleFilter(String field, dynamic value) {
@@ -102,24 +97,31 @@ class _ListWidgetState<T> extends State<ListWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final AsyncValue<PageVoModel> data = ref.watch(widget.provider(filterData));
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         widget.filterList != null ? SearchWidget(filterList: widget.filterList!, onChange: _handleFilter) : const SizedBox.shrink(),
-        Expanded(
-          child: SmartRefresher(
-            enablePullUp: true,
-            controller: _refreshController,
-            onLoading:_onLoading,
-            onRefresh: _onRefresh,
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: pageData.records.length,
-              itemBuilder: (BuildContext context, int index) {
-                return ListItemWidget(rowData: pageData.records[index], columns: widget.columns,);
-              }
-            ),
-          )
+        LoadingWidget(
+          data: data,
+          builder: (BuildContext context, PageVoModel value) {
+            return Expanded(
+              child: SmartRefresher(
+                enablePullUp: true,
+                controller: _refreshController,
+                onLoading:_onLoading,
+                onRefresh: _onRefresh,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: value.records.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return ListItemWidget(rowData: value.records[index], columns: widget.columns,);
+                  }
+                ),
+              )
+            );
+          }
         )
       ],
     );

@@ -5,30 +5,22 @@ import 'package:easy_collect/models/common/Area.dart';
 import 'package:easy_collect/views/insurance/StandardVerification.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_picker/picker.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AreaPickerWidget extends StatefulWidget {
+class AreaPickerWidget extends ConsumerStatefulWidget {
   final Function(List<String> value) onChange;
   const AreaPickerWidget({super.key, required this.onChange});
 
   @override
-  State<AreaPickerWidget> createState() => _AreaPickerWidgetState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _AreaPickerWidgetState();
 }
 
-class _AreaPickerWidgetState extends State<AreaPickerWidget> {
-  List<AreaModel> areaList = [];
+class _AreaPickerWidgetState extends ConsumerState<AreaPickerWidget> {
   List<String> penValue = [];
 
   @override
   void initState() {
-    getAreaData();
     super.initState();
-  }
-
-  getAreaData() async {
-    List<AreaModel> res = await CommonApi.getAreaApi();
-    setState(() {
-      areaList = res;
-    });
   }
 
 
@@ -41,7 +33,7 @@ class _AreaPickerWidgetState extends State<AreaPickerWidget> {
       );
     }).toList();
   }
-  String getName() {
+  String getName(areaList) {
     List<AreaModel> data = areaList.map((e) => e).toList();
     return penValue.map((e) {
       AreaModel item = data.firstWhere((element) => element.id == e);
@@ -52,6 +44,7 @@ class _AreaPickerWidgetState extends State<AreaPickerWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final AsyncValue<List<AreaModel>> areaList = ref.watch(areaProvider);
     return GestureDetector(
       onTap: () {
           Picker picker = Picker(
@@ -59,7 +52,7 @@ class _AreaPickerWidgetState extends State<AreaPickerWidget> {
           confirmText: '确定',
           cancelText: '取消',
           adapter: PickerDataAdapter(
-            data: getPickerData(areaList), 
+            data: getPickerData(areaList.value ?? []) , 
           ),
           changeToFirst: true,
           textAlign: TextAlign.left,
@@ -85,7 +78,7 @@ class _AreaPickerWidgetState extends State<AreaPickerWidget> {
           border: Border.all(color: const Color.fromARGB(255, 126, 126, 126), width: 1),
           borderRadius: BorderRadius.circular(4)
         ),
-        child: Text(penValue.isNotEmpty ? getName() : '选择牧场、圈舍', style: const TextStyle(fontSize: 16)),
+        child: Text(penValue.isNotEmpty ? getName(areaList.value ?? []) : '选择牧场、圈舍', style: const TextStyle(fontSize: 16)),
       ),
     );
   }

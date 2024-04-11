@@ -10,30 +10,30 @@ import 'package:go_router/go_router.dart';
 
 final List<GoRoute> routes = [
   GoRoute(
-    path: RouteEnum.home.value,
+    path: RouteEnum.home.path,
     builder: (context, state) => const HomePage(),
     redirect: (context, state) {
       String? token = SharedPreferencesManager().getString(StorageKeyEnum.token.value);
       if (token == null) {
-        return RouteEnum.login.value;
+        return RouteEnum.login.path;
+
       }
       return null;
     },
     routes: const []
   ),
   GoRoute(
-    path: RouteEnum.login.value,
+    path: RouteEnum.login.path,
     builder: (context, state) => const LoginPage(),
     routes: const []
   ),
   // 智慧保险
   GoRoute(
-    path: RouteEnum.insurance.value,
+    path: RouteEnum.insurance.path,
     builder: (context, state) => const InsurancePage(),
     routes: [
       GoRoute(
-        path: RouteEnum.standardVerification.value,
-        name: RouteEnum.standardVerification.value,
+        path: RouteEnum.standardVerification.path,
         builder: (context, state) => const StandardVerificationPage(),
       ),
 

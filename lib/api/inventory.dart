@@ -6,17 +6,13 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'inventory.g.dart';
 
-class InventoryApi {
-  // 图像盘点
-  static Future<PageVoModel> getImageApi(Map<String, dynamic> params) async {
-    Map<String, dynamic> data = await HttpUtils.get('/biz/scanAmount/pageApplicationPlatform', params: params);
-    return PageVoModel.fromJson(data);
-  }
-}
-
 @riverpod
 Future<PageVoModel> imageInventory(ImageInventoryRef ref, Map<String, dynamic> params) async {
-  Map<String, dynamic> data = await HttpUtils.get('/biz/scanAmount/pageApplicationPlatform', params: params);
-  return PageVoModel.fromJson(data);
+  Map<String, dynamic> res = await HttpUtils.get('/biz/scanAmount/pageApplicationPlatform', params: params);
+  PageVoModel data = PageVoModel.fromJson(res);
+  if (params['current'] != 1 && ref.state.hasValue) {
+    data.records.insertAll(0, ref.state.value!.records);
+  }
+  return data;
 }
 

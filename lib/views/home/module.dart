@@ -45,7 +45,7 @@ class _ModuleWidgetState extends State<ModuleWidget> {
               ),
               child: GestureDetector(
                 behavior:  HitTestBehavior.opaque,
-                onTap: () => context.go(e.route.value),
+                onTap: () => context.go(e.route.path),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

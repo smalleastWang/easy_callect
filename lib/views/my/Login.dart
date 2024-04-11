@@ -37,8 +37,7 @@ class _LoginPageState extends State<LoginPage> {
       'password': SM2.encrypt(_pwdController.text, sm2PublicKey)
     });
     SharedPreferencesManager().setString(StorageKeyEnum.token.value, token);
-    // context.go(RouteEnum.home.value);
-    context.replace(RouteEnum.home.value);
+    context.replace(RouteEnum.home.path);
   }
 
   @override

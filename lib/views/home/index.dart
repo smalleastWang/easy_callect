@@ -1,4 +1,4 @@
-import 'package:easy_collect/utils/init.dart';
+import 'package:easy_collect/views/home/listdemo.dart';
 import 'package:easy_collect/views/home/module.dart';
 import 'package:easy_collect/views/message/index.dart';
 import 'package:easy_collect/views/my/index.dart';
@@ -17,15 +17,9 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _widgetList = [
     const MessageWidget(),
     const ModuleWidget(),
+    const ListDemoWidget(),
     const MyWidget(),
-    
   ];
-
-  @override
-  void initState() {
-    App().appInit();
-    super.initState();
-  }
 
   List<BottomNavigationBarItem> _bottomBars() {
     return [
@@ -38,6 +32,10 @@ class _HomePageState extends State<HomePage> {
         icon: Icon(Icons.view_module),
       ),
       const BottomNavigationBarItem(
+        label: '列表demo',
+        icon: Icon(Icons.list),
+      ),
+      const BottomNavigationBarItem(
         label: '用户中心',
         icon: Icon(Icons.person),
       ),
@@ -47,9 +45,9 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // body: const DropDownMenu(),
       body: _widgetList[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         items: _bottomBars(),
         currentIndex: _currentIndex,
         onTap: (value) {

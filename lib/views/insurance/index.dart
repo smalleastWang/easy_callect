@@ -15,7 +15,7 @@ class InsurancePage extends StatelessWidget {
       ),
       body: Column(
         children: [
-          CellWidget(title: '验标注册', onTap: () => context.goNamed(RouteEnum.standardVerification.value)),
+          CellWidget(title: '验标注册', onTap: () => context.go(RouteEnum.standardVerification.fullpath!)),
           const CellWidget(title: '勘查对比'),
           const CellWidget(title: '生成订单'),
           const CellWidget(title: '订单查询'),

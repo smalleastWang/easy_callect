@@ -83,7 +83,7 @@ class HttpRequest {
         return response.data?['data'];
       }
       if (response.data['code'] == 401) {
-        routeKey.currentContext?.go(RouteEnum.login.value);
+        routeKey.currentContext?.go(RouteEnum.login.path);
       }
       throw Exception(response.data['msg']);
     } on DioException catch (error) {

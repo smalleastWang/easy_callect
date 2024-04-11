@@ -1,10 +1,12 @@
+
 import 'package:easy_collect/enums/Route.dart';
-import 'package:easy_collect/models/common/Area.dart';
-import 'package:easy_collect/models/common/Option.dart';
 import 'package:easy_collect/views/insurance/data.dart';
 import 'package:easy_collect/widgets/Register/AreaPicker.dart';
 import 'package:easy_collect/widgets/Register/RegisterType.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 
 
 final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
@@ -21,13 +23,40 @@ class _StandardVerificationPageState extends State<StandardVerificationPage> {
   final GlobalKey _formKey = GlobalKey<FormState>();
   final TextEditingController _numController = TextEditingController();
   List<String> penValue = [];
-  List<AreaModel> areaList = [];
+
+  int registerType = 1;
+  int changeRegisterCnt = 1;
 
   @override
   void initState() {
     super.initState();
   }
+  _changeRegisterType(value) {
+    setState(() {
+      registerType = value;
+    });
+  }
 
+  _changeRegisterCnt(value) {
+    setState(() {
+      changeRegisterCnt = value;
+    });
+  }
+  Widget get _getRegisterCnt {
+    if (registerType == 1) {
+      return RegisterTypeWidget<int>(options: singleOptions, onChange: _changeRegisterCnt);
+    } else if (registerType == 2) {
+      return RegisterTypeWidget<int>(options: multipleOptions, onChange: _changeRegisterCnt);
+    }
+    return const SizedBox.shrink();
+  }
+
+  void _pickImage(ImageSource source) async {
+    final picker = ImagePicker();
+    final XFile? pickedFile = await picker.pickImage(source: source);
+    print(pickedFile);
+    
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,10 +90,38 @@ class _StandardVerificationPageState extends State<StandardVerificationPage> {
                     });
                   }
                 ),
-                // RegisterTypeWidget(options: registerTypeOptions),
-                
-                // RegisterTypeWidget(options: singleOptions),
-                // RegisterTypeWidget(options: multipleOptions),
+                RegisterTypeWidget<int>(defaultValue: registerType, options: registerTypeOptions, onChange: _changeRegisterType),
+                _getRegisterCnt,
+                ElevatedButton(
+                  child: const  Text('选择图片'),
+                  onPressed: () {
+                    showCupertinoModalPopup<ImageSource>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return CupertinoActionSheet(
+                          actions: [
+                            CupertinoActionSheetAction(
+                              onPressed: () => context.pop(ImageSource.gallery),
+                              child: const Text("打开相册")
+                            ),
+                            CupertinoActionSheetAction(
+                              onPressed: () => context.pop(ImageSource.camera),
+                              child: const Text("拍摄")
+                            )
+                          ],
+                          cancelButton: CupertinoActionSheetAction(
+                            onPressed: () => context.pop(),
+                            child: const Text("取消")
+                          ),
+                        );
+                      }
+                    ).then((source) {
+                      if (source != null) {
+                        _pickImage(source);
+                      }
+                    });
+                  },
+                )
               ],
             ),
           ),

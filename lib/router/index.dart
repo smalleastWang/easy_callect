@@ -10,6 +10,7 @@ final routeKey = GlobalKey<NavigatorState>();
 
 final router = GoRouter(
   navigatorKey: routeKey,
-  initialLocation: RouteEnum.home.value,
+  // initialLocation: RouteEnum.home.path,
+  initialLocation: RouteEnum.standardVerification.fullpath,
   routes: routes,
 );

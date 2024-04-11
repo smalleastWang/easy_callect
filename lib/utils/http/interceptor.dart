@@ -51,7 +51,7 @@ class AuthInterceptor extends QueuedInterceptor {
     if (token != null || options.path.contains('/auth/b/doLogin')) {
       options.headers['Token'] = token;
     } else {
-      routeKey.currentContext?.go(RouteEnum.login.value);
+      routeKey.currentContext?.go(RouteEnum.login.path);
     }
     super.onRequest(options, handler);
   }
@@ -59,7 +59,7 @@ class AuthInterceptor extends QueuedInterceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     if (err.response?.statusCode == 401) {
-      routeKey.currentContext?.go(RouteEnum.login.value);
+      routeKey.currentContext?.go(RouteEnum.login.path);
       // await refreshToken();
       handler.next(err);
     }

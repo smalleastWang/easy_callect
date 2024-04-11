@@ -1,11 +1,11 @@
 enum RouteEnum {
 
-  home('/home', '首页'),
+  home('/home', '首页', ''),
   login('/login', '登录'),
 
 
   insurance('/insurance', '智慧保险'),
-  standardVerification('standardVerification', '验标注册'),
+  standardVerification('standardVerification', '验标注册', '/insurance/standardVerification'),
 
 
 
@@ -24,9 +24,10 @@ enum RouteEnum {
   security('/security', '智能安防'),
   pen('/pen', '圈舍管理');
 
-  const RouteEnum(this.value, this.title);
+  const RouteEnum(this.path, this.title, [this.fullpath]);
 
-  final String value;
+  final String path;
   final String title;
+  final String? fullpath;
 
 }

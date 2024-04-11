@@ -113,46 +113,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "8.9.1"
-  camera:
-    dependency: "direct main"
-    description:
-      name: camera
-      sha256: "9499cbc2e51d8eb0beadc158b288380037618ce4e30c9acbc4fae1ac3ecb5797"
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.10.5+9"
-  camera_android:
-    dependency: transitive
-    description:
-      name: camera_android
-      sha256: "1100e527b44a96906987a91ef78c8dacb539e34612a8058de89023380acf67f1"
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.10.8+18"
-  camera_avfoundation:
-    dependency: transitive
-    description:
-      name: camera_avfoundation
-      sha256: "841682a28b99b8594532d2afe81e092a2c1edb2c93526f6f841a878dd57eec8d"
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.9.14+2"
-  camera_platform_interface:
-    dependency: transitive
-    description:
-      name: camera_platform_interface
-      sha256: a250314a48ea337b35909a4c9d5416a208d736dcb01d0b02c6af122be66660b0
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "2.7.4"
-  camera_web:
-    dependency: transitive
-    description:
-      name: camera_web
-      sha256: f18ccfb33b2a7c49a52ad5aa3f07330b7422faaecbdfd9b9fe8e51182f6ad67d
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.3.2+4"
   characters:
     dependency: transitive
     description:
@@ -680,14 +640,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.0.5"
-  nested:
-    dependency: transitive
-    description:
-      name: nested
-      sha256: "03bac4c528c64c95c722ec99280375a6f2fc708eec17c7b3f07253b626cd2a20"
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "1.0.0"
   nm:
     dependency: transitive
     description:
@@ -800,14 +752,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.3.1"
-  provider:
-    dependency: "direct main"
-    description:
-      name: provider
-      sha256: c8a055ee5ce3fd98d6fc872478b03823ffdb448699c6ebdbbc71d59b596fd48c
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "6.1.2"
   pub_semver:
     dependency: transitive
     description:
