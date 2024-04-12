@@ -23,15 +23,19 @@ class HttpUtils {
   /// post
   static Future post(String path, {
     dynamic params,
+    dynamic query, 
     bool showLoading = true,
     bool showErrorMessage = true,
+    bool isformData = false
   }) {
     return httpRequest.request(
       path: path,
       method: HttpMethod.post,
       data: params,
+      queryParameters: query,
       showLoading: showLoading,
       showErrorMessage: showErrorMessage,
+      isformData: isformData,
     );
   }
 }

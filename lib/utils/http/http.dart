@@ -52,13 +52,14 @@ class HttpRequest {
   }
 
   /// 封装request方法
-  Future request({
+  Future<T> request<T>({
     required String path, //接口地址
     required HttpMethod method, //请求方式
     dynamic data, //数据
     Map<String, dynamic>? queryParameters,
     bool showLoading = true, //加载过程
     bool showErrorMessage = true, //是否弹出借口报错
+    bool isformData = false
   }) async {
     //动态添加header头
     Map<String, dynamic> headers = <String, dynamic>{};
@@ -68,6 +69,7 @@ class HttpRequest {
       method: method.value,
       headers: headers,
     );
+    if (isformData) options.contentType = 'multipart/form-data';
 
     try {
       if (showLoading) {
@@ -95,5 +97,9 @@ class HttpRequest {
         EasyLoading.dismiss();
       }
     }
+    if (T is List) return [] as T;
+    if (T is Map) return {} as T;
+    if (T is String) return '' as T;
+    return null as T;
   }
 }

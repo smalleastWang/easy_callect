@@ -1,7 +1,11 @@
-
+import 'dart:convert';
+import 'package:easy_collect/api/register.dart';
 import 'package:easy_collect/enums/Route.dart';
+import 'package:easy_collect/models/register/index.dart';
+import 'package:easy_collect/utils/tool/common.dart';
 import 'package:easy_collect/views/insurance/data.dart';
-import 'package:easy_collect/widgets/Register/AreaPicker.dart';
+import 'package:easy_collect/widgets/Form/PickerFormField.dart';
+import 'package:easy_collect/widgets/Register/EnclosurePicker.dart';
 import 'package:easy_collect/widgets/Register/RegisterType.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +26,7 @@ class _StandardVerificationPageState extends State<StandardVerificationPage> {
   // final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey _formKey = GlobalKey<FormState>();
   final TextEditingController _numController = TextEditingController();
-  List<String> penValue = [];
+  final PickerEditingController _enclosureController = PickerEditingController();
 
   int registerType = 1;
   int changeRegisterCnt = 1;
@@ -44,9 +48,9 @@ class _StandardVerificationPageState extends State<StandardVerificationPage> {
   }
   Widget get _getRegisterCnt {
     if (registerType == 1) {
-      return RegisterTypeWidget<int>(options: singleOptions, onChange: _changeRegisterCnt);
+      return RegisterTypeWidget<int>(options: singleOptions, onChange: _changeRegisterCnt, label: '注册方式');
     } else if (registerType == 2) {
-      return RegisterTypeWidget<int>(options: multipleOptions, onChange: _changeRegisterCnt);
+      return RegisterTypeWidget<int>(options: multipleOptions, onChange: _changeRegisterCnt, label: '注册方式');
     }
     return const SizedBox.shrink();
   }
@@ -54,6 +58,17 @@ class _StandardVerificationPageState extends State<StandardVerificationPage> {
   void _pickImage(ImageSource source) async {
     final picker = ImagePicker();
     final XFile? pickedFile = await picker.pickImage(source: source);
+    if (pickedFile == null) return;
+
+    final bytes = await pickedFile.readAsBytes();
+
+    RegisterQueryModel params = RegisterQueryModel(
+      cattleNo: _numController.text,
+      pastureId: '123',
+      houseId: '456',
+      faceImgs: [base64Encode(bytes)],
+    );
+    await RegisterApi.cattleApp(params);
     print(pickedFile);
     
   }
@@ -73,22 +88,21 @@ class _StandardVerificationPageState extends State<StandardVerificationPage> {
               children: [
                 TextFormField(
                   controller: _numController,
-                  decoration: const InputDecoration(
+                  decoration: getInputDecoration(
                     labelText: '耳标号',
-                    contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 6),
-                    border: OutlineInputBorder(),
                     hintText: '请输入牛耳耳标号(不支持中文)',
                   ),
                   validator: (v) {
                     return v!.trim().isNotEmpty ? null : "耳标号不能为空";
                   },
                 ),
-                AreaPickerWidget(
-                  onChange: (value) {
-                    setState(() {
-                      penValue = value;
-                    });
-                  }
+                const SizedBox(height: 16),
+                EnclosurePickerWidget(
+                  controller: _enclosureController,
+                  decoration: getInputDecoration(
+                    labelText: '牧场/圈舍',
+                    hintText: '请输入牛耳耳标号(不支持中文)',
+                  ),
                 ),
                 RegisterTypeWidget<int>(defaultValue: registerType, options: registerTypeOptions, onChange: _changeRegisterType),
                 _getRegisterCnt,
@@ -102,11 +116,11 @@ class _StandardVerificationPageState extends State<StandardVerificationPage> {
                           actions: [
                             CupertinoActionSheetAction(
                               onPressed: () => context.pop(ImageSource.gallery),
-                              child: const Text("打开相册")
+                              child: const Text("相册")
                             ),
                             CupertinoActionSheetAction(
                               onPressed: () => context.pop(ImageSource.camera),
-                              child: const Text("拍摄")
+                              child: const Text("拍照")
                             )
                           ],
                           cancelButton: CupertinoActionSheetAction(

@@ -19,4 +19,5 @@ List<OptionModel<int>> multipleOptions = [
   OptionModel<int>(value: 1, label: '无人机'),
   OptionModel<int>(value: 2, label: '图片'),
   OptionModel<int>(value: 3, label: '视频'),
+  OptionModel<int>(value: 4, label: '视频流'),
 ];

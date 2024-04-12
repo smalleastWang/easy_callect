@@ -1,25 +1,23 @@
-
-
-import 'package:easy_collect/enums/StorageKey.dart';
+import 'package:dio/dio.dart';
 import 'package:easy_collect/models/common/Area.dart';
 import 'package:easy_collect/models/dict/Dict.dart';
+import 'package:easy_collect/models/register/Upload.dart';
 import 'package:easy_collect/utils/global.dart';
 import 'package:easy_collect/utils/http/request.dart';
-import 'package:easy_collect/utils/storage.dart';
-import 'package:easy_collect/utils/tool/commot.dart';
+import 'package:easy_collect/utils/tool/common.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sqflite/sqflite.dart';
 
 part 'common.g.dart';
 class CommonApi {
-  // 获取字典
-  static Future<List<DictModel>> getDictApi() async {
-    List<dynamic> data = await HttpUtils.get('/dev/dict/tree');
-    List<DictModel> list = [];
-    for (var item in data) {
-      list.add(DictModel.fromJson(item));
-    }
-    return list;
+  // 上传至算法文件服务器图片
+  static Future<String> uploadFile(UploadQueryModel params) async {
+    Map<String, String> query = {'cattleId': params.cattleId, 'cowId': params.cowId};
+    // File file = File(params.filePath);
+    // Uint8List bytes = await file.readAsBytes();
+    FormData formData = FormData.fromMap({'sysFile': await MultipartFile.fromFile(params.filePath, filename: params.fileName)});
+    List<dynamic> data = await HttpUtils.post('/out/v1/uploadImg', params: formData, query: query, isformData: true);
+    return 'list';
   }
   
 }
