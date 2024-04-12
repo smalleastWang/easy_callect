@@ -6,6 +6,7 @@ import 'package:easy_collect/views/home/index.dart';
 import 'package:easy_collect/views/insurance/StandardVerification.dart';
 import 'package:easy_collect/views/insurance/index.dart';
 import 'package:easy_collect/views/my/Login.dart';
+import 'package:easy_collect/views/my/UserInfo.dart';
 import 'package:go_router/go_router.dart';
 
 final List<GoRoute> routes = [
@@ -25,6 +26,11 @@ final List<GoRoute> routes = [
   GoRoute(
     path: RouteEnum.login.path,
     builder: (context, state) => const LoginPage(),
+    routes: const []
+  ),
+  GoRoute(
+    path: RouteEnum.userInfo.path,
+    builder: (context, state) => const UserInfoPage(),
     routes: const []
   ),
   // 智慧保险
