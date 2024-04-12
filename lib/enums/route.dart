@@ -2,7 +2,7 @@ enum RouteEnum {
 
   home('/', '首页', ''),
   login('/login', '登录'),
-
+  userInfo('/userInfo', '用户基本信息'),
 
   insurance('/insurance', '智慧保险'),
   standardVerification('standardVerification', '验标注册', '/insurance/standardVerification'),
