@@ -10,7 +10,7 @@ class UserInfoPage extends StatefulWidget {
 
 class _UserInfoPageState extends State<UserInfoPage> {
   // 用户信息模型
-  late UserInfoModel _userInfo;
+  UserInfoModel? _userInfo;
 
   // 控制器
   final TextEditingController _nameController = TextEditingController();
@@ -67,7 +67,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
           children: [
             // 账号信息（从接口获取）
             Text(
-              '账号: ${_userInfo.account}',
+              '账号: ${_userInfo?.account}',
               style: const TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 10),
