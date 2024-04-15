@@ -17,7 +17,6 @@ final List<GoRoute> routes = [
       String? token = SharedPreferencesManager().getString(StorageKeyEnum.token.value);
       if (token == null) {
         return RouteEnum.login.path;
-
       }
       return null;
     },

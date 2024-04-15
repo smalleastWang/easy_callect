@@ -5,10 +5,12 @@ import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/utils/tool/common.dart';
 import 'package:easy_collect/views/insurance/data.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
+import 'package:easy_collect/widgets/Form/PickerImageField.dart';
 import 'package:easy_collect/widgets/Register/EnclosurePicker.dart';
 import 'package:easy_collect/widgets/Register/RegisterType.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -27,6 +29,7 @@ class _StandardVerificationPageState extends State<StandardVerificationPage> {
   final GlobalKey _formKey = GlobalKey<FormState>();
   final TextEditingController _numController = TextEditingController();
   final PickerEditingController _enclosureController = PickerEditingController();
+  final PickerImageController _imageController = PickerImageController();
 
   int registerType = 1;
   int changeRegisterCnt = 1;
@@ -55,22 +58,19 @@ class _StandardVerificationPageState extends State<StandardVerificationPage> {
     return const SizedBox.shrink();
   }
 
-  void _pickImage(ImageSource source) async {
-    final picker = ImagePicker();
-    final XFile? pickedFile = await picker.pickImage(source: source);
-    if (pickedFile == null) return;
-
-    final bytes = await pickedFile.readAsBytes();
+  _handleSubmit() async {
+    if (_numController.text.isEmpty) return EasyLoading.showError('请选择输入牛编号');
+    if (_enclosureController.value == null) return EasyLoading.showError('请选择牧场和圈舍');
+    if (_imageController.value == null) return EasyLoading.showError('请选择图片');
 
     RegisterQueryModel params = RegisterQueryModel(
       cattleNo: _numController.text,
-      pastureId: '123',
-      houseId: '456',
-      faceImgs: [base64Encode(bytes)],
+      pastureId: _enclosureController.value!.last,
+      houseId: _enclosureController.value![_enclosureController.value!.length -2],
+      faceImgs: _imageController.value!.map((e) => e.value).toList()
     );
     await RegisterApi.cattleApp(params);
-    print(pickedFile);
-    
+    context.pop();
   }
 
   @override
@@ -106,35 +106,16 @@ class _StandardVerificationPageState extends State<StandardVerificationPage> {
                 ),
                 RegisterTypeWidget<int>(defaultValue: registerType, options: registerTypeOptions, onChange: _changeRegisterType),
                 _getRegisterCnt,
+                PickerImageField(controller: _imageController, maxNum: 1),
+
+                const SizedBox(height: 50),
                 ElevatedButton(
-                  child: const  Text('选择图片'),
-                  onPressed: () {
-                    showCupertinoModalPopup<ImageSource>(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return CupertinoActionSheet(
-                          actions: [
-                            CupertinoActionSheetAction(
-                              onPressed: () => context.pop(ImageSource.gallery),
-                              child: const Text("相册")
-                            ),
-                            CupertinoActionSheetAction(
-                              onPressed: () => context.pop(ImageSource.camera),
-                              child: const Text("拍照")
-                            )
-                          ],
-                          cancelButton: CupertinoActionSheetAction(
-                            onPressed: () => context.pop(),
-                            child: const Text("取消")
-                          ),
-                        );
-                      }
-                    ).then((source) {
-                      if (source != null) {
-                        _pickImage(source);
-                      }
-                    });
-                  },
+                  onPressed: _handleSubmit,
+                  child: Container(
+                    width: double.infinity,
+                    alignment: Alignment.center,
+                    child: const Text('注册', style: TextStyle(fontSize: 16))
+                  ),
                 )
               ],
             ),

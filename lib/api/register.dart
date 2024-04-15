@@ -6,7 +6,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'register.g.dart';
 
 class RegisterApi {
-  // 上传至算法文件服务器图片
+  // 注册牛
   static Future<String> cattleApp(RegisterQueryModel params) async {
     CommonMap data = await HttpUtils.post('/out/v1/registerCattleAPP', params: params.toJson());
     return 'list';

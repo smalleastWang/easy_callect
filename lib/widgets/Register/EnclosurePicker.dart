@@ -5,6 +5,7 @@ import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/views/insurance/StandardVerification.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_picker/picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -46,6 +47,17 @@ class _EnclosurePickerWidgetState extends ConsumerState<EnclosurePickerWidget> {
       return item.name;
     }).join('/');
   }
+  bool lastIsBld(List<EnclosureModel> enclosureList, String id) {
+    return enclosureList.any((enclosure) {
+      if(enclosure.id == id && enclosure.nodeType == 'bld') {
+        return true;
+      }
+      if (enclosure.children != null) {
+        return lastIsBld(enclosure.children!, id);
+      }
+      return false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +81,14 @@ class _EnclosurePickerWidgetState extends ConsumerState<EnclosurePickerWidget> {
           columnPadding: const EdgeInsets.all(0),
           onConfirm: (Picker picker, List value) {
             List<String> values = picker.getSelectedValues().cast<String>();
+            if (!lastIsBld(enclosureList.value ?? [], values.last)) {
+              EasyLoading.showError('改选项最后一级不是圈舍');
+              return;
+            }
+            if (values.length < 2) {
+              EasyLoading.showError('数据错误，选项低于2级');
+              return;
+            }
             String text = getName(enclosureList.value ?? [], values);
             _controller.text = text;
             widget.controller.value = values;
