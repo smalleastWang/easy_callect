@@ -26,7 +26,11 @@ class MyApi {
   }
   // 获取用户信息
   static Future<UserInfoModel> getUserInfoApi() async {
-    Map<String, dynamic> data = await HttpUtils.get('/auth/b/getLoginUser');
+    // 获取当前时间
+    DateTime now = DateTime.now();
+    // 将当前时间转换为毫秒级时间戳（13位）
+    int timestamp = now.millisecondsSinceEpoch;
+    Map<String, dynamic> data = await HttpUtils.get('/auth/b/getLoginUser?_=$timestamp');
     return UserInfoModel.fromJson(data);
   }
   // 退出登录
@@ -40,5 +44,8 @@ class MyApi {
 
     await HttpUtils.get('/auth/b/doLogout?token=$token&_=$timestamp');
   }
-
+  // 更新用户信息
+  static Future<void> saveUserInfoApi(Map<String, dynamic> params) async {
+    await HttpUtils.post('/sys/userCenter/updateUserInfo', params: params);
+  }
 }
