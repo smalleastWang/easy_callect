@@ -1,5 +1,6 @@
 import 'package:easy_collect/enums/Route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:go_router/go_router.dart';
 
 class ModuleListModel {
@@ -45,7 +46,7 @@ class _ModuleWidgetState extends State<ModuleWidget> {
               ),
               child: GestureDetector(
                 behavior:  HitTestBehavior.opaque,
-                onTap: () => context.go(e.route.path),
+                onTap: () => context.push(e.route.path),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
