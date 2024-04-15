@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:easy_collect/models/user/UserInfo.dart';
 import 'package:easy_collect/api/my.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 class UserInfoPage extends StatefulWidget {
   const UserInfoPage({super.key});
@@ -51,56 +52,58 @@ class _UserInfoPageState extends State<UserInfoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('用户基本信息'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+        appBar: AppBar(
+          title: const Text('用户信息'),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
         ),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 账号信息（从接口获取）
-            Text(
-              '账号: ${_userInfo?.account}',
-              style: const TextStyle(fontSize: 18),
-            ),
-            const SizedBox(height: 10),
-            // 姓名
-            _buildTextField('姓名', _nameController),
-            const SizedBox(height: 10),
-            // 手机号
-            _buildTextField('手机号', _phoneNumberController),
-            const SizedBox(height: 10),
-            // 昵称
-            _buildTextField('昵称', _nicknameController),
-            const SizedBox(height: 10),
-            // 性别
-            _buildGenderSelection(),
-            const SizedBox(height: 10),
-            // 生日
-            _buildBirthdayPicker(),
-            const SizedBox(height: 10),
-            // 邮箱
-            _buildTextField('邮箱', _emailController),
-            const SizedBox(height: 20),
-            // 保存按钮
-            ElevatedButton(
-              onPressed: () {
-                // 在这里处理保存操作
-                _saveChanges();
-              },
-              child: const Text('保存'),
-            ),
-          ],
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 账号信息（从接口获取）
+              Text(
+                '账号: ${_userInfo?.account}',
+                style: const TextStyle(fontSize: 18),
+              ),
+              const SizedBox(height: 10),
+              // 姓名
+              _buildTextField('姓名', _nameController),
+              const SizedBox(height: 10),
+              // 手机号
+              _buildTextField('手机号', _phoneNumberController),
+              const SizedBox(height: 10),
+              // 昵称
+              _buildTextField('昵称', _nicknameController),
+              const SizedBox(height: 10),
+              // 性别
+              _buildGenderSelection(),
+              const SizedBox(height: 10),
+              // 生日
+              _buildBirthdayPicker(),
+              const SizedBox(height: 10),
+              // 邮箱
+              _buildTextField('邮箱', _emailController),
+              const SizedBox(height: 20),
+              // 保存按钮
+              Center(child:
+                ElevatedButton(
+                  onPressed: () {
+                    // 在这里处理保存操作
+                    _saveChanges();
+                  },
+                  child: const Text('保存'),
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
   }
 
   Widget _buildTextField(String label, TextEditingController controller) {
@@ -183,7 +186,17 @@ class _UserInfoPageState extends State<UserInfoPage> {
       initialDate: DateTime.now(),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
-      locale: const Locale('zh', 'CN')
+      locale: const Locale('zh', 'CN'),
+      builder: (BuildContext context, Widget? child) {
+        return Localizations.override(
+          context: context,
+          delegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+          ],
+          child: child!,
+        );
+      },
     );
     if (picked != null && picked != DateTime.now()) {
       setState(() {
