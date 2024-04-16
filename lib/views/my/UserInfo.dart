@@ -254,7 +254,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
     }
   }
 
-  void _saveChanges() {
+  void _saveChanges() async {
     // 检查姓名字段是否为空
     if (_nameController.text.isEmpty) {
       // 如果姓名字段为空，显示提示消息
@@ -284,14 +284,15 @@ class _UserInfoPageState extends State<UserInfoPage> {
     Map<String, dynamic> userInfoParams = _userInfo?.toJson() ?? {};
     Map<String, dynamic> params = {
       ...userInfoParams,
-      'name': _nameController.text,
-      'phone': _phoneNumberController.text,
-      'nickname': _nicknameController.text,
-      'gender': _selectedGender,
-      'birthday': _birthdayController.text,
-      'email': _emailController.text,
+      if (_nameController.text.isNotEmpty) 'name': _nameController.text,
+      if (_phoneNumberController.text.isNotEmpty) 'phone': _phoneNumberController.text,
+      if (_nicknameController.text.isNotEmpty) 'nickname': _nicknameController.text,
+      if (_selectedGender.isNotEmpty) 'gender': _selectedGender,
+      if (_birthdayController.text.isNotEmpty) 'birthday': _birthdayController.text,
+      if (_emailController.text.isNotEmpty) 'email': _emailController.text,
     };
-    MyApi.saveUserInfoApi(params);
+    await MyApi.saveUserInfoApi(params);
+    _getUserInfo();
     // 保存成功提示
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('保存成功')),
