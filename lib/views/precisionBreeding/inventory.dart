@@ -5,15 +5,15 @@ import 'package:easy_collect/models/PageVo.dart';
 import 'package:easy_collect/api/inventory.dart'; // Import the correct inventory.dart file
 import 'package:easy_collect/models/Inventory/Image.dart';
 
-class InventoryPage extends StatefulWidget {
+class InventoryPage extends ConsumerStatefulWidget {
   const InventoryPage({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
-  _InventoryPageState createState() => _InventoryPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _InventoryPageState();
 }
 
-class _InventoryPageState extends State<InventoryPage> with SingleTickerProviderStateMixin {
+class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   late TextEditingController _startTimeController;
   late TextEditingController _endTimeController;
@@ -61,6 +61,7 @@ class _InventoryPageState extends State<InventoryPage> with SingleTickerProvider
   }
 
   Widget _buildImageInventoryPage() {
+    final AsyncValue<PageVoModel> imageInventoryAsyncValue = ref.watch(imageInventoryProvider({}));
     return Column(
       children: [
         TextField(
@@ -76,22 +77,17 @@ class _InventoryPageState extends State<InventoryPage> with SingleTickerProvider
           child: const Text('搜索'),
         ),
         Expanded(
-          child: Consumer(
-            builder: (context, ref, child) {
-              final AsyncValue<PageVoModel> imageInventoryAsyncValue = ref.watch(imageInventoryProvider);
-              return imageInventoryAsyncValue.when(
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (error, stackTrace) => Center(child: Text('Error: $error')),
-                data: (pageVoModel) {
-                  return ListView.builder(
-                    itemCount: pageVoModel.records.length,
-                    itemBuilder: (context, index) {
-                      final ImageInventoryModel item = pageVoModel.records[index] as ImageInventoryModel;
-                      return ListTile(
-                        title: Text(item.name ?? ''),
-                        subtitle: Text(item.createTime ?? ''),
-                      );
-                    },
+          child: imageInventoryAsyncValue.when(
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stackTrace) => Center(child: Text('Error: $error')),
+            data: (pageVoModel) {
+              return ListView.builder(
+                itemCount: pageVoModel.records.length,
+                itemBuilder: (context, index) {
+                  final ImageInventoryModel item = pageVoModel.records[index] as ImageInventoryModel;
+                  return ListTile(
+                    title: Text(item.name ?? ''),
+                    subtitle: Text(item.createTime ?? ''),
                   );
                 },
               );
@@ -107,6 +103,6 @@ class _InventoryPageState extends State<InventoryPage> with SingleTickerProvider
       'startTime': _startTimeController.text,
       'endTime': _endTimeController.text,
     };
-    await imageInventory(imageInventoryProvider, params);
+    ref.refresh(imageInventoryProvider(params));
   }
 }
