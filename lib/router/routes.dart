@@ -5,6 +5,8 @@ import 'package:easy_collect/utils/storage.dart';
 import 'package:easy_collect/views/home/index.dart';
 import 'package:easy_collect/views/insurance/StandardVerification.dart';
 import 'package:easy_collect/views/insurance/index.dart';
+import 'package:easy_collect/views/precisionBreeding/index.dart';
+import 'package:easy_collect/views/precisionBreeding/inventory.dart';
 import 'package:easy_collect/views/my/Login.dart';
 import 'package:easy_collect/views/my/UserInfo.dart';
 import 'package:go_router/go_router.dart';
@@ -40,6 +42,18 @@ final List<GoRoute> routes = [
       GoRoute(
         path: RouteEnum.standardVerification.path,
         builder: (context, state) => const StandardVerificationPage(),
+      ),
+
+    ]
+  ),
+  // 精准养殖
+  GoRoute(
+    path: RouteEnum.precisionBreeding.path,
+    builder: (context, state) => const PrecisionBreedingPage(),
+    routes: [
+      GoRoute(
+        path: RouteEnum.inventory.path,
+        builder: (context, state) => const InventoryPage(),
       ),
 
     ]

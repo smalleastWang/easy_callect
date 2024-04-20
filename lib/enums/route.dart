@@ -15,7 +15,7 @@ enum RouteEnum {
 
   supervision('/supervision', '行业监督'),
 
-  inventory('/inventory', '盘点管理'),
+  inventory('inventory', '盘点管理', '/precisionBreeding/inventory'),
   performance('/performance', '性能测定'),
   weight('/estimate-weight', '智能估重'),
   behavior('/behavior', '行为分析'),
