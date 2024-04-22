@@ -9,7 +9,7 @@ import 'package:easy_collect/utils/camera/CameraxUtils.dart';
 import 'package:isolate_manager/isolate_manager.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:easy_collect/utils/camera/image.dart' as ImagePackage;
+import 'package:image/image.dart' as ImagePackage;
 
 
 class DetObject {

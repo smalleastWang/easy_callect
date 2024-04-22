@@ -1,6 +1,7 @@
 enum RouteEnum {
 
-  home('/', '首页', ''),
+  home('/', '首页'),
+  cameraRegister('/cameraRegister', '首页'),
   login('/login', '登录'),
   userInfo('/userInfo', '用户基本信息'),
 

@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:easy_collect/enums/route.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -56,8 +57,11 @@ class _PickerImageFieldState extends State<PickerImageField> {
     if (widget.multiple || source == null) {
       pickedFiles.addAll(await picker.pickMultiImage());
     } else {
-       XFile? pickfike = await picker.pickImage(source: source);
-       if (pickfike != null) pickedFiles.add(pickfike);
+      XFile? pickfike = await picker.pickImage(source: source);
+      if (pickfike != null) pickedFiles.add(pickfike);
+      if (source == ImageSource.camera) {
+        context.go(RouteEnum.cameraRegister.path);
+      }
     }
 
     for (XFile pickedFile in pickedFiles) {
