@@ -1,3 +1,6 @@
+#ifndef __DETECTION__
+#define __DETECTION__
+
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -87,4 +90,6 @@ FFI_PLUGIN_EXPORT status_err_t detectWithPixelsByV5(
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

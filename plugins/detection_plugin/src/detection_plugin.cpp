@@ -2,7 +2,17 @@
 
 #include <cstdlib>
 
+
+#if defined(NCNN_YOLOX_FLUTTER_IOS)
+#include "ncnn/ncnn/layer.h"
+#include "ncnn/ncnn/net.h"
+#include "ncnn/ncnn/simpleocv.h"
+#else
+#include "layer.h"
+#include "net.h"
 #include "simpleocv.h"
+#endif
+
 // ncnn
 #include "layer.h"
 #include "net.h"
