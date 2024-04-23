@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:easy_collect/enums/route.dart';
+import 'package:easy_collect/utils/camera/BaseCamerax.dart';
+import 'package:easy_collect/utils/camera/Config.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +23,7 @@ class PickerImageField extends StatefulWidget {
   final bool multiple;
   final Function(List<FileInfo> files)? onChange;
   final PickerImageController controller;
-  const PickerImageField({super.key, this.maxNum = 9, this.onChange, required this.controller, this.multiple = true});
+  const PickerImageField({super.key, this.maxNum = 9, this.onChange, required this.controller, this.multiple = false});
 
   @override
   State<PickerImageField> createState() => _PickerImageFieldState();
@@ -57,11 +59,23 @@ class _PickerImageFieldState extends State<PickerImageField> {
     if (widget.multiple || source == null) {
       pickedFiles.addAll(await picker.pickMultiImage());
     } else {
+      
+      if (source == ImageSource.camera) {
+        // context.go(RouteEnum.cameraRegister.path);
+        final barcode = await Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (c) {
+              return const CameraMlVision(
+                  mTaskMode: EnumTaskMode.cowFaceRegister
+              );
+            },
+          ),
+        );
+        print(barcode);
+        return;
+      }
       XFile? pickfike = await picker.pickImage(source: source);
       if (pickfike != null) pickedFiles.add(pickfike);
-      if (source == ImageSource.camera) {
-        context.go(RouteEnum.cameraRegister.path);
-      }
     }
 
     for (XFile pickedFile in pickedFiles) {
