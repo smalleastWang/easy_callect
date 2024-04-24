@@ -1,5 +1,8 @@
+import 'dart:js_interop';
+
 import 'package:easy_collect/api/register.dart';
 import 'package:easy_collect/enums/Route.dart';
+import 'package:easy_collect/mock.dart';
 import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/utils/tool/common.dart';
 import 'package:easy_collect/views/insurance/data.dart';
@@ -26,7 +29,7 @@ class _StandardVerificationPageState extends State<StandardVerificationPage> {
   final GlobalKey _formKey = GlobalKey<FormState>();
   final TextEditingController _numController = TextEditingController();
   final PickerEditingController _enclosureController = PickerEditingController();
-  final PickerImageController _imageController = PickerImageController();
+  PickerImageController _imageController = PickerImageController();
 
   int registerType = 1;
   int changeRegisterCnt = 1;
@@ -38,19 +41,21 @@ class _StandardVerificationPageState extends State<StandardVerificationPage> {
   _changeRegisterType(value) {
     setState(() {
       registerType = value;
+      _imageController = PickerImageController();
     });
   }
 
   _changeRegisterCnt(value) {
     setState(() {
       changeRegisterCnt = value;
+      _imageController = PickerImageController();
     });
   }
   Widget get _getRegisterCnt {
     if (registerType == 1) {
-      return RegisterTypeWidget<int>(options: singleOptions, onChange: _changeRegisterCnt, label: '注册方式');
+      return RegisterTypeWidget<int>(options: singleOptions, onChange: _changeRegisterCnt, label: '注册方式', defaultValue: singleOptions[0].value);
     } else if (registerType == 2) {
-      return RegisterTypeWidget<int>(options: multipleOptions, onChange: _changeRegisterCnt, label: '注册方式');
+      return RegisterTypeWidget<int>(options: multipleOptions, onChange: _changeRegisterCnt, label: '注册方式', defaultValue: multipleOptions[0].value,);
     }
     return const SizedBox.shrink();
   }
@@ -62,10 +67,21 @@ class _StandardVerificationPageState extends State<StandardVerificationPage> {
 
     RegisterQueryModel params = RegisterQueryModel(
       cattleNo: _numController.text,
-      pastureId: _enclosureController.value!.last,
-      houseId: _enclosureController.value![_enclosureController.value!.length -2],
+      houseId: _enclosureController.value!.last,
+      pastureId: _enclosureController.value![_enclosureController.value!.length -2],
       faceImgs: _imageController.value!.map((e) => e.value).toList()
     );
+    // 单个注册
+    if (registerType == 1) {
+      if (changeRegisterCnt == 1) {
+        // params.faceImgs = _imageController.value!.map((e) => e.value).toList();
+        // <List<String>> faceImgs = [];
+        // faceImgs.add(imagesStr['face_image'])
+        params.faceImgs = imagesStr['face_image'].cast<List<String>>();
+      } else if (registerType == 2) {
+        params.bodyImgs = _imageController.value!.map((e) => e.value).toList();
+      }
+    }
     await RegisterApi.cattleApp(params);
     context.pop();
   }

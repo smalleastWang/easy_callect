@@ -5,9 +5,11 @@ import 'dart:typed_data';
 import 'package:easy_collect/enums/route.dart';
 import 'package:easy_collect/utils/camera/BaseCamerax.dart';
 import 'package:easy_collect/utils/camera/Config.dart';
+import 'package:easy_collect/utils/camera/DetectFFI.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -32,6 +34,27 @@ class PickerImageField extends StatefulWidget {
 class _PickerImageFieldState extends State<PickerImageField> {
 
   final List<FileInfo> _pickImages = [];
+
+  @override
+  initState() {
+    iniDet();
+    super.initState();
+  }
+
+  iniDet() async {
+    final detFFIRes = await DetFFI.getInstance().init();
+    if(!detFFIRes) {
+      EasyLoading.showToast('初始化失败', toastPosition: EasyLoadingToastPosition.top);
+    } else {
+      EasyLoading.showToast('初始化成功', toastPosition: EasyLoadingToastPosition.top);
+    }
+  }
+
+  @override
+  void dispose() {
+    DetFFI.getInstance().clear();
+    super.dispose();
+  }
 
   List<Widget> get _pickImagesWidget {
     List<Image> imageWidget = _pickImages.map((FileInfo file) {
@@ -61,16 +84,7 @@ class _PickerImageFieldState extends State<PickerImageField> {
     } else {
       
       if (source == ImageSource.camera) {
-        // context.go(RouteEnum.cameraRegister.path);
-        final barcode = await Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (c) {
-              return const CameraMlVision(
-                  mTaskMode: EnumTaskMode.cowFaceRegister
-              );
-            },
-          ),
-        );
+        final barcode = await context.push(RouteEnum.cameraRegister.path);
         print(barcode);
         return;
       }

@@ -1,5 +1,4 @@
 import 'package:easy_collect/router/index.dart';
-import 'package:easy_collect/utils/camera/DetectFFI.dart';
 import 'package:easy_collect/utils/global.dart';
 import 'package:easy_collect/utils/storage.dart';
 import 'package:flutter/material.dart';
@@ -12,14 +11,6 @@ void main() async {
   // 初始化存储
   await SharedPreferencesManager().init();
   await DatabaseManager().init();
-  final detFFIRes = await DetFFI.getInstance().init();
-  if(!detFFIRes) {
-    // EasyLoading.showToast('初始化失败');
-    print('初始化失败');
-  } else {
-    print('初始化成功');
-    // EasyLoading.showToast('初始化成功');
-  }
     
   runApp(const ProviderScope(
     child: MyApp(),
