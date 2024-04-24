@@ -1,8 +1,7 @@
 #include "detection_plugin.h"
 
-#include <cstdlib>
 
-
+// ncnn
 #if defined(NCNN_YOLOX_FLUTTER_IOS)
 #include "ncnn/ncnn/layer.h"
 #include "ncnn/ncnn/net.h"
@@ -10,13 +9,14 @@
 #else
 #include "layer.h"
 #include "net.h"
+#include "benchmark.h"
 #include "simpleocv.h"
 #endif
 
-// ncnn
-#include "layer.h"
-#include "net.h"
-#include "benchmark.h"
+#include <float.h>
+#include <stdio.h>
+#include <vector>
+
 
 using namespace std;
 

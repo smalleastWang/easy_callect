@@ -14,6 +14,8 @@
 
 #if _WIN32
 #define FFI_PLUGIN_EXPORT __declspec(dllexport)
+#elif NCNN_YOLOX_FLUTTER_IOS
+#define FFI_PLUGIN_EXPORT __attribute__((visibility("default"))) __attribute__((used))
 #else
 #define FFI_PLUGIN_EXPORT
 #endif
@@ -60,7 +62,7 @@ enum DETType {
 };
 
 
-struct Rect {
+struct ObjectRect {
     float x;
     float y;
     float w;
@@ -70,7 +72,7 @@ struct Rect {
 struct Object {
     int label;
     float prob;
-    struct Rect rect;
+    struct ObjectRect rect;
 };
 
 struct DetectResult {

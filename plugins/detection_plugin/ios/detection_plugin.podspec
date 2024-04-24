@@ -28,22 +28,15 @@ A new Flutter FFI plugin project.
 
     ## If you do not need to download the ncnn library, remove it.
     ## From here
-    s.prepare_command = <<-CMD
-      rm -rf "ncnn.xcframework"
-      rm -rf "openmp.xcframework"
-      curl "https://github.com/KoheiKanagu/ncnn_yolox_flutter/releases/download/0.0.6/ncnn-ios-bitcode_xcframework.zip" -L -o "ncnn-ios-bitcode_xcframework.zip"
-      unzip "ncnn-ios-bitcode_xcframework.zip"
-      rm "ncnn-ios-bitcode_xcframework.zip"
-    CMD
     ## Up to here
 
     # https://medium.com/flutter-community/integrating-c-library-in-a-flutter-app-using-dart-ffi-38a15e16bc14
-    s.preserve_paths = 'ncnn.xcframework', 'openmp.xcframework'
+    s.preserve_paths = 'ncnn.xcframework', 'openmp.xcframework', 'glslang.xcframework'
     s.xcconfig = {
       'OTHER_LDFLAGS' => '-framework ncnn -framework openmp',
       'OTHER_CFLAGS' => '-DUSE_NCNN_SIMPLEOCV -DNCNN_YOLOX_FLUTTER_IOS',
     }
-    s.ios.vendored_frameworks = 'ncnn.xcframework', 'openmp.xcframework'
+    s.ios.vendored_frameworks = 'ncnn.xcframework', 'openmp.xcframework', 'glslang.xcframework'
     s.library = 'c++'
 
 
