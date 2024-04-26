@@ -1,4 +1,3 @@
-import 'package:easy_collect/views/home/listdemo.dart';
 import 'package:easy_collect/views/home/module.dart';
 import 'package:easy_collect/views/message/index.dart';
 import 'package:easy_collect/views/my/index.dart';
@@ -17,7 +16,6 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _widgetList = [
     const MessageWidget(),
     const ModuleWidget(),
-    const ListDemoWidget(),
     const MyWidget(),
   ];
 
@@ -30,10 +28,6 @@ class _HomePageState extends State<HomePage> {
       const BottomNavigationBarItem(
         label: '功能模块',
         icon: Icon(Icons.view_module),
-      ),
-      const BottomNavigationBarItem(
-        label: '列表demo',
-        icon: Icon(Icons.list),
       ),
       const BottomNavigationBarItem(
         label: '用户中心',

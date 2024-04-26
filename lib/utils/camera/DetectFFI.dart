@@ -98,9 +98,7 @@ Future<dynamic> handleDetectFace(dynamic data) async{
   if (errorFlag == DetectionLib.STATUS_OK) {
     final num = detectResult.ref.object_num;
     for (int i = 0; i < num; i++) {
-      final o = detectResult.ref.object
-          .elementAt(i)
-          .ref;
+      final o = detectResult.ref.object[0];
       final obj = DetObject(
           prob: o.prob,
           label: o.label,

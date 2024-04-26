@@ -16,15 +16,15 @@ import 'package:go_router/go_router.dart';
 
 final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
-class StandardVerificationPage extends StatefulWidget {
-  const StandardVerificationPage({super.key});
+class SurveyComparedPage extends StatefulWidget {
+  const SurveyComparedPage({super.key});
 
   @override
-  State<StandardVerificationPage> createState() => _StandardVerificationPageState();
+  State<SurveyComparedPage> createState() => _SurveyComparedPageState();
 }
 
-class _StandardVerificationPageState extends State<StandardVerificationPage> {
-  // final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+class _SurveyComparedPageState extends State<SurveyComparedPage> {
+  
   final GlobalKey _formKey = GlobalKey<FormState>();
   final TextEditingController _numController = TextEditingController();
   final PickerEditingController _enclosureController = PickerEditingController();

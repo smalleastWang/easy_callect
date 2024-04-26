@@ -260,7 +260,7 @@ class CameraMlVisionState extends State<CameraMlVision>
       description.sensorOrientation,
     );
 
-    //FIXME hacky technique to avoid having black screen on some android devices
+    // fixme hacky technique to avoid having black screen on some android devices
     await Future.delayed(const Duration(milliseconds: 200));
     start();
   }

@@ -2,7 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:image/image.dart' as ImagePackage;
 
 enum DetectionType{
-  COWFACE, COWBODY, PIGBODY
+  cowface, cowbody, pigbody
 }
 
 abstract class DataBean{

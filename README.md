@@ -5,6 +5,10 @@
 ```shell
 flutter packages pub run build_runner build
 ```
+或
+```shell
+flutter packages pub run build_runner build --delete-conflicting-outputs
+```
 
 ### 运行
 ```shell

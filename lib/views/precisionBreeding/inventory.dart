@@ -103,6 +103,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
       'startTime': _startTimeController.text,
       'endTime': _endTimeController.text,
     };
+    // ignore: unused_result
     ref.refresh(imageInventoryProvider(params));
   }
 }

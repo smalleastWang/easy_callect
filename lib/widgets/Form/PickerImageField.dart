@@ -3,8 +3,6 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:easy_collect/enums/route.dart';
-import 'package:easy_collect/utils/camera/BaseCamerax.dart';
-import 'package:easy_collect/utils/camera/Config.dart';
 import 'package:easy_collect/utils/camera/DetectFFI.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
 import 'package:flutter/cupertino.dart';

@@ -17,14 +17,14 @@ class ModuleListModel {
   ModuleListModel({required this.route, required this.background});
 }
 
-class ListDemoWidget extends ConsumerStatefulWidget {
-  const ListDemoWidget({super.key});
+class PerformancePage extends ConsumerStatefulWidget {
+  const PerformancePage({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _ListDemoWidgetState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _PerformancePageState();
 }
 
-class _ListDemoWidgetState extends ConsumerState<ListDemoWidget> {
+class _PerformancePageState extends ConsumerState<PerformancePage> {
   final List moduleList = [
     ModuleListModel(route: RouteEnum.inventory, background: Colors.black),
     ModuleListModel(route: RouteEnum.performance, background: Colors.black),
@@ -39,16 +39,16 @@ class _ListDemoWidgetState extends ConsumerState<ListDemoWidget> {
     final AsyncValue<List<DictModel>> dict = ref.watch(dictProvider);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('功能模块'),
+        title: const Text('体征信息'),
       ),
       body: LoadingWidget(
         data: dict,
         builder: (BuildContext context, value) {
           return ListWidget<ImageInventoryFamily>(
+            
             filterList: [
               getDictOptionsByValue(value, 'GENDER', 'gender'),
               getDictOptionsByValue(value, 'BRAND', 'brand'),
-              getDictOptionsByValue(value, 'BILL_PAYMENTSTATUS', 'billPaymentstatus'),
             ].map((item) => DropDownMenuModel(
               fieldName: item.fieldName!,
               name: item.name ?? '',
@@ -56,14 +56,18 @@ class _ListDemoWidgetState extends ConsumerState<ListDemoWidget> {
               list: item.children?.map((e) => Option(check: false, dictLabel: e.dictLabel, dictValue: e.dictValue)).toList() ?? []
             )).toList(),
             provider: imageInventoryProvider,
-            columns: [
-              ListColumnModal(label: '模型类型', field: 'model'),
-              ListColumnModal(label: '客户唯一索引', field: 'source'),
-              ListColumnModal(label: '资源', field: 'input'),
-              ListColumnModal(label: '识别数量', field: 'resultAmount'),
-              ListColumnModal(label: '创建时间', field: 'createTime'),
-            ],
-
+            builder: (data) {
+              return ListItemWidget(
+                rowData: data,
+                columns: [
+                  ListColumnModal(label: '模型类型', field: 'model'),
+                  ListColumnModal(label: '客户唯一索引', field: 'source'),
+                  ListColumnModal(label: '资源', field: 'input'),
+                  ListColumnModal(label: '识别数量', field: 'resultAmount'),
+                  ListColumnModal(label: '创建时间', field: 'createTime'),
+                ]
+              );
+            },
           );
         }
       )

@@ -6,6 +6,7 @@ import 'package:easy_collect/utils/camera/Config.dart';
 import 'package:easy_collect/utils/storage.dart';
 import 'package:easy_collect/views/home/index.dart';
 import 'package:easy_collect/views/insurance/StandardVerification.dart';
+import 'package:easy_collect/views/insurance/SurveyCompared.dart';
 import 'package:easy_collect/views/insurance/index.dart';
 import 'package:easy_collect/views/precisionBreeding/index.dart';
 import 'package:easy_collect/views/precisionBreeding/inventory.dart';
@@ -46,9 +47,15 @@ final List<GoRoute> routes = [
     path: RouteEnum.insurance.path,
     builder: (context, state) => const InsurancePage(),
     routes: [
+      // 验标注册
       GoRoute(
         path: RouteEnum.standardVerification.path,
         builder: (context, state) => const StandardVerificationPage(),
+      ),
+      // 查勘对比
+      GoRoute(
+        path: RouteEnum.surveyCompared.path,
+        builder: (context, state) => const SurveyComparedPage(),
       ),
 
     ]

@@ -1,6 +1,5 @@
 import 'package:easy_collect/models/PageVo.dart';
 import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
-import 'package:easy_collect/widgets/List/ListItem.dart';
 import 'package:easy_collect/widgets/LoadingWidget.dart';
 import 'package:easy_collect/widgets/Search/index.dart';
 import 'package:flutter/material.dart';
@@ -9,14 +8,15 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 
 typedef Api<T> = Future<PageVoModel> Function(Map<String, dynamic> params);
+typedef Builder = Widget Function(Map<String, dynamic> data);
 
 class ListWidget<T> extends ConsumerStatefulWidget {
   final List<DropDownMenuModel>? filterList;
-  final List<ListColumnModal> columns;
+  final Builder builder;
   // final Api<T>? api;
   final T provider;
   final Map<String, dynamic>? params;
-  const ListWidget({super.key, required this.columns, required this.provider, this.params, this.filterList});
+  const ListWidget({super.key, required this.builder, required this.provider, this.params, this.filterList});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ListWidgetState<T>();
@@ -116,7 +116,7 @@ class _ListWidgetState<T> extends ConsumerState<ListWidget> {
                   shrinkWrap: true,
                   itemCount: value.records.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return ListItemWidget(rowData: value.records[index], columns: widget.columns,);
+                    return widget.builder(value.records[index]);
                   }
                 ),
               )

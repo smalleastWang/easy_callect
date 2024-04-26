@@ -122,15 +122,14 @@ class ObjectPainter extends CustomPainter {
       );
     }
     if(objectRect != null){
-      _draw_box(canvas, size);
+      _drawBox(canvas, size);
     }
   }
 
-  void _draw_box(Canvas canvas, Size size){
+  void _drawBox(Canvas canvas, Size size){
     Color lineColor;
     int lineWidth = 20;
 
-    var scale = 1.0;
     double scaleX = size.width / mSize!.width;
     double scaleY = size.height / mSize!.height;
 

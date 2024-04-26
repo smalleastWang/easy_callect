@@ -11,13 +11,13 @@ import 'package:sqflite/sqflite.dart';
 part 'common.g.dart';
 class CommonApi {
   // 上传至算法文件服务器图片
-  static Future<String> uploadFile(UploadQueryModel params) async {
+  static Future<List<String>> uploadFile(UploadQueryModel params) async {
     Map<String, String> query = {'cattleId': params.cattleId, 'cowId': params.cowId};
     // File file = File(params.filePath);
     // Uint8List bytes = await file.readAsBytes();
     FormData formData = FormData.fromMap({'sysFile': await MultipartFile.fromFile(params.filePath, filename: params.fileName)});
     List<dynamic> data = await HttpUtils.post('/out/v1/uploadImg', params: formData, query: query, isformData: true);
-    return 'list';
+    return data.cast<String>();
   }
   
 }

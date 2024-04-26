@@ -1,7 +1,3 @@
-
-
-import 'dart:typed_data';
-
 import 'package:easy_collect/widgets/Form/PickerImageField.dart';
 
 class PickerEditingController {
