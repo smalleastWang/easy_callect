@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:easy_collect/enums/route.dart';
-import 'package:easy_collect/utils/camera/DetectFFI.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -35,22 +34,11 @@ class _PickerImageFieldState extends State<PickerImageField> {
 
   @override
   initState() {
-    iniDet();
     super.initState();
-  }
-
-  iniDet() async {
-    final detFFIRes = await DetFFI.getInstance().init();
-    if(!detFFIRes) {
-      EasyLoading.showToast('初始化失败', toastPosition: EasyLoadingToastPosition.top);
-    } else {
-      EasyLoading.showToast('初始化成功', toastPosition: EasyLoadingToastPosition.top);
-    }
   }
 
   @override
   void dispose() {
-    DetFFI.getInstance().clear();
     super.dispose();
   }
 

@@ -1,8 +1,6 @@
 
 import 'package:easy_collect/enums/Route.dart';
 import 'package:easy_collect/enums/StorageKey.dart';
-import 'package:easy_collect/utils/camera/BaseCamerax.dart';
-import 'package:easy_collect/utils/camera/Config.dart';
 import 'package:easy_collect/utils/storage.dart';
 import 'package:easy_collect/views/home/index.dart';
 import 'package:easy_collect/views/insurance/StandardVerification.dart';
@@ -15,11 +13,11 @@ import 'package:easy_collect/views/my/UserInfo.dart';
 import 'package:go_router/go_router.dart';
 
 final List<GoRoute> routes = [
-  GoRoute(
-    path: RouteEnum.cameraRegister.path,
-    builder: (context, state) => const CameraMlVision(mTaskMode: EnumTaskMode.cowBodyRegister),
-    routes: const []
-  ),
+  // GoRoute(
+  //   path: RouteEnum.cameraRegister.path,
+  //   builder: (context, state) => const CameraMlVision(mTaskMode: EnumTaskMode.cowBodyRegister),
+  //   routes: const []
+  // ),
   GoRoute(
     path: RouteEnum.home.path,
     builder: (context, state) => const HomePage(),
