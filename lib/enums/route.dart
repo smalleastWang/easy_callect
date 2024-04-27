@@ -13,7 +13,7 @@ enum RouteEnum {
 
 
 
-  // 智慧保险
+  // 养殖金融
   finance('/finance', '养殖金融'),
 
 

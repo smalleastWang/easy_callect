@@ -16,6 +16,8 @@ import 'package:go_router/go_router.dart';
 
 final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
+///
+/// 查勘对比
 class SurveyComparedPage extends StatefulWidget {
   const SurveyComparedPage({super.key});
 

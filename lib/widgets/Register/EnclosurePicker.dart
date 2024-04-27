@@ -12,7 +12,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class EnclosurePickerWidget extends ConsumerStatefulWidget {
   final InputDecoration? decoration;
   final PickerEditingController controller;
-  const EnclosurePickerWidget({super.key, this.decoration, required this.controller});
+  final List<EnclosureModel>? options;
+  const EnclosurePickerWidget({super.key, this.decoration, required this.controller, this.options});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _EnclosurePickerWidgetState();
@@ -61,7 +62,13 @@ class _EnclosurePickerWidgetState extends ConsumerState<EnclosurePickerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final AsyncValue<List<EnclosureModel>> enclosureList = ref.watch(enclosureListProvider);
+    List<EnclosureModel> options = [];
+    if (widget.options != null) {
+      options = widget.options!;
+    } else {
+      final AsyncValue<List<EnclosureModel>> enclosureList = ref.watch(enclosureListProvider);
+      options = enclosureList.value ?? [];
+    }
 
     return TextFormField(
       decoration: widget.decoration,
@@ -74,14 +81,14 @@ class _EnclosurePickerWidgetState extends ConsumerState<EnclosurePickerWidget> {
           confirmText: '确定',
           cancelText: '取消',
           adapter: PickerDataAdapter(
-            data: getPickerData(enclosureList.value ?? []) , 
+            data: getPickerData(options) , 
           ),
           changeToFirst: true,
           textAlign: TextAlign.left,
           columnPadding: const EdgeInsets.all(0),
           onConfirm: (Picker picker, List value) {
             List<String> values = picker.getSelectedValues().cast<String>();
-            if (!lastIsBld(enclosureList.value ?? [], values.last)) {
+            if (!lastIsBld(options, values.last)) {
               EasyLoading.showError('改选项最后一级不是圈舍');
               return;
             }
@@ -89,7 +96,7 @@ class _EnclosurePickerWidgetState extends ConsumerState<EnclosurePickerWidget> {
               EasyLoading.showError('数据错误，选项低于2级');
               return;
             }
-            String text = getName(enclosureList.value ?? [], values);
+            String text = getName(options, values);
             _controller.text = text;
             widget.controller.value = values;
             widget.controller.text = text;

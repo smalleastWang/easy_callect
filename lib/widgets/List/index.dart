@@ -1,6 +1,10 @@
 import 'package:easy_collect/models/PageVo.dart';
 import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
+import 'package:easy_collect/models/register/index.dart';
+import 'package:easy_collect/utils/tool/common.dart';
+import 'package:easy_collect/widgets/Form/PickerFormField.dart';
 import 'package:easy_collect/widgets/LoadingWidget.dart';
+import 'package:easy_collect/widgets/Register/EnclosurePicker.dart';
 import 'package:easy_collect/widgets/Search/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,13 +14,20 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 typedef Api<T> = Future<PageVoModel> Function(Map<String, dynamic> params);
 typedef Builder = Widget Function(Map<String, dynamic> data);
 
+class PastureModel {
+  String field;
+  List<EnclosureModel> options;
+  PastureModel({required this.field, this.options = const []});
+}
+
 class ListWidget<T> extends ConsumerStatefulWidget {
   final List<DropDownMenuModel>? filterList;
   final Builder builder;
   // final Api<T>? api;
   final T provider;
+  final PastureModel? pasture;
   final Map<String, dynamic>? params;
-  const ListWidget({super.key, required this.builder, required this.provider, this.params, this.filterList});
+  const ListWidget({super.key, required this.builder, required this.provider, this.params, this.filterList, this.pasture});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ListWidgetState<T>();
@@ -27,6 +38,7 @@ class _ListWidgetState<T> extends ConsumerState<ListWidget> {
 
   // 定义刷新控制器
   final RefreshController _refreshController = RefreshController(initialRefresh: false);
+  final PickerEditingController _enclosureController = PickerEditingController();
   
   PageVoModel pageData = PageVoModel(
     current: 0,
@@ -55,7 +67,9 @@ class _ListWidgetState<T> extends ConsumerState<ListWidget> {
     }
     // 加入筛选参数
     params.addAll(filterData);
-
+    if (widget.pasture != null) {
+      params.addAll({widget.pasture!.field: _enclosureController.value});
+    }
     // 加入分页参数
     params.addAll({
       'current': current ?? pageData.current + 1,
@@ -95,6 +109,23 @@ class _ListWidgetState<T> extends ConsumerState<ListWidget> {
     }
   }
 
+  Widget get _pastureWidget {
+    if (widget.pasture == null) return const SizedBox.shrink();
+    return EnclosurePickerWidget(
+      controller: _enclosureController,
+      options: widget.pasture!.options, 
+      decoration: getInputDecoration(
+        // labelText: '牧场/圈舍',
+        hintText: '请选择牧场/圈舍',
+      ),
+    );
+  }
+
+  Widget get _searchWidget {
+    if (widget.filterList == null) return const SizedBox.shrink();
+    return SearchWidget(filterList: widget.filterList!, onChange: _handleFilter);
+  }
+
   @override
   Widget build(BuildContext context) {
     final AsyncValue<PageVoModel> data = ref.watch(widget.provider(filterData));
@@ -102,6 +133,8 @@ class _ListWidgetState<T> extends ConsumerState<ListWidget> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+        _pastureWidget,
+        _searchWidget,
         widget.filterList != null ? SearchWidget(filterList: widget.filterList!, onChange: _handleFilter) : const SizedBox.shrink(),
         LoadingWidget(
           data: data,

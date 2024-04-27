@@ -1,6 +1,7 @@
 import 'package:easy_collect/router/index.dart';
 import 'package:easy_collect/utils/global.dart';
 import 'package:easy_collect/utils/storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -31,12 +32,10 @@ class MyApp extends StatelessWidget {
       routerConfig: router,
       builder: EasyLoading.init(),
       // 设置本地化属性
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ],
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
       supportedLocales: const [
-        Locale('zh', 'CN'), // 设置为中国大陆的简体中文
+        Locale.fromSubtags(languageCode: 'zh'),
+        // Locale('zh', 'CN'), // 设置为中国大陆的简体中文
       ],
     );
   }

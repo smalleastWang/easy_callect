@@ -8,7 +8,7 @@ class HttpUtils {
   /// get
   static Future get(String path, {
     Map<String, dynamic>? params,
-    bool showLoading = true,
+    bool showLoading = false,
     bool showErrorMessage = true,
   }) {
     return httpRequest.request(

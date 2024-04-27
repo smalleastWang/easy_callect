@@ -1,8 +1,11 @@
 import 'package:easy_collect/api/common.dart';
 import 'package:easy_collect/api/inventory.dart';
+import 'package:easy_collect/api/precisionBreeding.dart';
 import 'package:easy_collect/enums/Route.dart';
+import 'package:easy_collect/models/PageVo.dart';
 import 'package:easy_collect/models/dict/Dict.dart';
 import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
+import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/utils/tool/dict.dart';
 import 'package:easy_collect/widgets/DropDownMenu/index.dart';
 import 'package:easy_collect/widgets/List/ListItem.dart';
@@ -36,26 +39,30 @@ class _PerformancePageState extends ConsumerState<PerformancePage> {
   ];
   @override
   Widget build(BuildContext context) {
-    final AsyncValue<List<DictModel>> dict = ref.watch(dictProvider);
+    final AsyncValue<PageVoModel> weightInfoList = ref.watch(weightInfoPageProvider({}));
+    final AsyncValue<List<EnclosureModel>> weightInfoTree = ref.watch(weightInfoTreeProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('体征信息'),
       ),
       body: LoadingWidget(
-        data: dict,
+        data: weightInfoList,
         builder: (BuildContext context, value) {
-          return ListWidget<ImageInventoryFamily>(
-            
-            filterList: [
-              getDictOptionsByValue(value, 'GENDER', 'gender'),
-              getDictOptionsByValue(value, 'BRAND', 'brand'),
-            ].map((item) => DropDownMenuModel(
-              fieldName: item.fieldName!,
-              name: item.name ?? '',
-              layerLink: LayerLink(),
-              list: item.children?.map((e) => Option(check: false, dictLabel: e.dictLabel, dictValue: e.dictValue)).toList() ?? []
-            )).toList(),
-            provider: imageInventoryProvider,
+          return ListWidget<WeightInfoPageFamily>(
+            pasture: PastureModel(
+              field: 'orgId',
+              options: weightInfoTree.value ?? []
+            ),
+            // filterList: [
+            //   getDictOptionsByValue(value, 'GENDER', 'gender'),
+            //   getDictOptionsByValue(value, 'BRAND', 'brand'),
+            // ].map((item) => DropDownMenuModel(
+            //   fieldName: item.fieldName!,
+            //   name: item.name ?? '',
+            //   layerLink: LayerLink(),
+            //   list: item.children?.map((e) => Option(check: false, dictLabel: e.dictLabel, dictValue: e.dictValue)).toList() ?? []
+            // )).toList(),
+            provider: weightInfoPageProvider,
             builder: (data) {
               return ListItemWidget(
                 rowData: data,
