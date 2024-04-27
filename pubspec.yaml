@@ -31,8 +31,8 @@ dependencies:
   flutter:
     sdk: flutter
 
-  detection_plugin:
-    path: ./plugins/detection_plugin
+  # detection_plugin:
+  #   path: ./plugins/detection_plugin
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.6
