@@ -3,7 +3,7 @@
 import 'package:easy_collect/enums/route.dart';
 import 'package:easy_collect/views/precisionBreeding/Performance.dart';
 import 'package:easy_collect/views/precisionBreeding/index.dart';
-import 'package:easy_collect/views/precisionBreeding/inventory.dart';
+import 'package:easy_collect/views/precisionBreeding/Inventory.dart';
 import 'package:go_router/go_router.dart';
 
 // 精准养殖

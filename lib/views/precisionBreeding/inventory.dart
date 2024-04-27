@@ -4,6 +4,7 @@ import 'package:easy_collect/enums/Route.dart';
 import 'package:easy_collect/models/PageVo.dart';
 import 'package:easy_collect/api/inventory.dart'; // Import the correct inventory.dart file
 import 'package:easy_collect/models/Inventory/Image.dart';
+import 'package:easy_collect/widgets/LoadingWidget.dart';
 
 class InventoryPage extends ConsumerStatefulWidget {
   const InventoryPage({super.key});
@@ -50,11 +51,11 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
       ),
       body: TabBarView(
         controller: _tabController,
-        children: const [
-          // _buildImageInventoryPage(),
-          Center(child: Text('图像盘点')),
-          Center(child: Text('识别盘点')),
-          Center(child: Text('计数盘点')),
+        children: [
+          _buildImageInventoryPage(),
+          // const Center(child: Text('图像盘点')),
+          const Center(child: Text('识别盘点')),
+          const Center(child: Text('计数盘点')),
         ],
       ),
     );
@@ -62,26 +63,25 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
 
   Widget _buildImageInventoryPage() {
     final AsyncValue<PageVoModel> imageInventoryAsyncValue = ref.watch(imageInventoryProvider({}));
-    return Column(
-      children: [
-        TextField(
-          controller: _startTimeController,
-          decoration: const InputDecoration(labelText: '开始时间'),
-        ),
-        TextField(
-          controller: _endTimeController,
-          decoration: const InputDecoration(labelText: '结束时间'),
-        ),
-        ElevatedButton(
-          onPressed: () => _fetchImageInventory(),
-          child: const Text('搜索'),
-        ),
-        Expanded(
-          child: imageInventoryAsyncValue.when(
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, stackTrace) => Center(child: Text('Error: $error')),
-            data: (pageVoModel) {
-              return ListView.builder(
+    return LoadingWidget( // Using LoadingWidget here
+      data: imageInventoryAsyncValue,
+      builder: (context, pageVoModel) {
+        return Column(
+          children: [
+            TextField(
+              controller: _startTimeController,
+              decoration: const InputDecoration(labelText: '开始时间'),
+            ),
+            TextField(
+              controller: _endTimeController,
+              decoration: const InputDecoration(labelText: '结束时间'),
+            ),
+            ElevatedButton(
+              onPressed: () => _handleSearchButtonPressed(),
+              child: const Text('搜索'),
+            ),
+            Expanded(
+              child: ListView.builder(
                 itemCount: pageVoModel.records.length,
                 itemBuilder: (context, index) {
                   final ImageInventoryModel item = pageVoModel.records[index] as ImageInventoryModel;
@@ -90,11 +90,11 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
                     subtitle: Text(item.createTime ?? ''),
                   );
                 },
-              );
-            },
-          ),
-        ),
-      ],
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -105,5 +105,9 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
     };
     // ignore: unused_result
     ref.refresh(imageInventoryProvider(params));
+  }
+
+  void _handleSearchButtonPressed() {
+    _fetchImageInventory();
   }
 }
