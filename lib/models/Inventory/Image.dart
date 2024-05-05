@@ -4,6 +4,8 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'Image.g.dart';
 
+// 图像盘点
+
 @JsonSerializable()
 class ImageInventoryModel {
   String? id;

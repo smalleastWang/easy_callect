@@ -1,6 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'weight.g.dart';
+part 'Weight.g.dart';
+
+//智能估重
 
 @JsonSerializable()
 class Weight {

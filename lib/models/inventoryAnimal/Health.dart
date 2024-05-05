@@ -1,11 +1,11 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'Behavior.g.dart';
+part 'Health.g.dart';
 
-// 行为分析
+// 健康状态
 
 @JsonSerializable()
-class Behavior {
+class Health {
   // 主键
   String? id;
   // 圈舍
@@ -55,7 +55,7 @@ class Behavior {
   // 行为字典名称
   String? postureName;
 
-  Behavior({
+  Health({
     this.id,
     this.buildingName,
     this.buildingId,
@@ -82,7 +82,7 @@ class Behavior {
     this.postureName,
   });
 
-  factory Behavior.fromJson(Map<String, dynamic> json) => _$BehaviorFromJson(json);
+  factory Health.fromJson(Map<String, dynamic> json) => _$HealthFromJson(json);
 
-  Map<String, dynamic> toJson() => _$BehaviorToJson(this);
+  Map<String, dynamic> toJson() => _$HealthToJson(this);
 }

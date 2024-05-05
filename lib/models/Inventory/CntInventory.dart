@@ -3,6 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'CntInventory.g.dart';
 
 // 计数盘点
+
 @JsonSerializable()
 class CntInventoryModel {
   // ID

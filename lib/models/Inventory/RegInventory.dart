@@ -3,6 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'RegInventory.g.dart';
 
 // 识别盘点
+
 @JsonSerializable()
 class RegInventory {
   // 盘点ID
