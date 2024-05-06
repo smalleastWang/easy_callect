@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_collect/enums/Route.dart';
 import 'package:easy_collect/models/PageVo.dart';
 import 'package:easy_collect/api/inventory.dart'; // Import the correct inventory.dart file
-import 'package:easy_collect/models/Inventory/Image.dart';
+import 'package:easy_collect/models/inventory/Image.dart';
 import 'package:easy_collect/widgets/LoadingWidget.dart';
 
 class InventoryPage extends ConsumerStatefulWidget {
