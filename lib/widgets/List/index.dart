@@ -10,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
+enum Action { refresh, loading }
+
 
 typedef Api<T> = Future<PageVoModel> Function(Map<String, dynamic> params);
 typedef Builder = Widget Function(Map<String, dynamic> data);
@@ -34,23 +36,24 @@ class ListWidget<T> extends ConsumerStatefulWidget {
 }
 
 class _ListWidgetState<T> extends ConsumerState<ListWidget> {
-  Map<String, dynamic> filterData = {};
+  Action? action;
+  Map<String, dynamic> params = {
+    'current': 0,
+    'pages': 1,
+    'size': 5,
+    'total': 0,
+  };
 
   // 定义刷新控制器
   final RefreshController _refreshController = RefreshController(initialRefresh: false);
   final PickerEditingController _enclosureController = PickerEditingController();
-  
-  PageVoModel pageData = PageVoModel(
-    current: 0,
-    pages: 1,
-    size: 10,
-    total: 0,
-    records: []
-  );
 
   @override
   void initState() {
-    // _getList();
+    if (widget.params != null) {
+      params.addAll(widget.params!);
+    }
+    _getList();
     // ref.listenManual(widget.provider(filterData), (previous, next) {
 
     // });
@@ -58,55 +61,50 @@ class _ListWidgetState<T> extends ConsumerState<ListWidget> {
   }
 
   // 获取table数据
-  _getList([int? current]) async {
-    Map<String, dynamic> params = widget.params ?? {};
+  AsyncValue<PageVoModel>? _getList([int? current]) {
     // 数据加载完了
-    if (pageData.current >= pageData.pages) {
+    if (params['current'] >= params['pages']) {
       _refreshController.loadNoData();
-      return;
+      return null;
     }
     // 加入筛选参数
-    params.addAll(filterData);
     if (widget.pasture != null) {
       params.addAll({widget.pasture!.field: _enclosureController.value});
     }
     // 加入分页参数
-    params.addAll({
-      'current': current ?? pageData.current + 1,
-      'size': pageData.size
-    });
-    // PageVoModel res = await widget.api!(params);
-    final AsyncValue<PageVoModel> res =  ref.refresh(widget.provider(filterData));
+    params['current'] = current ?? params['current'] + 1;
+    final AsyncValue<PageVoModel> res = ref.refresh(widget.provider(params));
     if (res.hasError) throw Exception(res.error);
-
-    pageData.current = res.value!.current;
-    pageData.pages = res.value!.pages;
-    pageData.size = res.value!.size;
-    pageData.total = res.value!.total;
-    
+    return res;
   }
 
   _handleFilter(String field, dynamic value) {
-    filterData[field] = value;
+    params[field] = value;
     _getList(1);
   }
   void _onRefresh() async {
-    try {
-      await _getList(1);
-      _refreshController.refreshCompleted(resetFooterState: true);
-    } catch(e) {
-      _refreshController.refreshFailed();
-    }
-    // 重置获取数据LoadStatus
-    
+    action = Action.refresh;
+    _getList(1);
   }
   void _onLoading() async {
-    try {
-      await _getList();
-      _refreshController.loadComplete();
-    } catch(e) {
-      _refreshController.loadFailed();
+    action = Action.loading;
+    _getList();
+  }
+  _handleAction (AsyncValue<PageVoModel> asyncValue) {
+    if (asyncValue.hasError) {
+      if (action == Action.refresh) {
+        _refreshController.refreshFailed();
+      } else if (action == Action.loading) {
+        _refreshController.loadFailed();
+      }
+    } else {
+      if (action == Action.refresh) {
+        _refreshController.refreshCompleted(resetFooterState: true);
+      } else if (action == Action.loading) {
+        _refreshController.loadComplete();
+      }
     }
+    action == null;
   }
 
   Widget get _pastureWidget {
@@ -128,7 +126,9 @@ class _ListWidgetState<T> extends ConsumerState<ListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final AsyncValue<PageVoModel> data = ref.watch(widget.provider(filterData));
+    final AsyncValue<PageVoModel> data = ref.watch(widget.provider(params));
+
+    _handleAction(data);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -139,20 +139,45 @@ class _ListWidgetState<T> extends ConsumerState<ListWidget> {
         LoadingWidget(
           data: data,
           builder: (BuildContext context, PageVoModel value) {
+            // 更新分页信息
+            params['current'] = value.current;
+            params['pages'] = value.pages;
+            params['size'] = value.size;
+            params['total'] = value.total;
+            _refreshController.loadComplete();
             return Expanded(
-              child: SmartRefresher(
-                enablePullUp: true,
-                controller: _refreshController,
-                onLoading:_onLoading,
-                onRefresh: _onRefresh,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: value.records.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return widget.builder(value.records[index]);
-                  }
+              child: RefreshConfiguration(
+                headerBuilder: () => const ClassicHeader(
+                  idleText: "下拉刷新",
+                  refreshingText: "刷新中...",
+                  completeText: "加载成功",
+                  releaseText: "松开立即刷新",
+                  failedText: '刷新失败',
                 ),
+                footerBuilder:  () => const ClassicFooter(
+                  idleText: "上拉加载",
+                  loadingText: "加载中…",
+                  canLoadingText: "松手开始加载数据",
+                  failedText: "加载失败",
+                  noDataText: "没有更多数据了", //没有内容的文字
+                  // noMoreIcon: ,
+                ),
+                child: SmartRefresher(
+                  enablePullUp: true,
+                  controller: _refreshController,
+                  onLoading:_onLoading,
+                  onRefresh: _onRefresh,
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: value.records.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return widget.builder(value.records[index]);
+                    }
+                  ),
+                )
               )
+              
+              
             );
           }
         )

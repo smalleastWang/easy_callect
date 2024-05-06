@@ -313,13 +313,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.7.10"
-  detection_plugin:
-    dependency: "direct main"
-    description:
-      path: "plugins/detection_plugin"
-      relative: true
-    source: path
-    version: "0.0.1"
   device_info:
     dependency: "direct main"
     description:

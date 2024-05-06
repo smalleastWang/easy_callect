@@ -39,44 +39,47 @@ class _PerformancePageState extends ConsumerState<PerformancePage> {
   ];
   @override
   Widget build(BuildContext context) {
-    final AsyncValue<PageVoModel> weightInfoList = ref.watch(weightInfoPageProvider({}));
+    // final AsyncValue<PageVoModel> weightInfoList = ref.watch(weightInfoPageProvider({}));
     final AsyncValue<List<EnclosureModel>> weightInfoTree = ref.watch(weightInfoTreeProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('体征信息'),
       ),
-      body: LoadingWidget(
-        data: weightInfoList,
-        builder: (BuildContext context, value) {
-          return ListWidget<WeightInfoPageFamily>(
-            pasture: PastureModel(
-              field: 'orgId',
-              options: weightInfoTree.value ?? []
-            ),
-            // filterList: [
-            //   getDictOptionsByValue(value, 'GENDER', 'gender'),
-            //   getDictOptionsByValue(value, 'BRAND', 'brand'),
-            // ].map((item) => DropDownMenuModel(
-            //   fieldName: item.fieldName!,
-            //   name: item.name ?? '',
-            //   layerLink: LayerLink(),
-            //   list: item.children?.map((e) => Option(check: false, dictLabel: e.dictLabel, dictValue: e.dictValue)).toList() ?? []
-            // )).toList(),
-            provider: weightInfoPageProvider,
-            builder: (data) {
-              return ListItemWidget(
-                rowData: data,
-                columns: [
-                  ListColumnModal(label: '模型类型', field: 'model'),
-                  ListColumnModal(label: '客户唯一索引', field: 'source'),
-                  ListColumnModal(label: '资源', field: 'input'),
-                  ListColumnModal(label: '识别数量', field: 'resultAmount'),
-                  ListColumnModal(label: '创建时间', field: 'createTime'),
-                ]
-              );
-            },
+      body: ListWidget<WeightInfoPageFamily>(
+        pasture: PastureModel(
+          field: 'orgId',
+          options: weightInfoTree.value ?? []
+        ),
+        // filterList: [
+        //   getDictOptionsByValue(value, 'GENDER', 'gender'),
+        //   getDictOptionsByValue(value, 'BRAND', 'brand'),
+        // ].map((item) => DropDownMenuModel(
+        //   fieldName: item.fieldName!,
+        //   name: item.name ?? '',
+        //   layerLink: LayerLink(),
+        //   list: item.children?.map((e) => Option(check: false, dictLabel: e.dictLabel, dictValue: e.dictValue)).toList() ?? []
+        // )).toList(),
+        provider: weightInfoPageProvider,
+        builder: (data) {
+        
+          return ListItemWidget(
+            rowData: data,
+            columns: [
+              ListColumnModal(label: '牧场', field: 'orgName'),
+              ListColumnModal(label: '圈舍', field: 'buildingName'),
+              ListColumnModal(label: '牛耳标', field: 'animalNo'),
+              ListColumnModal(label: '身长/CM', field: 'length'),
+              ListColumnModal(label: '身高/CM', field: 'high'),
+              ListColumnModal(label: '肩宽/CM', field: 'width'),
+              ListColumnModal(label: '十字部高/CM', field: 'crossHigh'),
+              ListColumnModal(label: '体斜长/CM', field: 'plag'),
+              ListColumnModal(label: '胸围/CM', field: 'bust'),
+              ListColumnModal(label: '腹围/CM', field: 'circum'),
+              ListColumnModal(label: '管围/CM', field: 'canno'),
+              ListColumnModal(label: '测定日期', field: 'date'),
+            ]
           );
-        }
+        },
       )
     );
   }
