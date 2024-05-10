@@ -87,6 +87,7 @@ class HttpRequest {
       if (response.data['code'] == 401) {
         routeKey.currentContext?.go(RouteEnum.login.path);
       }
+      EasyLoading.showToast(response.data['msg']);
       throw Exception(response.data['msg']);
     } on DioException catch (error) {
       if (showErrorMessage && error.message != null) {

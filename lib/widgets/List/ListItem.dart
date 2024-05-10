@@ -22,6 +22,7 @@ class ListItemWidget extends StatefulWidget {
 class _ListItemWidgetState extends State<ListItemWidget> {
   @override
   Widget build(BuildContext context) {
+    List<ListColumnModal> columnData = widget.columns.getRange(0, 5).toList();
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
@@ -41,27 +42,74 @@ class _ListItemWidgetState extends State<ListItemWidget> {
         spacing: 0,
         runSpacing: 5,
         alignment: WrapAlignment.spaceBetween,
-        children: widget.columns.map((e) {
-          return SizedBox(
-            width: (MediaQuery.of(context).size.width - 10*2-10*2 -10)/2,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: Text(e.label),
-                ),
-                Expanded(
-                  child: e.render == null ? Text(
-                    widget.rowData[e.field] ?? '-',
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.end
-                  ) : e.render!(widget.rowData[e.field], widget.rowData, e)
-                )
-              ],
-            ),
-          );
-        }).toList(),
+        children: [
+          ...columnData.map((e) {
+            return SizedBox(
+              width: (MediaQuery.of(context).size.width - 10*2-10*2 -10)/2,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: Text(e.label),
+                  ),
+                  Expanded(
+                    child: e.render == null ? Text(
+                      widget.rowData[e.field] ?? '-',
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.end
+                    ) : e.render!(widget.rowData[e.field], widget.rowData, e)
+                  )
+                ],
+              ),
+            );
+          }),
+          GestureDetector(
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('详细信息'),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: widget.columns.map((e) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: Text(e.label),
+                            ),
+                            Expanded(
+                              child: e.render == null ? Text(
+                                widget.rowData[e.field] ?? '-',
+                                textAlign: TextAlign.right,
+                                style: const TextStyle(color: Colors.black54)
+                              ) : e.render!(widget.rowData[e.field], widget.rowData, e)
+                            )
+                            
+                          ],
+                        );
+                      }).toList()
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text('关闭'),
+                      ),
+                    ],
+                  );
+                },
+                
+              );
+            },
+            child: const Text('查看详情', style: TextStyle(color: Colors.blue)),
+          )
+        ],
       ),
     );
   }

@@ -12,6 +12,8 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 enum Action { refresh, loading }
 
+final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
 
 typedef Api<T> = Future<PageVoModel> Function(Map<String, dynamic> params);
 typedef Builder = Widget Function(Map<String, dynamic> data);
@@ -40,7 +42,7 @@ class _ListWidgetState<T> extends ConsumerState<ListWidget> {
   Map<String, dynamic> params = {
     'current': 0,
     'pages': 1,
-    'size': 5,
+    'size': 15,
     'total': 0,
   };
 
@@ -68,8 +70,9 @@ class _ListWidgetState<T> extends ConsumerState<ListWidget> {
       return null;
     }
     // 加入筛选参数
-    if (widget.pasture != null) {
-      params.addAll({widget.pasture!.field: _enclosureController.value});
+    if (widget.pasture != null && _enclosureController.value != null) {
+      final pastureVal = _enclosureController.value![_enclosureController.value!.length - 1];
+      params.addAll({widget.pasture!.field: pastureVal});
     }
     // 加入分页参数
     params['current'] = current ?? params['current'] + 1;
@@ -102,6 +105,7 @@ class _ListWidgetState<T> extends ConsumerState<ListWidget> {
         _refreshController.refreshCompleted(resetFooterState: true);
       } else if (action == Action.loading) {
         _refreshController.loadComplete();
+        
       }
     }
     action == null;
@@ -109,13 +113,22 @@ class _ListWidgetState<T> extends ConsumerState<ListWidget> {
 
   Widget get _pastureWidget {
     if (widget.pasture == null) return const SizedBox.shrink();
-    return EnclosurePickerWidget(
-      controller: _enclosureController,
-      options: widget.pasture!.options, 
-      decoration: getInputDecoration(
-        // labelText: '牧场/圈舍',
-        hintText: '请选择牧场/圈舍',
-      ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+      child: EnclosurePickerWidget(
+        scaffoldKey: _scaffoldKey,
+        controller: _enclosureController,
+        options: widget.pasture!.options, 
+        decoration: getInputDecoration(
+          // labelText: '牧场/圈舍',
+          hintText: '请选择牧场/圈舍',
+        ),
+        onChange: (value) {
+          action = Action.refresh;
+          _refreshController.requestRefresh();
+          _getList(1);
+        },
+      )
     );
   }
 
@@ -129,59 +142,60 @@ class _ListWidgetState<T> extends ConsumerState<ListWidget> {
     final AsyncValue<PageVoModel> data = ref.watch(widget.provider(params));
 
     _handleAction(data);
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _pastureWidget,
-        _searchWidget,
-        widget.filterList != null ? SearchWidget(filterList: widget.filterList!, onChange: _handleFilter) : const SizedBox.shrink(),
-        LoadingWidget(
-          data: data,
-          builder: (BuildContext context, PageVoModel value) {
-            // 更新分页信息
-            params['current'] = value.current;
-            params['pages'] = value.pages;
-            params['size'] = value.size;
-            params['total'] = value.total;
-            _refreshController.loadComplete();
-            return Expanded(
-              child: RefreshConfiguration(
-                headerBuilder: () => const ClassicHeader(
-                  idleText: "下拉刷新",
-                  refreshingText: "刷新中...",
-                  completeText: "加载成功",
-                  releaseText: "松开立即刷新",
-                  failedText: '刷新失败',
-                ),
-                footerBuilder:  () => const ClassicFooter(
-                  idleText: "上拉加载",
-                  loadingText: "加载中…",
-                  canLoadingText: "松手开始加载数据",
-                  failedText: "加载失败",
-                  noDataText: "没有更多数据了", //没有内容的文字
-                  // noMoreIcon: ,
-                ),
-                child: SmartRefresher(
-                  enablePullUp: true,
-                  controller: _refreshController,
-                  onLoading:_onLoading,
-                  onRefresh: _onRefresh,
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: value.records.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return widget.builder(value.records[index]);
-                    }
+    return  Scaffold(
+      key: _scaffoldKey,
+      body: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _pastureWidget,
+          _searchWidget,
+          widget.filterList != null ? SearchWidget(filterList: widget.filterList!, onChange: _handleFilter) : const SizedBox.shrink(),
+          LoadingWidget(
+            data: data,
+            builder: (BuildContext context, PageVoModel value) {
+              // 更新分页信息
+              params['current'] = value.current;
+              params['pages'] = value.pages;
+              params['size'] = value.size;
+              params['total'] = value.total;
+              return Expanded(
+                child: RefreshConfiguration(
+                  headerBuilder: () => const ClassicHeader(
+                    idleText: "下拉刷新",
+                    refreshingText: "数据加载中...",
+                    completeText: "加载成功",
+                    releaseText: "松开立即刷新",
+                    failedText: '刷新失败',
                   ),
+                  footerBuilder:  () => const ClassicFooter(
+                    idleText: "上拉加载",
+                    loadingText: "加载中…",
+                    canLoadingText: "松手开始加载数据",
+                    failedText: "加载失败",
+                    noDataText: "没有更多数据了", //没有内容的文字
+                    // noMoreIcon: ,
+                  ),
+                  child: SmartRefresher(
+                    enablePullUp: true,
+                    controller: _refreshController,
+                    onLoading:_onLoading,
+                    onRefresh: _onRefresh,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: value.records.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return widget.builder(value.records[index]);
+                      }
+                    ),
+                  )
                 )
-              )
-              
-              
-            );
-          }
-        )
-      ],
+                
+                
+              );
+            }
+          )
+        ],
+      ),
     );
   }
 }

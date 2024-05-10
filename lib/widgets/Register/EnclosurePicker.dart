@@ -2,7 +2,6 @@
 
 import 'package:easy_collect/api/register.dart';
 import 'package:easy_collect/models/register/index.dart';
-import 'package:easy_collect/views/insurance/StandardVerification.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -10,10 +9,19 @@ import 'package:flutter_picker/picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class EnclosurePickerWidget extends ConsumerStatefulWidget {
-  final InputDecoration? decoration;
+  final GlobalKey<ScaffoldState> scaffoldKey;
   final PickerEditingController controller;
+  final InputDecoration? decoration;
   final List<EnclosureModel>? options;
-  const EnclosurePickerWidget({super.key, this.decoration, required this.controller, this.options});
+  final Function? onChange;
+  const EnclosurePickerWidget({
+    super.key,
+    required this.scaffoldKey,
+    this.decoration,
+    required this.controller,
+    this.options,
+    this.onChange
+  });
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _EnclosurePickerWidgetState();
@@ -100,10 +108,13 @@ class _EnclosurePickerWidgetState extends ConsumerState<EnclosurePickerWidget> {
             _controller.text = text;
             widget.controller.value = values;
             widget.controller.text = text;
+            if (widget.onChange != null && values.isNotEmpty) {
+              widget.onChange!(values);
+            }
           }
         );
-        if (scaffoldKey.currentState != null) {
-          picker.show(scaffoldKey.currentState!);
+        if (widget.scaffoldKey.currentState != null) {
+          picker.show(widget.scaffoldKey.currentState!);
         }
       },
     );

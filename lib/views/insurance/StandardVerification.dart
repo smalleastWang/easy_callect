@@ -14,7 +14,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:go_router/go_router.dart';
 
 
-final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 ///
 /// 查勘对比
@@ -26,7 +26,6 @@ class StandardVerificationPage extends StatefulWidget {
 }
 
 class _StandardVerificationPageState extends State<StandardVerificationPage> {
-  // final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey _formKey = GlobalKey<FormState>();
   final TextEditingController _numController = TextEditingController();
   final PickerEditingController _enclosureController = PickerEditingController();
@@ -90,7 +89,7 @@ class _StandardVerificationPageState extends State<StandardVerificationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: scaffoldKey,
+      key: _scaffoldKey,
       appBar: AppBar(title: Text(RouteEnum.standardVerification.title)),
       body: SingleChildScrollView(
         child: Padding(
@@ -112,6 +111,7 @@ class _StandardVerificationPageState extends State<StandardVerificationPage> {
                 ),
                 const SizedBox(height: 16),
                 EnclosurePickerWidget(
+                  scaffoldKey: _scaffoldKey,
                   controller: _enclosureController,
                   decoration: getInputDecoration(
                     labelText: '牧场/圈舍',

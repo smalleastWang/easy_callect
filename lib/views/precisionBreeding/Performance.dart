@@ -1,16 +1,8 @@
-import 'package:easy_collect/api/common.dart';
-import 'package:easy_collect/api/inventory.dart';
 import 'package:easy_collect/api/precisionBreeding.dart';
 import 'package:easy_collect/enums/Route.dart';
-import 'package:easy_collect/models/PageVo.dart';
-import 'package:easy_collect/models/dict/Dict.dart';
-import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
 import 'package:easy_collect/models/register/index.dart';
-import 'package:easy_collect/utils/tool/dict.dart';
-import 'package:easy_collect/widgets/DropDownMenu/index.dart';
 import 'package:easy_collect/widgets/List/ListItem.dart';
 import 'package:easy_collect/widgets/List/index.dart';
-import 'package:easy_collect/widgets/LoadingWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -39,7 +31,6 @@ class _PerformancePageState extends ConsumerState<PerformancePage> {
   ];
   @override
   Widget build(BuildContext context) {
-    // final AsyncValue<PageVoModel> weightInfoList = ref.watch(weightInfoPageProvider({}));
     final AsyncValue<List<EnclosureModel>> weightInfoTree = ref.watch(weightInfoTreeProvider);
     return Scaffold(
       appBar: AppBar(
@@ -61,7 +52,6 @@ class _PerformancePageState extends ConsumerState<PerformancePage> {
         // )).toList(),
         provider: weightInfoPageProvider,
         builder: (data) {
-        
           return ListItemWidget(
             rowData: data,
             columns: [
