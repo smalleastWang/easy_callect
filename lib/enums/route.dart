@@ -21,7 +21,7 @@ enum RouteEnum {
   precisionBreeding('/precisionBreeding', '精准养殖'),
   inventory('inventory', '盘点管理', '/precisionBreeding/inventory'),
   performance('performance', '性能测定', '/precisionBreeding/performance'),
-  weight('estimate-weight', '智能估重', '/precisionBreeding/estimate-weight'),
+  weight('weight', '智能估重', '/precisionBreeding/weight'),
   behavior('behavior', '行为分析', '/precisionBreeding/behavior'),
   health('health', '健康监测', '/precisionBreeding/health'),
   position('position', '实时定位', '/precisionBreeding/position'),
