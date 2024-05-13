@@ -15,11 +15,11 @@ class InsurancePage extends StatelessWidget {
       ),
       body: Column(
         children: [
-          CellWidget(title: '验标注册', onTap: () => context.push(RouteEnum.standardVerification.fullpath!)),
-          CellWidget(title: '查勘对比', onTap: () => context.push(RouteEnum.surveyCompared.fullpath!)),
+          CellWidget(title: '验标注册', onTap: () => context.push(RouteEnum.standardVerification.fullpath)),
+          CellWidget(title: '查勘对比', onTap: () => context.push(RouteEnum.surveyCompared.fullpath)),
           // const CellWidget(title: '生成订单'),
-          CellWidget(title: '订单查询', onTap: () => context.push(RouteEnum.orderList.fullpath!)),
-          CellWidget(title: '计数盘点',onTap: () => context.push(RouteEnum.countRegister.fullpath!))
+          CellWidget(title: '订单查询', onTap: () => context.push(RouteEnum.orderList.fullpath)),
+          CellWidget(title: '计数盘点',onTap: () => context.push(RouteEnum.countRegister.fullpath))
         ],
       ),
     );

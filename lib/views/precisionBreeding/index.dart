@@ -15,10 +15,10 @@ class PrecisionBreedingPage extends StatelessWidget {
       ),
       body: Column(
         children: [
-          CellWidget(title: '智能盘点', onTap: () => context.push(RouteEnum.inventory.fullpath!)),
-          CellWidget(title: '性能测定', onTap: () => context.push(RouteEnum.performance.fullpath!)),
-          CellWidget(title: '智能估重', onTap: () => context.push(RouteEnum.weight.fullpath!)),
-          CellWidget(title: '行为分析', onTap: () => context.push(RouteEnum.behavior.fullpath!)),
+          CellWidget(title: '智能盘点', onTap: () => context.push(RouteEnum.inventory.fullpath)),
+          CellWidget(title: '性能测定', onTap: () => context.push(RouteEnum.performance.fullpath)),
+          CellWidget(title: '智能估重', onTap: () => context.push(RouteEnum.weight.fullpath)),
+          CellWidget(title: '行为分析', onTap: () => context.push(RouteEnum.behavior.fullpath)),
           const CellWidget(title: '健康状态'),
           const CellWidget(title: '实时定位'),
           const CellWidget(title: '智能安防'),

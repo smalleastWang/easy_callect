@@ -15,10 +15,10 @@ class FinancePage extends StatelessWidget {
       ),
       body: Column(
         children: [
-          CellWidget(title: '牛只注册', onTap: () => context.push(RouteEnum.cattleRegiter.fullpath!)),
-          CellWidget(title: '计数盘点', onTap: () => context.push(RouteEnum.financeCount.fullpath!)),
-          CellWidget(title: '牛只识别', onTap: () => context.push(RouteEnum.cattleDiscern.fullpath!)),
-          CellWidget(title: '实时视频',onTap: () => context.push(RouteEnum.financeVideo.fullpath!))
+          CellWidget(title: '牛只注册', onTap: () => context.push(RouteEnum.cattleRegiter.fullpath)),
+          CellWidget(title: '计数盘点', onTap: () => context.push(RouteEnum.financeCount.fullpath)),
+          CellWidget(title: '牛只识别', onTap: () => context.push(RouteEnum.cattleDiscern.fullpath)),
+          CellWidget(title: '实时视频',onTap: () => context.push(RouteEnum.financeVideo.fullpath))
         ],
       ),
     );
