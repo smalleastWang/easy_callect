@@ -21,3 +21,16 @@ List<OptionModel<int>> multipleOptions = [
   OptionModel<int>(value: 3, label: '视频'),
   OptionModel<int>(value: 4, label: '视频流'),
 ];
+
+
+enum OrderStatus {
+  inProgress(0, '无效'),
+  over(1, '有效'),
+  unknown(-1, '-');
+
+  final int value;
+  final String label;
+  const OrderStatus(this.value, this.label);
+  
+  static String getLabel(int value) => OrderStatus.values.firstWhere((i) => i.value == value, orElse: () => OrderStatus.unknown).label;
+}

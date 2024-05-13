@@ -55,7 +55,7 @@ class _ListItemWidgetState extends State<ListItemWidget> {
                   ),
                   Expanded(
                     child: e.render == null ? Text(
-                      widget.rowData[e.field] ?? '-',
+                      '${widget.rowData[e.field] ?? '-'}',
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.end
                     ) : e.render!(widget.rowData[e.field], widget.rowData, e)
@@ -84,7 +84,7 @@ class _ListItemWidgetState extends State<ListItemWidget> {
                             ),
                             Expanded(
                               child: e.render == null ? Text(
-                                widget.rowData[e.field] ?? '-',
+                                '${widget.rowData[e.field] ?? '-'}',
                                 textAlign: TextAlign.right,
                                 style: const TextStyle(color: Colors.black54)
                               ) : e.render!(widget.rowData[e.field], widget.rowData, e)

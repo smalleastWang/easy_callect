@@ -1,11 +1,12 @@
 import 'package:dio/dio.dart';
+import 'package:easy_collect/models/PageVo.dart';
 import 'package:easy_collect/models/index.dart';
 import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/utils/http/request.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'register.g.dart';
+part 'insurance.g.dart';
 
 class RegisterApi {
   // 注册牛
@@ -35,4 +36,15 @@ Future<List<EnclosureModel>> enclosureList(EnclosureListRef ref) async {
     list.add(EnclosureModel.fromJson(item));
   }
   return list;
+}
+
+/// 订单列表
+@riverpod
+Future<PageVoModel> orderList(OrderListRef ref, Map<String, dynamic> params) async {
+  Map<String, dynamic> res = await HttpUtils.get('/biz/policy/page', params: params);
+  PageVoModel data = PageVoModel.fromJson(res);
+  if (params['current'] != 1 && ref.state.hasValue) {
+    data.records.insertAll(0, ref.state.value!.records);
+  }
+  return data;
 }

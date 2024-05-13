@@ -1,6 +1,8 @@
 
 
 import 'package:easy_collect/enums/route.dart';
+import 'package:easy_collect/views/insurance/CountRegister.dart';
+import 'package:easy_collect/views/insurance/OrderList.dart';
 import 'package:easy_collect/views/insurance/StandardVerification.dart';
 import 'package:easy_collect/views/insurance/SurveyCompared.dart';
 import 'package:easy_collect/views/insurance/index.dart';
@@ -21,6 +23,13 @@ final insuranceRoutes = GoRoute(
       path: RouteEnum.surveyCompared.path,
       builder: (context, state) => const SurveyComparedPage(),
     ),
-
+    GoRoute(
+      path: RouteEnum.orderList.path,
+      builder: (context, state) => const OrderListPage(),
+    ),
+    GoRoute(
+      path: RouteEnum.countRegister.path,
+      builder: (context, state) => const CountRegisterPage(),
+    ),
   ]
 );

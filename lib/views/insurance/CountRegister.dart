@@ -18,14 +18,15 @@ final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 ///
 /// 查勘对比
-class StandardVerificationPage extends StatefulWidget {
-  const StandardVerificationPage({super.key});
+class CountRegisterPage extends StatefulWidget {
+  const CountRegisterPage({super.key});
 
   @override
-  State<StandardVerificationPage> createState() => _StandardVerificationPageState();
+  State<CountRegisterPage> createState() => _CountRegisterPageState();
 }
 
-class _StandardVerificationPageState extends State<StandardVerificationPage> {
+class _CountRegisterPageState extends State<CountRegisterPage> {
+  
   final GlobalKey _formKey = GlobalKey<FormState>();
   final TextEditingController _numController = TextEditingController();
   final PickerEditingController _enclosureController = PickerEditingController();

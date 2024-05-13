@@ -37,12 +37,18 @@ import 'package:go_router/go_router.dart';
 ### 添加页面路由
 - 在 /emums/Route.dart 下添加路由名
 - 在 /Router/routes.dart 添加路由
-- 页面跳转 context.go(RouteEnum.home.path)
+- 页面跳转不保留上一个路由记录返回（类似replace） context.go(RouteEnum.home.path)
+- 页面跳转 context.push(RouteEnum.home.path)
 - 无 context 情况 routeKey.currentContext!.go(RouteEnum.home.path)
 
 
 
 
+保险的账号
+账号：appkf
+密码：123456
 
+
+牧场的
 账号：zdcd
 密码：123456

@@ -18,14 +18,15 @@ final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 ///
 /// 查勘对比
-class StandardVerificationPage extends StatefulWidget {
-  const StandardVerificationPage({super.key});
+class FinanceCountPage extends StatefulWidget {
+  const FinanceCountPage({super.key});
 
   @override
-  State<StandardVerificationPage> createState() => _StandardVerificationPageState();
+  State<FinanceCountPage> createState() => _FinanceCountPageState();
 }
 
-class _StandardVerificationPageState extends State<StandardVerificationPage> {
+class _FinanceCountPageState extends State<FinanceCountPage> {
+  
   final GlobalKey _formKey = GlobalKey<FormState>();
   final TextEditingController _numController = TextEditingController();
   final PickerEditingController _enclosureController = PickerEditingController();
@@ -90,7 +91,7 @@ class _StandardVerificationPageState extends State<StandardVerificationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(title: Text(RouteEnum.standardVerification.title)),
+      appBar: AppBar(title: Text(RouteEnum.financeCount.title)),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(15),

@@ -1,6 +1,6 @@
 
 
-import 'package:easy_collect/api/register.dart';
+import 'package:easy_collect/api/insurance.dart';
 import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
 import 'package:flutter/material.dart';

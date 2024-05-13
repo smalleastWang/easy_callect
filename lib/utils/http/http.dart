@@ -86,6 +86,8 @@ class HttpRequest {
       }
       if (response.data['code'] == 401) {
         routeKey.currentContext?.go(RouteEnum.login.path);
+        EasyLoading.showToast('登录已过期，请重新登录');
+        throw Exception(response.data['msg']);
       }
       EasyLoading.showToast(response.data['msg']);
       throw Exception(response.data['msg']);
