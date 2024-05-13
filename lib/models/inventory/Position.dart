@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'Actual.g.dart';
+part 'Position.g.dart';
 
 //实时定位
 

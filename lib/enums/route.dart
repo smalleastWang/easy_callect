@@ -29,6 +29,7 @@ enum RouteEnum {
   position('position', '实时定位', '/precisionBreeding/position'),
   security('security', '智能安防', '/precisionBreeding/security'),
   pen('pen', '圈舍管理', '/precisionBreeding/pen'),
+  milksidentify('milksidentify', '在位识别', '/precisionBreeding/milksidentify'),
 
   // 行业监督
   supervision('/supervision', '行业监督', '/supervision'),
