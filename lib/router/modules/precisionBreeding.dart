@@ -7,6 +7,7 @@ import 'package:easy_collect/views/precisionBreeding/Inventory.dart';
 import 'package:easy_collect/views/precisionBreeding/Weight.dart';
 import 'package:easy_collect/views/precisionBreeding/Behavior.dart';
 import 'package:easy_collect/views/precisionBreeding/Health.dart';
+import 'package:easy_collect/views/precisionBreeding/Intelligencewarn.dart';
 import 'package:easy_collect/views/precisionBreeding/Position.dart';
 import 'package:easy_collect/views/precisionBreeding/Milksidentify.dart';
 import 'package:go_router/go_router.dart';
@@ -41,12 +42,17 @@ final precisionBreedingRoutes = GoRoute(
       path: RouteEnum.health.path,
       builder: (context, state) => const HealthPage(),
     ),
+    // 智能预警
+    GoRoute(
+      path: RouteEnum.intelligencewarn.path,
+      builder: (context, state) => const IntelligencewarnPage(),
+    ),
     // 实时定位
     GoRoute(
       path: RouteEnum.position.path,
       builder: (context, state) => const PositionPage(),
     ),
-     // 在位识别
+    // 在位识别
     GoRoute(
       path: RouteEnum.milksidentify.path,
       builder: (context, state) => const MilksidentifyPage(),
