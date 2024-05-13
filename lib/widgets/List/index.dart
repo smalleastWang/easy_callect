@@ -137,6 +137,15 @@ class _ListWidgetState<T> extends ConsumerState<ListWidget> {
     return SearchWidget(filterList: widget.filterList!, onChange: _handleFilter);
   }
 
+  Widget _buildNoDataWidget() {
+    return const Center(
+      child: Text(
+        '没有查询到数据',
+        style: TextStyle(fontSize: 16),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final AsyncValue<PageVoModel> data = ref.watch(widget.provider(params));
@@ -153,6 +162,9 @@ class _ListWidgetState<T> extends ConsumerState<ListWidget> {
           LoadingWidget(
             data: data,
             builder: (BuildContext context, PageVoModel value) {
+              if (value.records.isEmpty) {
+                return _buildNoDataWidget();
+              }
               // 更新分页信息
               params['current'] = value.current;
               params['pages'] = value.pages;
