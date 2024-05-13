@@ -54,6 +54,8 @@ class Behavior {
   int? autoDeduction;
   // 行为字典名称
   String? postureName;
+  // 检测时间
+  String? createTime;
 
   Behavior({
     this.id,
@@ -80,6 +82,7 @@ class Behavior {
     this.hurdle,
     this.autoDeduction,
     this.postureName,
+    this.createTime
   });
 
   factory Behavior.fromJson(Map<String, dynamic> json) => _$BehaviorFromJson(json);
