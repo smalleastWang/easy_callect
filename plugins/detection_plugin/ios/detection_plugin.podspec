@@ -31,12 +31,12 @@ A new Flutter FFI plugin project.
     ## Up to here
 
     # https://medium.com/flutter-community/integrating-c-library-in-a-flutter-app-using-dart-ffi-38a15e16bc14
-    s.preserve_paths = 'ncnn.xcframework', 'openmp.xcframework', 'glslang.xcframework'
+    s.preserve_paths = 'ncnn.xcframework', 'openmp.xcframework'
     s.xcconfig = {
-      'OTHER_LDFLAGS' => '-framework ncnn -framework openmp -framework glslang',
+      'OTHER_LDFLAGS' => '-framework ncnn -framework openmp',
       'OTHER_CFLAGS' => '-DUSE_NCNN_SIMPLEOCV -DNCNN_YOLOX_FLUTTER_IOS',
     }
-    s.ios.vendored_frameworks = 'ncnn.xcframework', 'openmp.xcframework', 'glslang.xcframework'
+    s.ios.vendored_frameworks = 'ncnn.xcframework', 'openmp.xcframework'
     s.library = 'c++'
 
 
