@@ -3,6 +3,7 @@ enum RouteEnum {
   home('/', '首页', '/'),
   cameraRegister('/cameraRegister', '首页', '/cameraRegister'),
   login('/login', '登录', '/login'),
+  downLoad('/downLoad', '资料下载', '/downLoad'),
   userInfo('/userInfo', '用户基本信息', '/userInfo'),
 
   // 智慧保险

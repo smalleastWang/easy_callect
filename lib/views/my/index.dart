@@ -18,7 +18,7 @@ class _MyWidgetState extends State<MyWidget> {
     context.push(RouteEnum.userInfo.path);
   }
   void _gotoDownload() {
-    context.push(RouteEnum.download.path);
+    context.push(RouteEnum.downLoad.path);
   }
   void _logoutAndNavigateToLogin() async {
     await MyApi.logoutApi(); // Call logout API

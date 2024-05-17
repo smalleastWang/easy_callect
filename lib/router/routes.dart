@@ -9,6 +9,7 @@ import 'package:easy_collect/utils/storage.dart';
 import 'package:easy_collect/views/home/index.dart';
 import 'package:easy_collect/views/my/Login.dart';
 import 'package:easy_collect/views/my/UserInfo.dart';
+import 'package:easy_collect/views/my/Download.dart';
 import 'package:go_router/go_router.dart';
 
 final List<GoRoute> routes = [
@@ -37,6 +38,11 @@ final List<GoRoute> routes = [
   GoRoute(
     path: RouteEnum.userInfo.path,
     builder: (context, state) => const UserInfoPage(),
+    routes: const []
+  ),
+  GoRoute(
+    path: RouteEnum.downLoad.path,
+    builder: (context, state) => const DownloadPage(),
     routes: const []
   ),
   
