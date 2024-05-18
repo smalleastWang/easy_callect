@@ -12,8 +12,6 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 enum Action { refresh, loading }
 
-// final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
 
 typedef Api<T> = Future<PageVoModel> Function(Map<String, dynamic> params);
 typedef Builder = Widget Function(Map<String, dynamic> data);
@@ -24,20 +22,29 @@ class PastureModel {
   PastureModel({required this.field, this.options = const []});
 }
 
+///
+/// 列表组件
+/// 参数 {pasture} 牧场筛选
+/// 参数 {searchForm} 自定义删选
+/// 参数 {filterList} 下拉塞选
+/// 
+/// builder 可以用  ListItemWidget 组件 也可以传入自定义组件
+///
 class ListWidget<T> extends ConsumerStatefulWidget {
   final List<DropDownMenuModel>? filterList;
   final Builder builder;
-  // final Api<T>? api;
   final T provider;
   final PastureModel? pasture;
   final Map<String, dynamic>? params;
-  const ListWidget({super.key, required this.builder, required this.provider, this.params, this.filterList, this.pasture});
+  final Widget? searchForm;
+  final String? debugLabel;
+  const ListWidget({super.key, required this.builder, required this.provider, this.params, this.filterList, this.pasture, this.searchForm, this.debugLabel});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _ListWidgetState<T>();
+  ConsumerState<ConsumerStatefulWidget> createState() => ListWidgetState<T>();
 }
 
-class _ListWidgetState<T> extends ConsumerState<ListWidget> {
+class ListWidgetState<T> extends ConsumerState<ListWidget> {
   Action? action;
   Map<String, dynamic> params = {
     'current': 0,
@@ -60,6 +67,11 @@ class _ListWidgetState<T> extends ConsumerState<ListWidget> {
 
     // });
     super.initState();
+  }
+
+  getList(Map<String, dynamic> query) {
+    params.addAll(query);
+    return _getList(1);
   }
 
   // 获取table数据
@@ -132,9 +144,13 @@ class _ListWidgetState<T> extends ConsumerState<ListWidget> {
     );
   }
 
-  Widget get _searchWidget {
+  Widget get _dropDownSearchWidget {
     if (widget.filterList == null) return const SizedBox.shrink();
     return SearchWidget(filterList: widget.filterList!, onChange: _handleFilter);
+  }
+  Widget get _getSearchForm {
+    if (widget.searchForm == null) return const SizedBox.shrink();
+    return widget.searchForm!;
   }
 
   Widget _buildNoDataWidget() {
@@ -157,8 +173,8 @@ class _ListWidgetState<T> extends ConsumerState<ListWidget> {
         mainAxisSize: MainAxisSize.min,
         children: [
           _pastureWidget,
-          _searchWidget,
-          widget.filterList != null ? SearchWidget(filterList: widget.filterList!, onChange: _handleFilter) : const SizedBox.shrink(),
+          _getSearchForm,
+          _dropDownSearchWidget,
           LoadingWidget(
             data: data,
             builder: (BuildContext context, PageVoModel value) {

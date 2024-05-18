@@ -3,12 +3,14 @@ import 'dart:convert';
 import 'package:easy_collect/api/precisionBreeding.dart';
 import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/views/precisionBreeding/data.dart';
+import 'package:easy_collect/widgets/Form/SearchDate.dart';
 import 'package:easy_collect/widgets/List/ListItem.dart';
 import 'package:easy_collect/widgets/List/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_collect/enums/Route.dart';
 import 'package:easy_collect/api/inventory.dart';
+
 
 class InventoryPage extends ConsumerStatefulWidget {
   const InventoryPage({super.key});
@@ -22,6 +24,8 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
   late TabController _tabController;
   late TextEditingController _startTimeController;
   late TextEditingController _endTimeController;
+  GlobalKey<ListWidgetState> imgWidgetKey = GlobalKey<ListWidgetState>();
+  GlobalKey<ListWidgetState> regWidgetKey = GlobalKey<ListWidgetState>();
 
   @override
   void initState() {
@@ -67,6 +71,17 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
   // 图像盘点
   Widget get _buildImageInventoryPage {
     return ListWidget<ImageInventoryFamily>(
+      key: imgWidgetKey,
+      debugLabel: '11',
+      searchForm: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+        child: SearchDateWidget(
+          hintText: '盘点时间',
+          onChange: (String first, String last) {
+            imgWidgetKey.currentState!.getList({'first': first, 'last': last});
+          },
+        )
+      ),
       provider: imageInventoryProvider,
       builder: (data) {
           return ListItemWidget(
@@ -99,13 +114,19 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
     );
   }
   // 识别盘点
-   Widget _buildRegInventoryInfoPage(AsyncValue<List<EnclosureModel>> weightInfoTree) {
+  Widget _buildRegInventoryInfoPage(AsyncValue<List<EnclosureModel>> weightInfoTree) {
     return ListWidget<RegInventoryInfoPageFamily>(
-      // searchForm: () {
-      //   return Columns(
-
-      //   );
-      // },
+      key: regWidgetKey,
+      searchForm: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+        child: SearchDateWidget(
+          hintText: '盘点时间',
+          onChange: (String first, String last) {
+            regWidgetKey.currentState!.getList({'first': first, 'last': last});
+          },
+        )
+      ),
+      debugLabel: '22',
       pasture: PastureModel(
         field: 'orgId',
         options: weightInfoTree.value ?? []

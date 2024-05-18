@@ -1,8 +1,6 @@
 
 import 'dart:convert';
 import 'dart:typed_data';
-
-import 'package:easy_collect/api/insurance.dart';
 import 'package:easy_collect/enums/route.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
 import 'package:flutter/cupertino.dart';
