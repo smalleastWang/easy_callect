@@ -48,7 +48,7 @@ class HttpRequest {
         requestHeader: true,
         requestBody: true,
         responseHeader: true,
-        responseBody: true));
+        responseBody: true, maxWidth: 100));
   }
 
   /// 封装request方法

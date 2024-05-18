@@ -9,14 +9,14 @@ import 'package:flutter_picker/picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class EnclosurePickerWidget extends ConsumerStatefulWidget {
-  final GlobalKey<ScaffoldState> scaffoldKey;
+  final GlobalKey<ScaffoldState>? scaffoldKey;
   final PickerEditingController controller;
   final InputDecoration? decoration;
   final List<EnclosureModel>? options;
   final Function? onChange;
   const EnclosurePickerWidget({
     super.key,
-    required this.scaffoldKey,
+    this.scaffoldKey,
     this.decoration,
     required this.controller,
     this.options,
@@ -113,8 +113,10 @@ class _EnclosurePickerWidgetState extends ConsumerState<EnclosurePickerWidget> {
             }
           }
         );
-        if (widget.scaffoldKey.currentState != null) {
-          picker.show(widget.scaffoldKey.currentState!);
+        if (widget.scaffoldKey?.currentState != null) {
+          picker.show(widget.scaffoldKey!.currentState!);
+        } else {
+          picker.showModal(context);
         }
       },
     );

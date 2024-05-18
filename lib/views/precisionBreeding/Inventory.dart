@@ -83,7 +83,14 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
                 if (value == null) return const Text('-');
                 final result = jsonDecode(value);
                 if (result['imgurl'] == null) return const Text('-');
-                return Image.network(result['imgurl'], width: 140);
+                if (record['model'] == 'cattle-img') {
+                  return Image.network(result['imgurl'], width: 140, errorBuilder: (context, error, stackTrace) {
+                    return const Text('图片加载错误');
+                  });
+                } else if (record['model'] == 'cattle-video') {
+                  return const Text('视频');
+                }
+                return const Text('-');
               }),
               ListColumnModal(label: '创建时间', field: 'createTime'),
             ]
@@ -94,6 +101,11 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
   // 识别盘点
    Widget _buildRegInventoryInfoPage(AsyncValue<List<EnclosureModel>> weightInfoTree) {
     return ListWidget<RegInventoryInfoPageFamily>(
+      // searchForm: () {
+      //   return Columns(
+
+      //   );
+      // },
       pasture: PastureModel(
         field: 'orgId',
         options: weightInfoTree.value ?? []
@@ -114,17 +126,6 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
               ListColumnModal(label: '匹配失败数量', field: 'inventoryFailNum'),
               ListColumnModal(label: '昨天盘点总数', field: 'lastInventoryAuthTotalNum'),
               ListColumnModal(label: '盘点人', field: 'stateName'),
-
-              // ListColumnModal(label: '盘点状态', field: 'result', render: (value, record, column) {
-              //   return Text('${jsonDecode(value ?? '{}')?['total'] ?? 0}只');
-              // }),
-
-              // ListColumnModal(label: '实际数量', field: 'result', render: (value, record, column) {
-              //   if (value == null) return const Text('-');
-              //   final result = jsonDecode(value);
-              //   if (result['imgurl'] == null) return const Text('-');
-              //   return Image.network(result['imgurl'], width: 140);
-              // }),
             ]
           );
         },

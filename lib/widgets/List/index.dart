@@ -12,7 +12,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 enum Action { refresh, loading }
 
-final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+// final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 
 typedef Api<T> = Future<PageVoModel> Function(Map<String, dynamic> params);
@@ -116,7 +116,7 @@ class _ListWidgetState<T> extends ConsumerState<ListWidget> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
       child: EnclosurePickerWidget(
-        scaffoldKey: _scaffoldKey,
+        // scaffoldKey: _scaffoldKey,
         controller: _enclosureController,
         options: widget.pasture!.options, 
         decoration: getInputDecoration(
@@ -152,7 +152,7 @@ class _ListWidgetState<T> extends ConsumerState<ListWidget> {
 
     _handleAction(data);
     return  Scaffold(
-      key: _scaffoldKey,
+      // key: _scaffoldKey,
       body: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

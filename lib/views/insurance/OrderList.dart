@@ -1,6 +1,6 @@
 import 'package:easy_collect/api/insurance.dart';
 import 'package:easy_collect/enums/Route.dart';
-import 'package:easy_collect/views/insurance/data.dart';
+import 'package:easy_collect/enums/register.dart';
 import 'package:easy_collect/widgets/List/ListItem.dart';
 import 'package:easy_collect/widgets/List/index.dart';
 import 'package:flutter/material.dart';

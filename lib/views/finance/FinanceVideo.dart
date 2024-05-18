@@ -1,10 +1,11 @@
 
 import 'package:easy_collect/api/insurance.dart';
 import 'package:easy_collect/enums/Route.dart';
+import 'package:easy_collect/enums/index.dart';
+import 'package:easy_collect/enums/register.dart';
 import 'package:easy_collect/mock.dart';
 import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/utils/tool/common.dart';
-import 'package:easy_collect/views/insurance/data.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
 import 'package:easy_collect/widgets/Form/PickerImageField.dart';
 import 'package:easy_collect/widgets/Register/EnclosurePicker.dart';
@@ -54,9 +55,9 @@ class _FinanceVideoPageState extends State<FinanceVideoPage> {
   }
   Widget get _getRegisterCnt {
     if (registerType == 1) {
-      return RegisterTypeWidget<int>(options: singleOptions, onChange: _changeRegisterCnt, label: '注册方式', defaultValue: singleOptions[0].value);
+      return RegisterTypeWidget<int>(options: enumsToOptions(RegisterFaceEnum.values), onChange: _changeRegisterCnt, label: '注册方式', defaultValue: RegisterFaceEnum.face.value);
     } else if (registerType == 2) {
-      return RegisterTypeWidget<int>(options: multipleOptions, onChange: _changeRegisterCnt, label: '注册方式', defaultValue: multipleOptions[0].value,);
+      return RegisterTypeWidget<int>(options: enumsToOptions(RegisterMediaEnum.values), onChange: _changeRegisterCnt, label: '注册方式', defaultValue: RegisterMediaEnum.drones.value);
     }
     return const SizedBox.shrink();
   }
@@ -119,7 +120,7 @@ class _FinanceVideoPageState extends State<FinanceVideoPage> {
                     hintText: '请输入牛耳耳标号(不支持中文)',
                   ),
                 ),
-                RegisterTypeWidget<int>(defaultValue: registerType, options: registerTypeOptions, onChange: _changeRegisterType),
+                RegisterTypeWidget<int>(defaultValue: registerType, options: enumsToOptions(RegisterTypeEnum.values), onChange: _changeRegisterType),
                 _getRegisterCnt,
                 PickerImageField(controller: _imageController, maxNum: 1),
 

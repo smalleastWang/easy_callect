@@ -1,16 +1,17 @@
 
 import 'package:easy_collect/api/insurance.dart';
 import 'package:easy_collect/enums/Route.dart';
-import 'package:easy_collect/mock.dart';
+import 'package:easy_collect/enums/index.dart';
+import 'package:easy_collect/enums/register.dart';
 import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/utils/tool/common.dart';
-import 'package:easy_collect/views/insurance/data.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
 import 'package:easy_collect/widgets/Form/PickerImageField.dart';
 import 'package:easy_collect/widgets/Register/EnclosurePicker.dart';
 import 'package:easy_collect/widgets/Register/RegisterType.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 
@@ -18,22 +19,24 @@ final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 ///
 /// 查勘对比
-class SurveyComparedPage extends StatefulWidget {
+class SurveyComparedPage extends ConsumerStatefulWidget {
   const SurveyComparedPage({super.key});
 
   @override
-  State<SurveyComparedPage> createState() => _SurveyComparedPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _SurveyComparedPageState();
 }
 
-class _SurveyComparedPageState extends State<SurveyComparedPage> {
-  
+class _SurveyComparedPageState extends ConsumerState<SurveyComparedPage> {
   final GlobalKey _formKey = GlobalKey<FormState>();
   final TextEditingController _numController = TextEditingController();
   final PickerEditingController _enclosureController = PickerEditingController();
-  PickerImageController _imageController = PickerImageController();
+  PickerImageController _faceImgsController = PickerImageController();
+  PickerImageController _bodyImgsController = PickerImageController();
+  PickerImageController _dronesController = PickerImageController();
 
-  int registerType = 1;
-  int changeRegisterCnt = 1;
+  bool submitLoading = false;
+  int registerType = RegisterTypeEnum.single.value;
+  int registerMedia = RegisterMediaEnum.drones.value;
 
   @override
   void initState() {
@@ -42,56 +45,113 @@ class _SurveyComparedPageState extends State<SurveyComparedPage> {
   _changeRegisterType(value) {
     setState(() {
       registerType = value;
-      _imageController = PickerImageController();
-    });
-  }
-
-  _changeRegisterCnt(value) {
-    setState(() {
-      changeRegisterCnt = value;
-      _imageController = PickerImageController();
+      _faceImgsController = PickerImageController();
+      _bodyImgsController = PickerImageController();
+      _dronesController = PickerImageController();
     });
   }
   Widget get _getRegisterCnt {
-    if (registerType == 1) {
-      return RegisterTypeWidget<int>(options: singleOptions, onChange: _changeRegisterCnt, label: '注册方式', defaultValue: singleOptions[0].value);
-    } else if (registerType == 2) {
-      return RegisterTypeWidget<int>(options: multipleOptions, onChange: _changeRegisterCnt, label: '注册方式', defaultValue: multipleOptions[0].value,);
+    onChange(value) {
+      setState(() {
+        registerMedia = value;
+        _faceImgsController = PickerImageController();
+        _bodyImgsController = PickerImageController();
+        _dronesController = PickerImageController();
+      });
+    }
+    if (registerType == RegisterTypeEnum.multiple.value) {
+      return RegisterTypeWidget<int>(
+        label: '注册方式',
+        options: enumsToOptions(SurveyMediaEnum.values),
+        onChange: onChange,
+        defaultValue: SurveyMediaEnum.drones.value
+      );
     }
     return const SizedBox.shrink();
   }
 
-  _handleSubmit() async {
-    if (_numController.text.isEmpty) return EasyLoading.showError('请选择输入牛编号');
-    if (_enclosureController.value == null) return EasyLoading.showError('请选择牧场和圈舍');
-    if (_imageController.value == null) return EasyLoading.showError('请选择图片');
-
-    RegisterQueryModel params = RegisterQueryModel(
-      cattleNo: _numController.text,
-      houseId: _enclosureController.value!.last,
-      pastureId: _enclosureController.value![_enclosureController.value!.length -2],
-      faceImgs: _imageController.value!.map((e) => e.value).toList()
-    );
-    // 单个注册
-    if (registerType == 1) {
-      if (changeRegisterCnt == 1) {
-        // params.faceImgs = _imageController.value!.map((e) => e.value).toList();
-        // <List<String>> faceImgs = [];
-        // faceImgs.add(imagesStr['face_image'])
-        params.faceImgs = imagesStr['face_image'].cast<List<String>>();
-      } else if (registerType == 2) {
-        params.bodyImgs = _imageController.value!.map((e) => e.value).toList();
+  EnclosureModel? findNode(List<EnclosureModel> options) {
+    for (var node in options) {
+      if (node.id == _enclosureController.value!.last) {
+        return node;
+      }
+      if (node.children != null) {
+        return findNode(node.children!);
       }
     }
-    await RegisterApi.cattleApp(params);
-    context.pop();
+    return null;
+  }
+
+  _handleSubmit(List<EnclosureModel> options) async {
+    if (_numController.text.isEmpty) return EasyLoading.showError('请选择输入牛编号');
+    if (_enclosureController.value == null) return EasyLoading.showError('请选择牧场和圈舍');
+    EnclosureModel? houseData = findNode(options);
+    if (houseData == null || houseData.nodeType != 'bld') {
+      return EasyLoading.showError('圈舍选择错误');
+    }
+
+    try {
+      setState(() {
+        submitLoading = true;
+      });
+
+      RegisterQueryModel params = RegisterQueryModel(
+        cattleNo: _numController.text,
+        houseId: houseData.id,
+        pastureId: houseData.parentId,
+      );
+      // 无人机查勘
+      if (registerMedia == RegisterMediaEnum.drones.value) {
+        if (_dronesController.value == null || _dronesController.value!.isEmpty) return EasyLoading.showError('请上传牛脸图片');
+        params.faceImgs = _dronesController.value!.map((e) => e.value).toList();
+        await RegisterApi.uavForm(UavRegisterQueryModel(
+          batch: 0,
+          houseId: houseData.id,
+          pastureId: houseData.parentId,
+          resourceType: ResourceTypeEnum.discern.value,
+          single: registerType,
+          imgs: _dronesController.value!.map((e) => e.value).toList()
+        ));
+        context.pop();
+        return;
+      }
+      // 视频
+      if (registerMedia == RegisterMediaEnum.video.value) {
+      }
+      
+    } finally {
+      setState(() {
+        submitLoading = false;
+      });
+    }
+    
+  }
+
+  List<Widget> get _getImgWidget {
+    // 单个注册-牛脸注册
+    if (registerType == RegisterTypeEnum.single.value && registerMedia == RegisterMediaEnum.face.value) {
+      return [PickerImageField(controller: _faceImgsController, maxNum: 1, label: '请上传牛脸图片')];
+    }
+    // 单个注册-牛背注册
+    if (registerType == RegisterTypeEnum.single.value && registerMedia == RegisterMediaEnum.back.value) {
+      return [
+        PickerImageField(controller: _bodyImgsController, maxNum: 1, label: '请上传牛背图片'),
+        PickerImageField(controller: _faceImgsController, maxNum: 1, label: '请上传牛脸图片'),
+      ];
+    }
+    // 批量注册-无人机
+    if (registerMedia == RegisterMediaEnum.drones.value) {
+      return [PickerImageField(controller: _dronesController, maxNum: registerType == RegisterTypeEnum.single.value ? 1 : 9,label: '航拍图', uploadApi: RegisterApi.uavUpload)];
+    }
+    return [const SizedBox.shrink()];
   }
 
   @override
   Widget build(BuildContext context) {
+    final AsyncValue<List<EnclosureModel>> enclosureList = ref.watch(enclosureListProvider);
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(title: Text(RouteEnum.standardVerification.title)),
+      appBar: AppBar(title: Text(RouteEnum.surveyCompared.title)),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(15),
@@ -113,19 +173,23 @@ class _SurveyComparedPageState extends State<SurveyComparedPage> {
                 const SizedBox(height: 16),
                 EnclosurePickerWidget(
                   scaffoldKey: _scaffoldKey,
+                  options: enclosureList.value ?? [],
                   controller: _enclosureController,
                   decoration: getInputDecoration(
                     labelText: '牧场/圈舍',
                     hintText: '请输入牛耳耳标号(不支持中文)',
                   ),
                 ),
-                RegisterTypeWidget<int>(defaultValue: registerType, options: registerTypeOptions, onChange: _changeRegisterType),
+                RegisterTypeWidget<int>(defaultValue: registerType, options: enumsToOptions(RegisterTypeEnum.values), onChange: _changeRegisterType),
                 _getRegisterCnt,
-                PickerImageField(controller: _imageController, maxNum: 1),
+
+                
+                ..._getImgWidget,
 
                 const SizedBox(height: 50),
                 ElevatedButton(
-                  onPressed: _handleSubmit,
+                  onPressed: submitLoading ? null : () => _handleSubmit(enclosureList.value ?? []),
+                  
                   child: Container(
                     width: double.infinity,
                     alignment: Alignment.center,

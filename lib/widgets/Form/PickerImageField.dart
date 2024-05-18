@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:easy_collect/api/insurance.dart';
 import 'package:easy_collect/enums/route.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,18 +11,21 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 class FileInfo {
-  Uint8List bytes;
+  Uint8List? bytes;
   String value;
   String? text;
-  FileInfo({this.text, required this.value, required this.bytes});
+  FileInfo({this.text, required this.value, this.bytes});
 }
+typedef UploadApi = Future<String> Function(XFile flie);
 
 class PickerImageField extends StatefulWidget {
+  final UploadApi? uploadApi;
   final int maxNum;
+  final String? label;
   final bool multiple;
   final Function(List<FileInfo> files)? onChange;
   final PickerImageController controller;
-  const PickerImageField({super.key, this.maxNum = 9, this.onChange, required this.controller, this.multiple = false});
+  const PickerImageField({super.key, this.maxNum = 9, this.onChange, required this.controller, this.multiple = false, this.label, this.uploadApi});
 
   @override
   State<PickerImageField> createState() => _PickerImageFieldState();
@@ -43,7 +47,10 @@ class _PickerImageFieldState extends State<PickerImageField> {
 
   List<Widget> get _pickImagesWidget {
     List<Image> imageWidget = _pickImages.map((FileInfo file) {
-      return Image.memory(file.bytes, width: 80, height: 80);
+      if (file.bytes == null) {
+        return Image.network(file.value);
+      }
+      return Image.memory(file.bytes!, width: 80, height: 80);
     }).toList();
      List<Widget> result = [...imageWidget];
     if (result.length < widget.maxNum) {
@@ -73,16 +80,24 @@ class _PickerImageFieldState extends State<PickerImageField> {
         print(barcode);
         return;
       }
-      XFile? pickfike = await picker.pickImage(source: source);
-      if (pickfike != null) pickedFiles.add(pickfike);
+      XFile? pickfile = await picker.pickImage(source: source);
+      if (pickfile != null) pickedFiles.add(pickfile);
     }
 
     for (XFile pickedFile in pickedFiles) {
-      final bytes = await pickedFile.readAsBytes();
-      final FileInfo fileInfo = FileInfo(value: base64Encode(bytes), text: pickedFile.name, bytes: bytes);
-      setState(() {
-        _pickImages.add(fileInfo);
-      });
+      if (widget.uploadApi == null) {
+        final bytes = await pickedFile.readAsBytes();
+        final FileInfo fileInfo = FileInfo(value: base64Encode(bytes), text: pickedFile.name, bytes: bytes);
+        setState(() {
+          _pickImages.add(fileInfo);
+        });
+      } else {
+        // String url = await RegisterApi.uavUpload(pickedFile);
+        String url = await widget.uploadApi!(pickedFile);
+        setState(() {
+          _pickImages.add(FileInfo(value: url, text: pickedFile.name));
+        });
+      }
     }
     if (widget.onChange is Function) {
       widget.onChange!(_pickImages);
@@ -124,18 +139,29 @@ class _PickerImageFieldState extends State<PickerImageField> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
+    return Padding(
       padding: const EdgeInsets.only(top: 10),
-      child: Expanded(
-        child: Wrap(
-          spacing: 13,
-          runSpacing: 8,
-          alignment: WrapAlignment.start,
-          children: [
-            ..._pickImagesWidget,
-          ],
-        ),
+      child: Column(
+        children: [
+          widget.label != null ? Container(
+            alignment: Alignment.centerLeft,
+            child: Text(widget.label!, style: const TextStyle(fontSize: 16)),
+          ) : const SizedBox.shrink(),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.only(top: 10),
+            child: Expanded(
+              child: Wrap(
+                spacing: 13,
+                runSpacing: 8,
+                alignment: WrapAlignment.start,
+                children: [
+                  ..._pickImagesWidget,
+                ],
+              ),
+            ),
+          )
+        ],
       ),
     );
   }

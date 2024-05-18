@@ -11,20 +11,50 @@ class RegisterQueryModel {
   // 圈舍id
   String houseId;
   // 牛脸图片
-  List<String> faceImgs;
+  List<String>? faceImgs;
   // 牛身图片
   List<String>? bodyImgs;
   RegisterQueryModel({
     required this.cattleNo,
     required this.pastureId,
     required this.houseId,
-    required this.faceImgs,
+    this.faceImgs,
     this.bodyImgs,
   });
 
   factory RegisterQueryModel.fromJson(Map<String, dynamic> json) => _$RegisterQueryModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$RegisterQueryModelToJson(this);
+}
+
+
+@JsonSerializable()
+class UavRegisterQueryModel {
+  // 1、2、0,默认0
+  int batch;
+  // 牧场id
+  String pastureId;
+  // 圈舍id
+  String houseId;
+  // 注册识别盘点功能：1.表示注册 2.表示识别 3.计数盘点)
+  int resourceType;
+  // 1.表示单个，2表示批量
+  int single;
+  // 图片
+  List<String> imgs;
+  
+  UavRegisterQueryModel({
+    required this.batch,
+    required this.pastureId,
+    required this.houseId,
+    required this.resourceType,
+    required this.single,
+    required this.imgs,
+  });
+
+  factory UavRegisterQueryModel.fromJson(Map<String, dynamic> json) => _$UavRegisterQueryModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$UavRegisterQueryModelToJson(this);
 }
 
 

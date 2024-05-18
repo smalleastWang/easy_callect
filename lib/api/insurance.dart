@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:easy_collect/models/PageVo.dart';
-import 'package:easy_collect/models/index.dart';
 import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/utils/http/request.dart';
 import 'package:image_picker/image_picker.dart';
@@ -9,22 +8,51 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'insurance.g.dart';
 
 class RegisterApi {
-  // 注册牛
+  // 验标注册-校验牛标号是否注册
+  static Future<String> isRegister(Map<String, String> params) async {
+    return await HttpUtils.post('/out/v1/isRegister', params: params);
+  } 
+  // 验标注册-注册牛
   static Future<void> cattleApp(RegisterQueryModel params) async {
     await HttpUtils.post('/out/v1/registerCattleAPP', params: params.toJson());
-  } 
-
+  }
   // 上传无人机图片
-  static Future<void> uavUpload(XFile flie) async {
+  static Future<String> uavUpload(XFile flie) async {
     FormData formData = FormData.fromMap({'file': await MultipartFile.fromFile(flie.path, filename: flie.name)});
-    CommonMap data = await HttpUtils.post('/biz/uav/upload', params: formData, isformData: true);
-    print(data);
+    return await HttpUtils.post('/biz/uav/upload', params: formData, isformData: true);
   }
   // 无人机注册
-  static Future<void> uavForm(XFile flie) async {
-    await HttpUtils.post('/biz/uav/form', params: {}, isformData: true);
+  static Future<void> uavForm(UavRegisterQueryModel params) async {
+    await HttpUtils.post('/biz/uav/form', params: params);
   }
-  
+  // 视频上传
+  static Future<void> videoUpload(XFile flie) async {
+    FormData formData = FormData.fromMap({'file': await MultipartFile.fromFile(flie.path, filename: flie.name)});
+    await HttpUtils.post('/video/upload/file', params: formData, isformData: true);
+  }
+  // 视频分片上传
+  static Future<void> videoMultipartUpload(XFile flie) async {
+    FormData formData = FormData.fromMap({'file': await MultipartFile.fromFile(flie.path, filename: flie.name)});
+    await HttpUtils.post('/video/multipart/complete', params: formData, isformData: true);
+  }
+  // 视频-注册
+  static Future<void> videoRsegister(UavRegisterQueryModel params) async {
+    await HttpUtils.post('/video/register', params: params);
+  }
+  // 视频-查勘
+  static Future<void> videoSurvey(UavRegisterQueryModel params) async {
+    await HttpUtils.post('/video/distinguish', params: params);
+  }
+
+  // 计数盘点文件上传
+  static Future<String> scanAmountUpload(XFile flie) async {
+    FormData formData = FormData.fromMap({'file': await MultipartFile.fromFile(flie.path, filename: flie.name)});
+    return await HttpUtils.post('biz/scanAmount/upload', params: formData, isformData: true);
+  }
+  // 计数盘点
+  static Future<void> countInventory(Map<String, dynamic> params) async {
+    await HttpUtils.post('/biz/scanAmount/add', params: params);
+  }
 }
 
 /// 牧场圈舍信息
