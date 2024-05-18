@@ -72,7 +72,6 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
   Widget get _buildImageInventoryPage {
     return ListWidget<ImageInventoryFamily>(
       key: imgWidgetKey,
-      debugLabel: '11',
       searchForm: Container(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
         child: SearchDateWidget(
@@ -126,7 +125,6 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
           },
         )
       ),
-      debugLabel: '22',
       pasture: PastureModel(
         field: 'orgId',
         options: weightInfoTree.value ?? []

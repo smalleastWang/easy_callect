@@ -37,8 +37,7 @@ class ListWidget<T> extends ConsumerStatefulWidget {
   final PastureModel? pasture;
   final Map<String, dynamic>? params;
   final Widget? searchForm;
-  final String? debugLabel;
-  const ListWidget({super.key, required this.builder, required this.provider, this.params, this.filterList, this.pasture, this.searchForm, this.debugLabel});
+  const ListWidget({super.key, required this.builder, required this.provider, this.params, this.filterList, this.pasture, this.searchForm});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => ListWidgetState<T>();
