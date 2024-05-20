@@ -4,6 +4,7 @@ import 'package:easy_collect/api/precisionBreeding.dart';
 import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/views/precisionBreeding/data.dart';
 import 'package:easy_collect/widgets/Form/SearchDate.dart';
+import 'package:easy_collect/widgets/Form/BottomSheetPicker.dart';
 import 'package:easy_collect/widgets/List/ListItem.dart';
 import 'package:easy_collect/widgets/List/index.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +27,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
   late TextEditingController _endTimeController;
   GlobalKey<ListWidgetState> imgWidgetKey = GlobalKey<ListWidgetState>();
   GlobalKey<ListWidgetState> regWidgetKey = GlobalKey<ListWidgetState>();
+  GlobalKey<ListWidgetState> cntWidgetKey = GlobalKey<ListWidgetState>();
 
   @override
   void initState() {
@@ -75,7 +77,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
       searchForm: Container(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
         child: SearchDateWidget(
-          hintText: '盘点时间',
+          hintText: '请选择盘点时间',
           onChange: (String first, String last) {
             imgWidgetKey.currentState!.getList({'first': first, 'last': last});
           },
@@ -118,11 +120,32 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
       key: regWidgetKey,
       searchForm: Container(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-        child: SearchDateWidget(
-          hintText: '盘点时间',
-          onChange: (String first, String last) {
-            regWidgetKey.currentState!.getList({'first': first, 'last': last});
-          },
+        child: Column(
+        children: [
+          BottomSheetPickerWidget(
+            hintText: '请选择盘点状态',
+            options: const [
+              {'': '不限'},
+              {'0': '盘点中'},
+              {'1': '盘点结束'},
+            ],
+            onSelect: (option) {
+              // Handle the selected option
+              print('Selected option: $option');
+              final key = option.keys.first;
+              final value = option[key];
+              print('Selected key: $key, value: $value');
+              regWidgetKey.currentState!.getList({'state': key});
+            },
+          ),
+          const SizedBox(height: 10), // Add some space between the widgets
+          SearchDateWidget(
+            hintText: '请选择盘点时间',
+            onChange: (String first, String last) {
+              regWidgetKey.currentState!.getList({'first': first, 'last': last});
+            },
+          ),
+        ],
         )
       ),
       pasture: PastureModel(
@@ -153,6 +176,37 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
   //计数盘点
   Widget _buildCntInventoryInfoPage(AsyncValue<List<EnclosureModel>> weightInfoTree) {
     return ListWidget<CntInventoryInfoPageFamily>(
+      key: cntWidgetKey,
+      searchForm: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+        child: Column(
+        children: [
+          BottomSheetPickerWidget(
+            hintText: '请选择盘点状态',
+            options: const [
+              {'': '不限'},
+              {'0': '盘点中'},
+              {'1': '盘点结束'},
+            ],
+            onSelect: (option) {
+              // Handle the selected option
+              print('Selected option: $option');
+              final key = option.keys.first;
+              final value = option[key];
+              print('Selected key: $key, value: $value');
+              regWidgetKey.currentState!.getList({'state': key});
+            },
+          ),
+          const SizedBox(height: 10), // Add some space between the widgets
+          SearchDateWidget(
+            hintText: '请选择盘点时间',
+            onChange: (String first, String last) {
+              regWidgetKey.currentState!.getList({'first': first, 'last': last});
+            },
+          ),
+        ],
+        )
+      ),
       pasture: PastureModel(
         field: 'orgId',
         options: weightInfoTree.value ?? []
