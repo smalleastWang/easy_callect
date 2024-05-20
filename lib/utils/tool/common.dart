@@ -13,7 +13,7 @@ List<T> listMapToModel<T>(List<dynamic> listMap, Function jsonF) {
 InputDecoration getInputDecoration({String? labelText, String? hintText}) {
   return InputDecoration(
     labelText: labelText,
-    contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 6),
+    contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
     border: const OutlineInputBorder(),
     hintText: hintText,
   );
