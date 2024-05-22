@@ -76,7 +76,7 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
   // 获取table数据
   AsyncValue<PageVoModel>? _getList([int? current]) {
     // 数据加载完了
-    if (params['current'] >= params['pages']) {
+    if (params['current'] >= params['pages'] && params['current'] > 1) {
       _refreshController.loadNoData();
       return null;
     }
@@ -177,7 +177,7 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
           LoadingWidget(
             data: data,
             builder: (BuildContext context, PageVoModel value) {
-              if (value.records.isEmpty) {
+              if (value.total <= 0) {
                 return _buildNoDataWidget();
               }
               // 更新分页信息
