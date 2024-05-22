@@ -142,6 +142,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
           SearchDateWidget(
             hintText: '请选择盘点时间',
             onChange: (String first, String last) {
+              print('Selected first: $first, last: $last');
               regWidgetKey.currentState!.getList({'first': first, 'last': last});
             },
           ),
@@ -194,14 +195,15 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
               final key = option.keys.first;
               final value = option[key];
               print('Selected key: $key, value: $value');
-              regWidgetKey.currentState!.getList({'state': key});
+              cntWidgetKey.currentState!.getList({'state': key});
             },
           ),
           const SizedBox(height: 10), // Add some space between the widgets
           SearchDateWidget(
             hintText: '请选择盘点时间',
             onChange: (String first, String last) {
-              regWidgetKey.currentState!.getList({'first': first, 'last': last});
+              print('Selected first: $first, last: $last');
+              cntWidgetKey.currentState!.getList({'first': first, 'last': last});
             },
           ),
         ],
