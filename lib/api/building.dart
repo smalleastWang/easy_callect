@@ -1,6 +1,3 @@
-
-import 'dart:ffi';
-
 import 'package:easy_collect/models/PageVo.dart';
 import 'package:easy_collect/models/buildings/building.dart';
 import 'package:easy_collect/utils/http/request.dart';
