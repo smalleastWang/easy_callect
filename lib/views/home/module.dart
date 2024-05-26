@@ -2,14 +2,9 @@ import 'package:easy_collect/views/home/data.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class ModuleWidget extends StatefulWidget {
+class ModuleWidget extends StatelessWidget {
   const ModuleWidget({super.key});
 
-  @override
-  State<ModuleWidget> createState() => _ModuleWidgetState();
-}
-
-class _ModuleWidgetState extends State<ModuleWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
