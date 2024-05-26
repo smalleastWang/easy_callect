@@ -50,7 +50,7 @@ class _PickerImageFieldState extends State<PickerImageField> {
       }
       return Image.memory(file.bytes!, width: 80, height: 80);
     }).toList();
-     List<Widget> result = [...imageWidget];
+    List<Widget> result = [...imageWidget];
     if (result.length < widget.maxNum) {
       result.add(GestureDetector(
         onTap: _handleAction,
@@ -148,8 +148,8 @@ class _PickerImageFieldState extends State<PickerImageField> {
           Container(
             width: double.infinity,
             padding: const EdgeInsets.only(top: 10),
-            child: Expanded(
-              child: Wrap(
+            child: SingleChildScrollView(
+              child: Wrap(  
                 spacing: 13,
                 runSpacing: 8,
                 alignment: WrapAlignment.start,
@@ -157,7 +157,7 @@ class _PickerImageFieldState extends State<PickerImageField> {
                   ..._pickImagesWidget,
                 ],
               ),
-            ),
+            )
           )
         ],
       ),

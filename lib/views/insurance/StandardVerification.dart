@@ -36,7 +36,7 @@ class _StandardVerificationPageState extends ConsumerState<StandardVerificationP
 
   bool submitLoading = false;
   int registerType = RegisterTypeEnum.single.value;
-  int registerMedia = RegisterMediaEnum.drones.value;
+  int registerMedia = RegisterMediaEnum.face.value;
 
   @override
   void initState() {

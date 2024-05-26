@@ -103,7 +103,7 @@ enum CountMediaEnum implements EnumStrOption {
   OptionModel<String> toOptionModel() {
     return OptionModel(value: value, label: label);
   }
-  static String getLabel(String value) => OrderStatus.values.firstWhere((i) => i.value == value, orElse: () => OrderStatus.unknown).label;
+  static String getLabel(String value) => CountMediaEnum.values.firstWhere((i) => i.value == value).label;
 }
 
 enum ResourceTypeEnum implements EnumOption {

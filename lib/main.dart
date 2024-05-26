@@ -1,4 +1,5 @@
 import 'package:easy_collect/router/index.dart';
+import 'package:easy_collect/utils/colors.dart';
 import 'package:easy_collect/utils/global.dart';
 import 'package:easy_collect/utils/storage.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       title: '易采天成',
       theme:  ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: MyColors.primaryColor),
         useMaterial3: true,
       ),
       routerConfig: router,

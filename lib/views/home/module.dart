@@ -1,13 +1,6 @@
-import 'package:easy_collect/enums/Route.dart';
+import 'package:easy_collect/views/home/data.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-class ModuleListModel {
-  RouteEnum route;
-  Color? background;
-  IconData icon;
-  ModuleListModel({required this.route, this.background, required this.icon});
-}
 
 class ModuleWidget extends StatefulWidget {
   const ModuleWidget({super.key});
@@ -17,12 +10,6 @@ class ModuleWidget extends StatefulWidget {
 }
 
 class _ModuleWidgetState extends State<ModuleWidget> {
-  final List<ModuleListModel> moduleList = [
-    ModuleListModel(route: RouteEnum.insurance, icon: Icons.ac_unit),
-    ModuleListModel(route: RouteEnum.finance, icon: Icons.beach_access),
-    ModuleListModel(route: RouteEnum.precisionBreeding, icon: Icons.cake),
-    ModuleListModel(route: RouteEnum.supervision, icon: Icons.free_breakfast),
-  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,31 +18,55 @@ class _ModuleWidgetState extends State<ModuleWidget> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(15),
-        child: GridView(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            mainAxisSpacing: 15,
-            crossAxisSpacing: 15,
-            crossAxisCount: 2,
-            childAspectRatio: 1.0
-          ),
-          children: moduleList.map((e) {
-            return Container(
-              decoration: const BoxDecoration(
-                color: Colors.deepPurple
-              ),
-              child: GestureDetector(
-                behavior:  HitTestBehavior.opaque,
-                onTap: () => context.push(e.route.path),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(e.icon, size: 36, color: Colors.white),
-                    const SizedBox(height: 10),
-                    Text(e.route.title, style: const TextStyle(fontSize: 18, color: Colors.white))],
+        child: ListView.separated(
+          // shrinkWrap: true,
+          itemCount:  moduleList.length,
+          itemBuilder: (context, index) {
+            final module = moduleList[index];
+            return Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    module.title ?? module.route?.title ?? '',
+                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600)
+                  ),
                 ),
-              ),
-            );
-          }).toList()
+                GridView(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    mainAxisSpacing: 15,
+                    crossAxisSpacing: 5,
+                    crossAxisCount: 5,
+                    childAspectRatio: 1.0
+                  ),
+                  children: module.children.map((e) {
+                    return InkWell(
+                      onTap: () => context.push(e.route.fullpath),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: module.bgColor.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Icon(e.icon, size: 18, color: module.bgColor),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(e.title ?? e.route.title, style: const TextStyle(fontSize: 12))
+                        ],
+                      ),
+                    );
+                  }).toList()
+                )
+              ],
+            ); 
+          },
+          separatorBuilder: (context, index) => const Divider(color: Color(0xFFE5E5E5), height: 30),
         ),
       ),
     );
