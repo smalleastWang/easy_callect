@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:easy_collect/models/user/UserInfo.dart';
 import 'package:easy_collect/api/my.dart';
@@ -7,247 +5,76 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 class UserInfoPage extends StatefulWidget {
   const UserInfoPage({super.key});
+
   @override
   State<UserInfoPage> createState() => _UserInfoPageState();
 }
 
 class _UserInfoPageState extends State<UserInfoPage> {
-  // 用户信息模型
   UserInfoModel? _userInfo;
-
-  // 控制器
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _nicknameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _birthdayController = TextEditingController();
-  String? _phoneNumberErrorMessage;
-  String _selectedGender = '';
-  Timer? _debounce;
-
-  void _validatePhoneNumber() {
-    // Cancel previous timer if exists
-    _debounce?.cancel();
-    
-    // Schedule a new timer after 500 milliseconds of user inactivity
-    _debounce = Timer(const Duration(milliseconds: 500), () {
-      String phoneNumber = _phoneNumberController.text.trim();
-      if (phoneNumber.isNotEmpty && !RegExp(r'^1[0-9]{10}$').hasMatch(phoneNumber)) {
-        setState(() {
-          _phoneNumberErrorMessage = '请输入正确的手机号';
-        });
-      }
-      else {
-        setState(() {
-          _phoneNumberErrorMessage = '';
-        });
-      }
-    });
-  }
+  String _selectedGender = '男';
 
   @override
   void initState() {
     super.initState();
-    _phoneNumberController.addListener(_validatePhoneNumber);
-    // 初始化页面数据
     _getUserInfo();
   }
 
-  @override
-  void didUpdateWidget(covariant UserInfoPage oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    // When the widget is updated, re-fetch user information
-    _getUserInfo();
-  }
-
-  @override
-  void dispose() {
-    _phoneNumberController.dispose();
-    super.dispose();
-  }
-
-  // 从接口获取用户信息
-  void _getUserInfo() async {
+  Future<void> _getUserInfo() async {
     try {
-      // 调用接口获取用户信息
-      UserInfoModel userInfo = await MyApi.getUserInfoApi();
+      final userInfo = await MyApi.getUserInfoApi();
       setState(() {
-        // 将获取的用户信息填充到控制器中
         _userInfo = userInfo;
         _nameController.text = userInfo.name ?? '';
         _phoneNumberController.text = userInfo.phone ?? '';
         _nicknameController.text = userInfo.nickname ?? '';
         _emailController.text = userInfo.email ?? '';
         _birthdayController.text = userInfo.birthday ?? '';
-        _selectedGender = userInfo.gender ?? '';
+        _selectedGender = userInfo.gender ?? '男';
       });
     } catch (e) {
-      // 处理错误
       print('Error fetching user info: $e');
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('用户信息'),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 账号信息（从接口获取）
-              Text(
-                '账号: ${_userInfo?.account}',
-                style: const TextStyle(fontSize: 18),
-              ),
-              const SizedBox(height: 10),
-              // 姓名
-              _buildTextField('姓名', _nameController, required: true),
-              const SizedBox(height: 10),
-              // 手机号
-              _buildTextField('手机号', _phoneNumberController, errorMessage: _phoneNumberErrorMessage),
-              const SizedBox(height: 10),
-              // 昵称
-              _buildTextField('昵称', _nicknameController),
-              const SizedBox(height: 10),
-              // 性别
-              _buildGenderSelection(),
-              const SizedBox(height: 10),
-              // 生日
-              _buildBirthdayPicker(),
-              const SizedBox(height: 10),
-              // 邮箱
-              _buildTextField('邮箱', _emailController),
-              const SizedBox(height: 20),
-              // 保存按钮
-              Center(child:
-                ElevatedButton(
-                  onPressed: () {
-                    // 在这里处理保存操作
-                    _saveChanges();
-                  },
-                  child: const Text('保存'),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-  }
-
- Widget _buildTextField(String label, TextEditingController controller, {bool required = false, String? errorMessage}) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      TextField(
-        controller: controller,
-        decoration: InputDecoration(
-          labelText: label + (required ? ' *' : ''),
-          labelStyle: TextStyle(color: required ? Colors.red : null),
-          border: const OutlineInputBorder(),
-        ),
-      ),
-      if (errorMessage != null) // Show error message if it exists
-        Text(
-          errorMessage,
-          style: const TextStyle(color: Colors.red),
-        ),
-    ],
-  );
-}
-
-  Widget _buildGenderSelection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          '性别',
-          style: TextStyle(fontSize: 16),
-        ),
-        const SizedBox(height: 5),
-        Row(
-          children: [
-            Radio<String>(
-              value: '男',
-              groupValue: _selectedGender,
-              onChanged: (value) {
-                setState(() {
-                  _selectedGender = value!;
-                });
-              },
-            ),
-            const Text('男'),
-            Radio<String>(
-              value: '女',
-              groupValue: _selectedGender,
-              onChanged: (value) {
-                setState(() {
-                  _selectedGender = value!;
-                });
-              },
-            ),
-            const Text('女'),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBirthdayPicker() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          '生日',
-          style: TextStyle(fontSize: 16),
-        ),
-        const SizedBox(height: 5),
-        GestureDetector(
-          onTap: () {
-            _selectDate(context);
-          },
-          child: AbsorbPointer(
-            child: TextFormField(
-              controller: _birthdayController,
-              decoration: const InputDecoration(
-                labelText: '选择日期',
-                border: OutlineInputBorder(),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
+    final picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
       locale: const Locale('zh', 'CN'),
-      builder: (BuildContext context, Widget? child) {
-        return Localizations.override(
-          context: context,
-          delegates: const [
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-          ],
-          child: child!,
+      builder: (context, child) {
+        return Theme(
+          data: ThemeData(
+            colorScheme: const ColorScheme.light(
+              primary: Colors.blue, // header background color
+              onPrimary: Colors.white, // header text color
+              onSurface: Colors.black, // body text color
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.blue, // button text color
+              ),
+            ),
+          ),
+          child: Localizations.override(
+            context: context,
+            delegates: const [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+            ],
+            child: child!,
+          ),
         );
       },
     );
-    if (picked != null && picked != DateTime.now()) {
+    if (picked != null) {
       setState(() {
         _birthdayController.text = picked.toString().split(' ')[0];
       });
@@ -296,6 +123,170 @@ class _UserInfoPageState extends State<UserInfoPage> {
     // 保存成功提示
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('保存成功')),
+    );
+  }
+
+  Widget _buildTextField(String label, TextEditingController controller, {bool readOnly = false, Widget? suffixIcon}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border(bottom: BorderSide(color: Colors.grey.shade300)),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              flex: 1,
+              child: Text(
+                label,
+                style: const TextStyle(color: Colors.black, fontSize: 16),
+              ),
+            ),
+            Expanded(
+              flex: 5,
+              child: TextField(
+                controller: controller,
+                readOnly: readOnly,
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  suffixIcon: suffixIcon,
+                ),
+                style: const TextStyle(color: Colors.black, fontSize: 16), // 添加字段值的样式
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGenderSelection() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border(bottom: BorderSide(color: Colors.grey.shade300)),
+        ),
+        child: Row(
+          children: [
+            const Expanded(
+              flex: 1,
+              child: Text('性别', style: TextStyle(fontSize: 16, color: Colors.black)),
+            ),
+            Expanded(
+              flex: 7,
+              child: Row(
+                children: [
+                  Radio<String>(
+                    value: '男',
+                    groupValue: _selectedGender,
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedGender = value!;
+                      });
+                    },
+                    activeColor: Colors.blue, // 修改选中颜色
+                  ),
+                  const Text('男'),
+                  const SizedBox(width: 10),
+                  Radio<String>(
+                    value: '女',
+                    groupValue: _selectedGender,
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedGender = value!;
+                      });
+                    },
+                    activeColor: Colors.blue, // 修改选中颜色
+                  ),
+                  const Text('女'),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBirthdayPicker() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border(bottom: BorderSide(color: Colors.grey.shade300)),
+        ),
+        child: Row(
+          children: [
+            const Expanded(
+              flex: 1,
+              child: Text('生日', style: TextStyle(fontSize: 16, color: Colors.black)),
+            ),
+            Expanded(
+              flex: 5,
+              child: GestureDetector(
+                onTap: () => _selectDate(context),
+                child: AbsorbPointer(
+                  child: TextField(
+                    controller: _birthdayController,
+                   decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      suffixIcon: Icon(Icons.calendar_today_outlined, color: Colors.blue, size: 24), // 修改为设计稿中的图标
+                    ),
+                    style: const TextStyle(color: Colors.black, fontSize: 16), // 添加字段值的样式
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('基本信息'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        child: Column(
+          children: [
+            _buildTextField('姓名', _nameController),
+            _buildTextField('手机', _phoneNumberController),
+            _buildTextField('昵称', _nicknameController),
+            _buildGenderSelection(),
+            _buildBirthdayPicker(),
+            _buildTextField('邮箱', _emailController),
+            const SizedBox(height: 20),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: _saveChanges,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue, // 背景颜色
+                foregroundColor: Colors.white, // 字体颜色
+                padding: const EdgeInsets.symmetric(vertical: 15), // 内边距
+                textStyle: const TextStyle(fontSize: 18), // 字体大小
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8), // 圆角
+                ),
+                elevation: 3, // 阴影
+              ),
+              child: const Text('保存'),
+            ),
+          ),
+          ],
+        ),
+      ),
     );
   }
 }
