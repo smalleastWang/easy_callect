@@ -41,8 +41,8 @@ aibox/AIBox
 
 ### api 
 
-摄像头列表：/biz/camera/page
-摄像头新增：biz/camera/add
+- 摄像头列表：/biz/camera/page
+- 摄像头新增：biz/camera/add
 
 ### model
 
