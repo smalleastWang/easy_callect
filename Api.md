@@ -1,5 +1,7 @@
 Model&API
 
+> 养殖规模，抵押信息，健康监测，邮箱设置没有找到接口
+
 ## 投保人管理
 
 ### api 
@@ -47,3 +49,23 @@ aibox/AIBox
 ### model
 
 camera/Camera
+
+## 投保信息管理
+
+### api 
+
+- 投保信息列表：/biz/insurancedetail/page
+
+### model
+
+insurancedetail/InsuranceDetail
+
+## 账单管理
+
+### api 
+
+- 账单管理列表：/biz/bill/page
+
+### model
+
+bill/Bill
