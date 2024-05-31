@@ -1,6 +1,6 @@
 Model&API
 
-> 养殖规模，抵押信息，健康监测，邮箱设置没有找到接口
+> 养殖规模，抵押信息，健康监测，邮箱设置，最新公告，系统信息，账户信息没有找到接口
 
 ## 投保人管理
 
@@ -69,3 +69,13 @@ insurancedetail/InsuranceDetail
 ### model
 
 bill/Bill
+
+## 套餐管理
+
+### api 
+
+- 账单管理列表：/biz/combo/page
+
+### model
+
+combo/Combo
