@@ -25,15 +25,12 @@ insurance/InsuranceApplicant.dart
 暂无
 
 
-## 邮箱管理
+## AI盒子管理
 
 ### api 
 
-- 获取列表页：biz/aibox/page
-- 新增盒子：biz/aibox/add
-- 获取牧场选择栏：biz/user/orgTreeSelector
-- 获取圈舍选择： biz/buildings/buildingsSelector
-- 圈舍牧场选择器：biz/buildings/orgTreeSelector
+- 获取列表页：biz/aibox/page【aiboxPage】
+- 新增盒子：biz/aibox/add【addAIBox】
 
 ### model
 
