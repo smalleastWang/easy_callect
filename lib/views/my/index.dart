@@ -14,12 +14,10 @@ class MyWidget extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<MyWidget> {
-  void _gotoBasicInfo() {
-    context.push(RouteEnum.userInfo.path);
+  void _navigateTo(String path) {
+    context.push(path);
   }
-  void _gotoDownload() {
-    context.push(RouteEnum.downLoad.path);
-  }
+
   void _logoutAndNavigateToLogin() async {
     await MyApi.logoutApi(); // Call logout API
     await SharedPreferencesManager().remove(StorageKeyEnum.token.value);
@@ -61,10 +59,10 @@ class _MyWidgetState extends State<MyWidget> {
       body: Column(
         children: [
           const _MyHeaderWidget(version: 'sss'),
-          const CellWidget(icon: Icons.shop, title: '套餐展示'),
+          CellWidget(icon: Icons.shop, title: '套餐展示', onTap: () => _navigateTo(RouteEnum.packageScreen.path)),
           const CellWidget(icon: Icons.shopping_bag, title: '已经订购套餐'),
-          CellWidget(icon: Icons.feed, title: '基本信息', onTap: _gotoBasicInfo),
-          CellWidget(icon: Icons.download, title: '资料下载', onTap: _gotoDownload),
+          CellWidget(icon: Icons.feed, title: '基本信息', onTap: () => _navigateTo(RouteEnum.userInfo.path)),
+          CellWidget(icon: Icons.download, title: '资料下载', onTap:() => _navigateTo(RouteEnum.downLoad.path)),
           const CellWidget(icon: Icons.help, title: '帮助手册'),
           const CellWidget(icon: Icons.call, title: '联系我们'),
           CellWidget(icon: Icons.logout, title: '退出登录', onTap: _showLogoutConfirmationDialog),

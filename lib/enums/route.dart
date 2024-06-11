@@ -5,6 +5,7 @@ enum RouteEnum {
   login('/login', '登录', '/login'),
   downLoad('/downLoad', '资料下载', '/downLoad'),
   userInfo('/userInfo', '用户基本信息', '/userInfo'),
+  packageScreen('/packageScreen', '套餐信息', '/packageScreen'),
 
   // 智慧保险
   insurance('/insurance', '智慧保险', '/insurance'),
