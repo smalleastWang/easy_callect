@@ -6,8 +6,8 @@ Model&API
 
 ### api 
 
-- 投保人列表查询： biz/insuranceapplicant/page
-- 投保人添加： biz/insuranceapplicant/add
+- 投保人列表查询： biz/insuranceapplicant/page【insuranceApplicantList】
+- 投保人添加： biz/insuranceapplicant/add【addInsuranceApplicant】
 
 ### model
 

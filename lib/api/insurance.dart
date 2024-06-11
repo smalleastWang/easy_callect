@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:easy_collect/models/PageVo.dart';
+import 'package:easy_collect/models/insurance/InsuranceApplicant.dart';
 import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/utils/http/request.dart';
 import 'package:image_picker/image_picker.dart';
@@ -75,4 +76,20 @@ Future<PageVoModel> orderList(OrderListRef ref, Map<String, dynamic> params) asy
     data.records.insertAll(0, ref.state.value!.records);
   }
   return data;
+}
+
+/// 投保人列表
+@riverpod
+Future<PageVoModel> insuranceApplicantList(InsuranceApplicantListRef ref, Map<String, dynamic> params) async {
+  Map<String, dynamic> res = await HttpUtils.get('/biz/insuranceapplicant/page', params: params);
+  PageVoModel data = PageVoModel.fromJson(res);
+  if (params['current'] != 1 && ref.state.hasValue) {
+    data.records.insertAll(0, ref.state.value!.records);
+  }
+  return data;
+}
+
+// 新增投保人
+Future<void> addInsuranceApplicant(InsuranceApplicant params) async {
+  await HttpUtils.post('/biz/insuranceapplicant/add', params: params.toJson());
 }
