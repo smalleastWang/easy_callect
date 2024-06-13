@@ -76,3 +76,14 @@ bill/Bill
 ### model
 
 combo/Combo
+
+## email管理
+
+### api 
+
+- 获取列表页：biz/email/page【emailPage】
+- 新增email：biz/email/add【addEmail】
+
+### model
+
+email/Email
