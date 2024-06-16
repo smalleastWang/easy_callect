@@ -1,6 +1,5 @@
 import 'package:easy_collect/enums/route.dart';
 import 'package:easy_collect/utils/colors.dart';
-import 'package:easy_collect/utils/icons.dart';
 import 'package:flutter/material.dart';
 
 class ModuleModel {
@@ -13,8 +12,8 @@ class ModuleModel {
 class ModuleItemModel {
   RouteEnum route;
   String? title;
-  IconData icon;
-  ModuleItemModel({required this.route, required this.icon, this.title});
+  String iconPath;
+  ModuleItemModel({required this.route, required this.iconPath, this.title});
 }
 
 final List<ModuleModel> moduleList = [
@@ -22,35 +21,37 @@ final List<ModuleModel> moduleList = [
     route: RouteEnum.insurance,
     bgColor: MyColors.insuranceColor,
     children: [
-      ModuleItemModel(route: RouteEnum.standardVerification, icon: MyIcons.helpManual),
-      ModuleItemModel(route: RouteEnum.insurance, icon: MyIcons.surveyCompared),
-      ModuleItemModel(route: RouteEnum.orderList, icon: MyIcons.surveyCompared),
-      ModuleItemModel(route: RouteEnum.countRegister, icon: MyIcons.surveyCompared)
+      ModuleItemModel(route: RouteEnum.standardVerification, iconPath: 'assets/icon/insurance/1.png'),
+      ModuleItemModel(route: RouteEnum.surveyCompared, iconPath: 'assets/icon/insurance/5.png'),
+      ModuleItemModel(route: RouteEnum.orderList, iconPath: 'assets/icon/insurance/6.png'),
+      ModuleItemModel(route: RouteEnum.countRegister, iconPath: 'assets/icon/insurance/8.png')
     ]
-
   ),
   ModuleModel(
     route: RouteEnum.finance,
     bgColor: MyColors.orangeColor,
     children: [
-      ModuleItemModel(route: RouteEnum.insurance, icon: MyIcons.helpManual),
-      ModuleItemModel(route: RouteEnum.cattleRegiter, icon: MyIcons.helpManual),
-      ModuleItemModel(route: RouteEnum.financeCount, icon: MyIcons.helpManual),
-      ModuleItemModel(route: RouteEnum.cattleDiscern, icon: MyIcons.helpManual),
-      ModuleItemModel(route: RouteEnum.financeVideo, icon: MyIcons.helpManual),
+      ModuleItemModel(route: RouteEnum.cattleRegiter, iconPath: 'assets/icon/finance/1.png'),
+      ModuleItemModel(route: RouteEnum.cattleDiscern, iconPath: 'assets/icon/finance/2.png'),
+      ModuleItemModel(route: RouteEnum.financeVideo, iconPath: 'assets/icon/finance/3.png'),
+      ModuleItemModel(route: RouteEnum.financeCount, iconPath: 'assets/icon/finance/4.png'),
     ]
   ),
   ModuleModel(
     route: RouteEnum.precisionBreeding,
     bgColor: MyColors.greenColor,
     children: [
-      ModuleItemModel(route: RouteEnum.inventory, icon: MyIcons.helpManual),
-      ModuleItemModel(route: RouteEnum.performance, icon: MyIcons.helpManual),
-      ModuleItemModel(route: RouteEnum.weight, icon: MyIcons.helpManual),
-      ModuleItemModel(route: RouteEnum.behavior, icon: MyIcons.helpManual),
-      ModuleItemModel(route: RouteEnum.health, icon: MyIcons.helpManual),
-      ModuleItemModel(route: RouteEnum.intelligencewarn, icon: MyIcons.helpManual),
-      ModuleItemModel(route: RouteEnum.position, icon: MyIcons.helpManual),
+      ModuleItemModel(route: RouteEnum.inventory, iconPath: 'assets/icon/precisionBreeding/1.png'),
+      ModuleItemModel(route: RouteEnum.weight, iconPath: 'assets/icon/precisionBreeding/2.png'),
+      ModuleItemModel(route: RouteEnum.behavior, iconPath: 'assets/icon/precisionBreeding/3.png'),
+      ModuleItemModel(route: RouteEnum.performance, iconPath: 'assets/icon/precisionBreeding/4.png'),
+      ModuleItemModel(route: RouteEnum.position, iconPath: 'assets/icon/precisionBreeding/5.png'),
+      ModuleItemModel(route: RouteEnum.security, iconPath: 'assets/icon/precisionBreeding/6.png'),
+      ModuleItemModel(route: RouteEnum.milksidentify, iconPath: 'assets/icon/precisionBreeding/7.png'),
+      ModuleItemModel(route: RouteEnum.countRegister, iconPath: 'assets/icon/precisionBreeding/8.png'),
+
+      // ModuleItemModel(route: RouteEnum.health, iconPath: 'assets/icon/precisionBreeding/1.png'),
+      // ModuleItemModel(route: RouteEnum.intelligencewarn, iconPath: 'assets/icon/precisionBreeding/1.png'),
     ]
 
   ),
@@ -58,10 +59,10 @@ final List<ModuleModel> moduleList = [
     route: RouteEnum.supervision,
     bgColor: MyColors.pinkColor,
     children: [
-      ModuleItemModel(route: RouteEnum.breedingScale, icon: MyIcons.helpManual),
-      ModuleItemModel(route: RouteEnum.mortgageInfo, icon: MyIcons.helpManual),
-      ModuleItemModel(route: RouteEnum.insureInfo, icon: MyIcons.helpManual),
-      ModuleItemModel(route: RouteEnum.healthCheck, icon: MyIcons.helpManual),
+      ModuleItemModel(route: RouteEnum.mortgageInfo, iconPath: 'assets/icon/supervision/1.png'),
+      ModuleItemModel(route: RouteEnum.insureInfo, iconPath: 'assets/icon/supervision/2.png'),
+      ModuleItemModel(route: RouteEnum.breedingScale, iconPath: 'assets/icon/supervision/3.png'),
+      ModuleItemModel(route: RouteEnum.healthCheck, iconPath: 'assets/icon/supervision/4.png'),
     ]
 
   ),

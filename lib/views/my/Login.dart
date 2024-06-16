@@ -43,92 +43,127 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        // title: Text(AppLocalizations.of(context).login),
-      ),
-      body: Container(
-        padding: const EdgeInsets.fromLTRB(30, 20, 30, 20),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                padding: const EdgeInsets.only(top: 60, bottom: 80),
-                alignment: Alignment.center,
-                child: const Image(
-                  width: 200,
-                  image: AssetImage("assets/images/logo01.png")
+      // appBar: AppBar(
+      //   automaticallyImplyLeading: false,
+      //   // title: Text(AppLocalizations.of(context).login),
+      // ),
+      body: Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            const Image(
+              image: AssetImage("assets/images/login_bg.png")
+            ),
+            Transform.translate(
+              offset: const Offset(0.0, -40.0),
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.elliptical(36, 40),
+                    topRight: Radius.elliptical(36, 40),
+                  )
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 24),
-                child: TextFormField(
-                  autofocus: true,
-                  controller: _unameController,
-                  decoration: const InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 6),
-                    border: OutlineInputBorder(),
-                    hintText: '请输入您的账号',
-                    prefixIcon: Icon(Icons.person)
-                  ),
-                  validator: (v) {
-                    return v!.trim().isNotEmpty ? null : "账号不能为空";
-                  },
-                )
-              ),
-              TextFormField(
-                controller: _pwdController,
-                decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(vertical: 2, horizontal: 6),
-                  border: const OutlineInputBorder(),
-                  hintText: '请输入您的密码',
-                  prefixIcon: const Icon(Icons.lock),
-                  suffixIcon: IconButton(
-                  icon: Icon(pwdVisible ? Icons.visibility : Icons.visibility_off),
-                  onPressed: () { 
-                    setState(() {
-                      pwdVisible = !pwdVisible;
-                    });
-                   },
-                ),
-                ),
-                obscureText: !pwdVisible,
-                //校验密码
-                validator: (v) {
-                  return v!.trim().length > 5 ? null : "密码不能少于6位";
-                },
-              ),
-              // 登录按钮
-              Padding(
-                padding: const EdgeInsets.only(top: 28.0),
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: ElevatedButton(
-                        child: const Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Text('登录', style: TextStyle(fontSize: 18)),
+                padding: const EdgeInsets.only(top: 30, left: 20, right: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('账号', style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.bold)),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 24),
+                      child: TextFormField(
+                        autofocus: true,
+                        controller: _unameController,
+                        decoration: const InputDecoration(
+                          contentPadding: EdgeInsets.symmetric(horizontal: 6),
+                          // border: OutlineInputBorder(),
+                          hintText: '请输入您的账号',
                         ),
-                        onPressed: () async {
-                          // 通过_formKey.currentState 获取FormState后，
-                          // 调用validate()方法校验用户名密码是否合法，校验
-                          // 通过后再提交数据。
-                          if ((_formKey.currentState as FormState).validate()) {
-                            handlesSubmit();
-                          }
+                        validator: (v) {
+                          return v!.trim().isNotEmpty ? null : "账号不能为空";
                         },
-                      ),
+                      )
                     ),
+                  const Text('密码', style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.bold)),
+                    TextFormField(
+                      controller: _pwdController,
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 6),
+                        // border: const OutlineInputBorder(),
+                        hintText: '请输入您的密码',
+                        suffixIcon: IconButton(
+                          icon: Icon(pwdVisible ? Icons.visibility : Icons.visibility_off),
+                          onPressed: () { 
+                            setState(() {
+                              pwdVisible = !pwdVisible;
+                            });
+                          },
+                        ),
+                      ),
+                      obscureText: !pwdVisible,
+                      //校验密码
+                      validator: (v) {
+                        return v!.trim().length > 5 ? null : "密码不能少于6位";
+                      },
+                    ),
+                    // 登录按钮
+                    Padding(
+                      padding: const EdgeInsets.only(top: 70),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Theme.of(context).primaryColor,
+                                foregroundColor: Theme.of(context).primaryColor.withOpacity(0.3)
+                              ),
+                              child: const Padding(
+                                padding: EdgeInsets.all(10),
+                                child: Text('登录', style: TextStyle(fontSize: 18, color: Colors.white)),
+                              ),
+                              onPressed: () async {
+                                // 通过_formKey.currentState 获取FormState后，
+                                // 调用validate()方法校验用户名密码是否合法，校验
+                                // 通过后再提交数据。
+                                if ((_formKey.currentState as FormState).validate()) {
+                                  handlesSubmit();
+                                }
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
                   ],
                 ),
-              )
-            ],
-          ),
+              ),
+            )
+            
+            
+          ],
         ),
+        
+              
+              
+              
+            
+          
       ),
       resizeToAvoidBottomInset: false,
     );
+  }
+}
+
+class LoginFormWidget extends StatefulWidget {
+  const LoginFormWidget({super.key});
+
+  @override
+  State<LoginFormWidget> createState() => _LoginFormWidgetState();
+}
+
+class _LoginFormWidgetState extends State<LoginFormWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
   }
 }

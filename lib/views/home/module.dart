@@ -32,9 +32,9 @@ class ModuleWidget extends StatelessWidget {
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    mainAxisSpacing: 15,
-                    crossAxisSpacing: 5,
-                    crossAxisCount: 5,
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 25,
+                    crossAxisCount: 4,
                     childAspectRatio: 1.0
                   ),
                   children: module.children.map((e) {
@@ -43,14 +43,24 @@ class ModuleWidget extends StatelessWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+                          // Container(
+                          //   padding: const EdgeInsets.all(8),
+                          //   decoration: BoxDecoration(
+                          //     color: module.bgColor.withOpacity(0.3),
+                          //     borderRadius: BorderRadius.circular(4),
+                          //   ),
+                          //   child: Icon(e.icon, size: 18, color: module.bgColor),
+                          // ),
+                          // Padding(
+                          //   padding: const EdgeInsets.all(8),
+                          //   child: Image.asset(e.iconPath, width: 50),
+                          // ),
                           Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: module.bgColor.withOpacity(0.3),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Icon(e.icon, size: 18, color: module.bgColor),
+                            width: 40,
+                            height: 40,
+                            child: Image.asset(e.iconPath, fit: BoxFit.contain),
                           ),
+                          
                           const SizedBox(height: 10),
                           Text(e.title ?? e.route.title, style: const TextStyle(fontSize: 12))
                         ],

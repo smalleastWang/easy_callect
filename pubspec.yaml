@@ -96,6 +96,11 @@ flutter:
   assets:
     - assets/images/
     - assets/pdf/
+    - assets/icon/finance/
+    - assets/icon/insurance/
+    - assets/icon/precisionBreeding/
+    - assets/icon/supervision/
+    - assets/icon/setting/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

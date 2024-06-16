@@ -52,22 +52,50 @@ class _MyWidgetState extends State<MyWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('用户中心'),
-      ),
-      body: Column(
-        children: [
-          const _MyHeaderWidget(version: 'sss'),
-          CellWidget(icon: Icons.shop, title: '套餐展示', onTap: () => _navigateTo(RouteEnum.packageScreen.path)),
-          const CellWidget(icon: Icons.shopping_bag, title: '已经订购套餐'),
-          CellWidget(icon: Icons.feed, title: '基本信息', onTap: () => _navigateTo(RouteEnum.userInfo.path)),
-          CellWidget(icon: Icons.download, title: '资料下载', onTap:() => _navigateTo(RouteEnum.downLoad.path)),
-          const CellWidget(icon: Icons.help, title: '帮助手册'),
-          const CellWidget(icon: Icons.call, title: '联系我们'),
-          CellWidget(icon: Icons.logout, title: '退出登录', onTap: _showLogoutConfirmationDialog),
-        ],
-      ),
+      // appBar: AppBar(
+      //   title: const Text('用户中心'),
+      // ),
+      body: SingleChildScrollView(
+        child: Container(
+          // height: screenHeight,
+          constraints: BoxConstraints(
+            maxHeight: screenHeight - 90
+          ),
+          decoration: const BoxDecoration(
+            color: Color(0xffF1F5F9)
+          ),
+          child: Column(
+            children: [
+              const Image(
+                image: AssetImage("assets/images/logo02.png"),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Transform.translate(
+                  offset: const Offset(0.0, -20.0),
+                  child: Column(
+                      children: [
+                        CellWidget(icon: Icons.shop, title: '套餐展示', onTap: () => _navigateTo(RouteEnum.packageScreen.path)),
+                        const CellWidget(icon: Icons.shopping_bag, title: '已经订购套餐'),
+                        CellWidget(icon: Icons.feed, title: '基本信息', onTap: () => _navigateTo(RouteEnum.userInfo.path)),
+                        CellWidget(icon: Icons.download, title: '资料下载', onTap:() => _navigateTo(RouteEnum.downLoad.path)),
+                        const CellWidget(icon: Icons.help, title: '帮助手册'),
+                        const CellWidget(icon: Icons.call, title: '联系我们'),
+                        CellWidget(icon: Icons.logout, title: '退出登录', onTap: _showLogoutConfirmationDialog),
+                      ],
+                    )
+                  )
+              )
+              
+            ],
+          )
+        )
+        
+        
+      )
+      
     );
   }
 }
@@ -88,7 +116,7 @@ class _MyHeaderWidget extends StatelessWidget {
             padding: EdgeInsets.only(top: 28, bottom: 10),
             child: Image(
               width: 100,
-              image: AssetImage("assets/images/logo01.png"),
+              image: AssetImage("assets/images/logo02.png"),
             ),
           ),
           Text(version),

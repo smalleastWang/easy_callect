@@ -12,6 +12,13 @@ class CellWidget extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
+        height: 60,
+        margin: const EdgeInsets.only(bottom: 8),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(9),
+        ),
         padding: const EdgeInsets.all(12),
         child: Row(
           children: [

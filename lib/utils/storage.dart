@@ -50,6 +50,6 @@ class SharedPreferencesManager {
 
   // 删除token
   Future<void> remove(String prefsKey) async {
-    await _prefs.remove('prefsKey');
+    await _prefs.remove(prefsKey);
   }
 }

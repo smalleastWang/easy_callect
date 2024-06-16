@@ -26,7 +26,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       title: '易采天成',
       theme:  ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: MyColors.primaryColor),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: MyColors.primaryColor,
+          primary: MyColors.primaryColor,
+        ),
         useMaterial3: true,
       ),
       routerConfig: router,
