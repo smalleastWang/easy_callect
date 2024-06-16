@@ -23,29 +23,77 @@ class _MyWidgetState extends State<MyWidget> {
     await SharedPreferencesManager().remove(StorageKeyEnum.token.value);
     context.replace(RouteEnum.login.path);
   }
-  
+
   void _showLogoutConfirmationDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('提示'),
-          content: const Text('确认退出当前用户？'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('取消'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          backgroundColor: Colors.white, // Ensure AlertDialog background is white
+          contentPadding: const EdgeInsets.all(0),
+          content: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+            ), // Ensure container background is white with rounded corners
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 42),
+                  child: const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('提示', textAlign: TextAlign.left, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
+                      SizedBox(height: 20),
+                      Text('确认退出当前用户？', textAlign: TextAlign.left, style: TextStyle(fontSize: 16, color: Colors.black)),
+                    ],
+                  ),
+                ),
+                const Divider(height: 0.5, color: Color(0xFFE9E8E8)),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          border: Border(
+                            right: BorderSide(color: Color(0xFFE9E8E8), width: 0.5),
+                          ),
+                        ),
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            textStyle: const TextStyle(fontSize: 16),
+                          ),
+                          child: const Text('取消', style: TextStyle(color: Color(0xFF666666))),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          _logoutAndNavigateToLogin();
+                        },
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          textStyle: const TextStyle(fontSize: 16),
+                        ),
+                        child: const Text('确定', style: TextStyle(color: Colors.blue)),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                _logoutAndNavigateToLogin();
-              },
-              child: const Text('确定'),
-            ),
-          ],
+          ),
         );
       },
     );
