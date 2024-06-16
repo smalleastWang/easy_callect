@@ -11,7 +11,7 @@ class Combo {
 
   /// 套餐名称
   @JsonKey(name: 'costName')
-  final String? costName;
+  final String costName;
 
   /// 套餐类型
   @JsonKey(name: 'comboType')
@@ -80,7 +80,7 @@ class Combo {
   /// 构造函数
   Combo({
     this.id,
-    this.costName,
+    required this.costName,
     this.comboType,
     this.costType,
     this.chargeType,

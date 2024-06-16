@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:easy_collect/models/bill/Combo.dart';
+import 'package:easy_collect/api/combo.dart';
 
 class PackageScreenPage extends StatefulWidget {
   const PackageScreenPage({super.key});
@@ -10,38 +12,44 @@ class PackageScreenPage extends StatefulWidget {
 
 class _PackageScreenState extends State<PackageScreenPage> {
   final PageController _pageController = PageController();
+  late Future<List<Combo>> futureComboList;
   Gradient _appBarGradient = const LinearGradient(
     begin: Alignment.centerLeft,
     end: Alignment.centerRight,
     colors: [Color(0xFF5082F6), Color(0xFF84B0FE)], // 渐变色开始和结束颜色
   );
 
+  @override
+  void initState() {
+    super.initState();
+    futureComboList = comboList(); // 调用 comboList 函数获取数据
+  }
+
   void _onPageChanged(int index) {
-    print(index);
     switch (index) {
       case 0:
-        _appBarGradient = LinearGradient(
+        _appBarGradient = const LinearGradient(
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
           colors: [Color(0xFF5082F6), Color(0xFF84B0FE)],
         );
         break;
       case 1:
-        _appBarGradient = LinearGradient(
+        _appBarGradient = const LinearGradient(
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
           colors: [Color(0xFFEABB7E), Color(0xFFF9D9A7)],
         );
         break;
       case 2:
-        _appBarGradient = LinearGradient(
+        _appBarGradient = const LinearGradient(
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
           colors: [Color(0xFFF2554C), Color(0xFFFFA496)],
         );
         break;
       case 3:
-        _appBarGradient = LinearGradient(
+        _appBarGradient = const LinearGradient(
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
           colors: [Color(0xFF8093CA), Color(0xFFB2BFE1)],
@@ -69,88 +77,59 @@ class _PackageScreenState extends State<PackageScreenPage> {
           },
         ),
       ),
-      body: Stack(
-        children: [
-          PageView(
-            controller: _pageController,
-            onPageChanged: _onPageChanged,
-            physics: const BouncingScrollPhysics(),
-            children: [
-              _buildPackagePage(
-                '基础套餐',
-                '8.0元',
-                'assets/images/套餐-基础套餐.png',
-                _appBarGradient,
-                const Color(0xFF34466F),
-                '10.0元',
-                '3.0元',
-                '15.4元',
-                '按功能收费',
-                '永久授权',
-                '按年',
-                '启用',
-                '365天',
-              ),
-              _buildPackagePage(
-                '安享套餐',
-                '10.0元',
-                'assets/images/套餐-安享套餐.png',
-                _appBarGradient,
-                const Color(0xFFB67C1F),
-                '10.0元',
-                '5.0元',
-                '20.5元',
-                '按功能收费',
-                '永久授权',
-                '按年',
-                '启用',
-                '365天',
-              ),
-              _buildPackagePage(
-                '计数盘点套餐',
-                '10.0元',
-                'assets/images/套餐-计数盘点套餐.png',
-                _appBarGradient,
-                const Color(0xFFF45C53),
-                '10.0元',
-                '5.0元',
-                '20.5元',
-                '按功能收费',
-                '永久授权',
-                '按年',
-                '启用',
-                '365天',
-              ),
-              _buildPackagePage(
-                '赠送套餐',
-                '10.0元',
-                'assets/images/套餐-赠送套餐.png',
-                _appBarGradient,
-                const Color(0xFF34466F),
-                '10.0元',
-                '5.0元',
-                '20.5元',
-                '按功能收费',
-                '永久授权',
-                '按年',
-                '启用',
-                '365天',
-              ),
-            ],
-          ),
-          Positioned(
-            bottom: 16.0,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: SmoothPageIndicator(
-                controller: _pageController,
-                count: 4,
-                effect: const WormEffect(), // Customize the effect
-              ),
-            ),
-          ),
-        ],
+      body: FutureBuilder<List<Combo>>(
+        future: futureComboList,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('没有套餐'));
+          } else {
+            final comboList = snapshot.data!;
+            return Stack(
+              children: [
+                PageView.builder(
+                  controller: _pageController,
+                  onPageChanged: _onPageChanged,
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: comboList.length,
+                  itemBuilder: (context, index) {
+                    final combo = comboList[index];
+                    return _buildPackagePage(
+                      combo.costName,
+                      '10.0元', // 替换为实际折扣价格字段
+                      'assets/images/套餐-基础套餐.png', // 替换为实际图像路径字段
+                      _appBarGradient,
+                      const Color(0xFF34466F), // 替换为实际颜色字段
+                      '10.0元', // 替换为实际套餐牛只/次数字段
+                      '3.0元', // 替换为实际单价字段
+                      '15.4元', // 替换为实际套餐总费用字段
+                      '按功能收费', // 替换为实际套餐类型字段
+                      '永久授权', // 替换为实际授权方式字段
+                      '按年', // 替换为实际收费类型字段
+                      '启用', // 替换为实际是否启用字段
+                      '365天', // 替换为实际启用天数字段
+                    );
+                  },
+                ),
+                Positioned(
+                  bottom: 16.0,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: SmoothPageIndicator(
+                      controller: _pageController,
+                      count: comboList.length,
+                      effect: const WormEffect(), // Customize the effect
+                    ),
+                  ),
+                ),
+              ],
+            );
+          }
+        },
       ),
     );
   }
@@ -174,7 +153,7 @@ class _PackageScreenState extends State<PackageScreenPage> {
       children: [
         Container(
           height: 120.0, // Adjust height for the top section background
-          decoration: BoxDecoration(gradient: _appBarGradient),
+          decoration: BoxDecoration(gradient: backgroundColor),
         ),
         Expanded(
           child: Stack(
@@ -246,6 +225,7 @@ class PackageHeader extends StatelessWidget {
   final Color backgroundColor;
 
   const PackageHeader({
+    super.key,
     required this.title,
     required this.discountedPrice,
     required this.imagePath,
@@ -314,7 +294,8 @@ class PackageDetails extends StatelessWidget {
   final String isEnabled;
   final String enabledDays;
 
-  const PackageDetails({super.key, 
+  const PackageDetails({
+    super.key,
     required this.backgroundColor,
     required this.cattleCount,
     required this.unitPrice,
@@ -330,59 +311,54 @@ class PackageDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(16.0),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 6.0,
-              offset: Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            const SizedBox(width: 8.0),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      // Container for the vertical line
-                      height: 18,
-                      width: 6.0,
-                      color:
-                          backgroundColor, // Choose the color you want for the line
-                      margin: const EdgeInsets.only(
-                          right:
-                              8.0), // Add margin to separate the line from text
+      padding: const EdgeInsets.all(16.0),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 6.0,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          const SizedBox(width: 8.0),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    // Container for the vertical line
+                    height: 18,
+                    width: 6.0,
+                    color: backgroundColor, // Choose the color you want for the line
+                    margin: const EdgeInsets.only(
+                        right: 8.0), // Add margin to separate the line from text
+                  ),
+                  const Text(
+                    '套餐权益',
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold,
                     ),
-                    const Text(
-                      '套餐权益',
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8.0),
-                PackageDetailRow(label: '套餐牛只/次数', value: cattleCount),
-                PackageDetailRow(label: '单价', value: unitPrice),
-                PackageDetailRow(label: '套餐总费用', value: totalCost),
-                PackageDetailRow(label: '套餐类型', value: packageType),
-                PackageDetailRow(label: '授权方式', value: authorizationType),
-                PackageDetailRow(label: '收费类型', value: billingType),
-                PackageDetailRow(label: '是否启用', value: isEnabled),
-                PackageDetailRow(label: '启用天数', value: enabledDays),
-              ],
-            ),
-          ],
-        ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8.0),
+              PackageDetailRow(label: '套餐牛只/次数', value: cattleCount),
+              PackageDetailRow(label: '单价', value: unitPrice),
+              PackageDetailRow(label: '套餐总费用', value: totalCost),
+              PackageDetailRow(label: '套餐类型', value: packageType),
+              PackageDetailRow(label: '授权方式', value: authorizationType),
+              PackageDetailRow(label: '收费类型', value: billingType),
+              PackageDetailRow(label: '是否启用', value: isEnabled),
+              PackageDetailRow(label: '启用天数', value: enabledDays),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -392,7 +368,11 @@ class PackageDetailRow extends StatelessWidget {
   final String label;
   final String value;
 
-  const PackageDetailRow({super.key, required this.label, required this.value});
+  const PackageDetailRow({
+    super.key,
+    required this.label,
+    required this.value,
+  });
 
   @override
   Widget build(BuildContext context) {
