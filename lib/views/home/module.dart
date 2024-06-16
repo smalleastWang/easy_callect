@@ -11,67 +11,73 @@ class ModuleWidget extends StatelessWidget {
       appBar: AppBar(
         title: const Text('功能模块'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(15),
-        child: ListView.separated(
-          // shrinkWrap: true,
-          itemCount:  moduleList.length,
+      body: Container(
+        color: const Color(0xffF1F5F9), // 设置页面背景色
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6), // 设置整个页面距离两边12px, 上下6px
+        child: ListView.builder(
+          itemCount: moduleList.length,
           itemBuilder: (context, index) {
             final module = moduleList[index];
             return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (index != 0) const SizedBox(height: 6), // 大模块之间的间距为6px
                 Container(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    module.title ?? module.route?.title ?? '',
-                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600)
+                  decoration: BoxDecoration(
+                    color: Colors.white, // 设置大模块背景色为白色
+                    borderRadius: BorderRadius.circular(9), // 设置大模块圆角为9px
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12), // 设置大模块左右padding为10，上下padding为12
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          module.title ?? module.route?.title ?? '',
+                          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600), // 设置大模块标题字体大小为15px
+                        ),
+                      ),
+                      GridView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          mainAxisSpacing: 10,
+                          crossAxisSpacing: 25,
+                          crossAxisCount: 4,
+                          childAspectRatio: 1.0,
+                        ),
+                        itemCount: module.children.length,
+                        itemBuilder: (context, childIndex) {
+                          final e = module.children[childIndex];
+                          return InkWell(
+                            onTap: () => context.push(e.route.fullpath),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Flexible(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8), // 增加内边距
+                                    child: Image.asset(e.iconPath, fit: BoxFit.contain),
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  e.title ?? e.route.title, 
+                                  style: const TextStyle(fontSize: 13, color: Color(0xFF444444)), // 设置小模块标题字体大小为13px，颜色为#444444
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ),
-                GridView(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    mainAxisSpacing: 10,
-                    crossAxisSpacing: 25,
-                    crossAxisCount: 4,
-                    childAspectRatio: 1.0
-                  ),
-                  children: module.children.map((e) {
-                    return InkWell(
-                      onTap: () => context.push(e.route.fullpath),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // Container(
-                          //   padding: const EdgeInsets.all(8),
-                          //   decoration: BoxDecoration(
-                          //     color: module.bgColor.withOpacity(0.3),
-                          //     borderRadius: BorderRadius.circular(4),
-                          //   ),
-                          //   child: Icon(e.icon, size: 18, color: module.bgColor),
-                          // ),
-                          // Padding(
-                          //   padding: const EdgeInsets.all(8),
-                          //   child: Image.asset(e.iconPath, width: 50),
-                          // ),
-                          Container(
-                            width: 40,
-                            height: 40,
-                            child: Image.asset(e.iconPath, fit: BoxFit.contain),
-                          ),
-                          
-                          const SizedBox(height: 10),
-                          Text(e.title ?? e.route.title, style: const TextStyle(fontSize: 12))
-                        ],
-                      ),
-                    );
-                  }).toList()
-                )
               ],
-            ); 
+            );
           },
-          separatorBuilder: (context, index) => const Divider(color: Color(0xFFE5E5E5), height: 30),
         ),
       ),
     );
