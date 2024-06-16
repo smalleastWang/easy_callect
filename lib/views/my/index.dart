@@ -23,6 +23,7 @@ class _MyWidgetState extends State<MyWidget> {
     await SharedPreferencesManager().remove(StorageKeyEnum.token.value);
     context.replace(RouteEnum.login.path);
   }
+  
   void _showLogoutConfirmationDialog() {
     showDialog(
       context: context,
@@ -54,17 +55,13 @@ class _MyWidgetState extends State<MyWidget> {
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
-      // appBar: AppBar(
-      //   title: const Text('用户中心'),
-      // ),
       body: SingleChildScrollView(
         child: Container(
-          // height: screenHeight,
           constraints: BoxConstraints(
-            maxHeight: screenHeight - 90
+            maxHeight: screenHeight - 90,
           ),
           decoration: const BoxDecoration(
-            color: Color(0xffF1F5F9)
+            color: Color(0xffF1F5F9),
           ),
           child: Column(
             children: [
@@ -76,30 +73,50 @@ class _MyWidgetState extends State<MyWidget> {
                 child: Transform.translate(
                   offset: const Offset(0.0, -20.0),
                   child: Column(
-                      children: [
-                        CellWidget(icon: Icons.shop, title: '套餐展示', onTap: () => _navigateTo(RouteEnum.packageScreen.path)),
-                        const CellWidget(icon: Icons.shopping_bag, title: '已经订购套餐'),
-                        CellWidget(icon: Icons.feed, title: '基本信息', onTap: () => _navigateTo(RouteEnum.userInfo.path)),
-                        CellWidget(icon: Icons.download, title: '资料下载', onTap:() => _navigateTo(RouteEnum.downLoad.path)),
-                        const CellWidget(icon: Icons.help, title: '帮助手册'),
-                        const CellWidget(icon: Icons.call, title: '联系我们'),
-                        CellWidget(icon: Icons.logout, title: '退出登录', onTap: _showLogoutConfirmationDialog),
-                      ],
-                    )
-                  )
-              )
-              
+                    children: [
+                      CellWidget(
+                        assetIcon: "assets/icon/my/shop.png",
+                        title: '套餐展示',
+                        onTap: () => _navigateTo(RouteEnum.packageScreen.path),
+                      ),
+                      const CellWidget(
+                        assetIcon: "assets/icon/my/shopping_bag.png",
+                        title: '已经订购套餐',
+                      ),
+                      CellWidget(
+                        assetIcon: "assets/icon/my/feed.png",
+                        title: '基本信息',
+                        onTap: () => _navigateTo(RouteEnum.userInfo.path),
+                      ),
+                      CellWidget(
+                        assetIcon: "assets/icon/my/download.png",
+                        title: '资料下载',
+                        onTap: () => _navigateTo(RouteEnum.downLoad.path),
+                      ),
+                      const CellWidget(
+                        assetIcon: "assets/icon/my/help.png",
+                        title: '帮助手册',
+                      ),
+                      const CellWidget(
+                        assetIcon: "assets/icon/my/call.png",
+                        title: '联系我们',
+                      ),
+                      CellWidget(
+                        assetIcon: "assets/icon/my/logout.png",
+                        title: '退出登录',
+                        onTap: _showLogoutConfirmationDialog,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
-          )
-        )
-        
-        
-      )
-      
+          ),
+        ),
+      ),
     );
   }
 }
-
 
 class _MyHeaderWidget extends StatelessWidget {
   final String version;

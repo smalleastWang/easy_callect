@@ -1,11 +1,18 @@
-
 import 'package:flutter/material.dart';
 
 class CellWidget extends StatelessWidget {
   final String title;
   final IconData? icon;
+  final String? assetIcon;
   final GestureTapCallback? onTap;
-  const CellWidget({super.key, required this.title, this.icon, this.onTap});
+
+  const CellWidget({
+    super.key, 
+    required this.title, 
+    this.icon, 
+    this.assetIcon, 
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,14 +29,14 @@ class CellWidget extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         child: Row(
           children: [
-            icon != null ? Icon(icon) : const SizedBox.shrink(),
+            if (icon != null) Icon(icon) else if (assetIcon != null) Image.asset(assetIcon!, width: 32, height: 32),
             Text(' $title', style: const TextStyle(fontSize: 16)),
             const Expanded(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [Icon(Icons.chevron_right)],
-              )
-            )
+              ),
+            ),
           ],
         ),
       ),
