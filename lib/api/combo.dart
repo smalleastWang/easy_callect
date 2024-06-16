@@ -19,7 +19,7 @@ Future<PageVoModel> comboPage(ComboPageRef ref, [Map<String, dynamic>? params]) 
 
 // combo列表
 Future<List<Combo>> comboList() async {
-  final res = await HttpUtils.get('/biz/combo/page', {page: 100});
+  final res = await HttpUtils.get('/biz/combo/page');
   final List<dynamic> comboJsonList = res['records'];
   final List<Combo> comboList = comboJsonList.map((json) => Combo.fromJson(json)).toList();
   return comboList;
