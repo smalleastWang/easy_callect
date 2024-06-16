@@ -1,6 +1,7 @@
 import 'package:easy_collect/views/home/module.dart';
 import 'package:easy_collect/views/message/index.dart';
 import 'package:easy_collect/views/my/index.dart';
+import 'package:easy_collect/utils/icons.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -23,15 +24,18 @@ class _HomePageState extends State<HomePage> {
     return [
       const BottomNavigationBarItem(
         label: '消息通知',
-        icon: Icon(Icons.chat),
+        icon: Icon(MyIcons.message),
+        activeIcon: Icon(MyIcons.messageActive),
       ),
       const BottomNavigationBarItem(
         label: '功能模块',
-        icon: Icon(Icons.view_module),
+        icon: Icon(MyIcons.module),
+        activeIcon: Icon(MyIcons.moduleActive)
       ),
       const BottomNavigationBarItem(
         label: '用户中心',
-        icon: Icon(Icons.person),
+        icon: Icon(MyIcons.person),
+        activeIcon: Icon(MyIcons.personActive)
       ),
     ];
   }
