@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:easy_collect/models/bill/Combo.dart';
+import 'package:easy_collect/models/combo/Combo.dart';
 import 'package:easy_collect/api/combo.dart';
 
 class PackageScreenPage extends StatefulWidget {
