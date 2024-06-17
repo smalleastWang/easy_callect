@@ -125,11 +125,12 @@ class _MyWidgetState extends State<MyWidget> {
                       CellWidget(
                         assetIcon: "assets/icon/my/shop.png",
                         title: '套餐展示',
-                        onTap: () => _navigateTo(RouteEnum.packageScreen.path),
+                        onTap: () => _navigateTo(RouteEnum.comboList.path),
                       ),
-                      const CellWidget(
+                      CellWidget(
                         assetIcon: "assets/icon/my/shopping_bag.png",
                         title: '已经订购套餐',
+                        onTap: () => _navigateTo(RouteEnum.packageScreen.path),
                       ),
                       CellWidget(
                         assetIcon: "assets/icon/my/feed.png",
