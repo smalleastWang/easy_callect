@@ -74,21 +74,33 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
   }
 
   // 获取table数据
-  AsyncValue<PageVoModel>? _getList([int? current]) {
-    // 数据加载完了
-    if (params['current'] >= params['pages'] && params['current'] > 1) {
-      _refreshController.loadNoData();
-      return null;
+  AsyncValue<PageVoModel>? _getList([int? current, bool? isRefresh]) {
+    // 判断是否需要刷新
+    if (isRefresh == true) {
+      params['current'] = 1; // 重置为第一页
+    } else {
+      // 数据加载完了
+      if (params['current'] >= params['pages']) {
+        _refreshController.loadNoData();
+        return null;
+      }
+      // 加入分页参数
+      params['current'] = current ?? params['current'] + 1;
     }
+
     // 加入筛选参数
     if (widget.pasture != null && _enclosureController.value != null) {
       final pastureVal = _enclosureController.value![_enclosureController.value!.length - 1];
       params.addAll({widget.pasture!.field: pastureVal});
     }
-    // 加入分页参数
-    params['current'] = current ?? params['current'] + 1;
+
+    // 请求数据
     final AsyncValue<PageVoModel> res = ref.refresh(widget.provider(params));
-    if (res.hasError) throw Exception(res.error);
+    if (res.hasError) {
+      print('Error: ${res.error}');
+      throw Exception(res.error);
+    }
+
     return res;
   }
 
@@ -98,7 +110,7 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
   }
   void _onRefresh() async {
     action = Action.refresh;
-    _getList(1);
+    _getList(1, true);
   }
   void _onLoading() async {
     action = Action.loading;
