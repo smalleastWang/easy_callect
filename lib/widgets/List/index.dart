@@ -180,7 +180,7 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
     _handleAction(data);
     return  Scaffold(
       // key: _scaffoldKey,
-      body: Column(
+      body:Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           _pastureWidget,
@@ -198,38 +198,41 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
               params['size'] = value.size;
               params['total'] = value.total;
               return Expanded(
-                child: RefreshConfiguration(
-                  headerBuilder: () => const ClassicHeader(
-                    idleText: "下拉刷新",
-                    refreshingText: "数据加载中...",
-                    completeText: "加载成功",
-                    releaseText: "松开立即刷新",
-                    failedText: '刷新失败',
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFF1F5F9)
                   ),
-                  footerBuilder:  () => const ClassicFooter(
-                    idleText: "上拉加载",
-                    loadingText: "加载中…",
-                    canLoadingText: "松手开始加载数据",
-                    failedText: "加载失败",
-                    noDataText: "没有更多数据了", //没有内容的文字
-                    // noMoreIcon: ,
-                  ),
-                  child: SmartRefresher(
-                    enablePullUp: true,
-                    controller: _refreshController,
-                    onLoading:_onLoading,
-                    onRefresh: _onRefresh,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: value.records.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return widget.builder(value.records[index]);
-                      }
+                  child: RefreshConfiguration(
+                    headerBuilder: () => const ClassicHeader(
+                      idleText: "下拉刷新",
+                      refreshingText: "数据加载中...",
+                      completeText: "加载成功",
+                      releaseText: "松开立即刷新",
+                      failedText: '刷新失败',
                     ),
+                    footerBuilder:  () => const ClassicFooter(
+                      idleText: "上拉加载",
+                      loadingText: "加载中…",
+                      canLoadingText: "松手开始加载数据",
+                      failedText: "加载失败",
+                      noDataText: "没有更多数据了", //没有内容的文字
+                      // noMoreIcon: ,
+                    ),
+                    child: SmartRefresher(
+                      enablePullUp: true,
+                      controller: _refreshController,
+                      onLoading:_onLoading,
+                      onRefresh: _onRefresh,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: value.records.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return widget.builder(value.records[index]);
+                        }
+                      ),
+                    )
                   )
-                )
-                
-                
+                ),
               );
             }
           )

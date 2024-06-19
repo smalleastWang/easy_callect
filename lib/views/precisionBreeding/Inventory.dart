@@ -85,6 +85,59 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
       ),
       provider: imageInventoryProvider,
       builder: (data) {
+          return  Container(
+            margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              color: Colors.white
+            ),
+            child: Column(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(data['orgName'] ?? '去万达玩', style: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.w500)),
+                        const Icon(Icons.arrow_forward_ios)
+                      ],
+                    ),
+                  ),
+                ),
+                Row(
+                  children: [
+                    const SizedBox(
+                      width: 100,
+                      child: Text('客户唯一索引'),
+                    ),
+                    Text(data['source'] ?? '-'),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const SizedBox(
+                      width: 100,
+                      child: Text('识别数量'),
+                    ),
+                    Text('${jsonDecode(data['result'] ?? '{}')?['total'] ?? 0}只'),
+                  ],
+                ),
+                const Divider(),
+                Row(
+                  children: [
+                    const Text('盘点时间：', style: TextStyle(color: Color(0xFF999999))),
+                    Text(data['createTime'] ?? '-', style: const TextStyle(color: Color(0xFF999999))),
+                  ],
+                ),
+              ],
+              
+            ),
+          );
           return ListItemWidget(
             rowData: data,
             columns: [
