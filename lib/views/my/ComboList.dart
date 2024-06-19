@@ -29,39 +29,42 @@ class _ComboListPageState extends State<ComboListPage> {
           },
         ),
       ),
-      backgroundColor: Color(0xFFF1F5F9),
+      backgroundColor: const Color(0xFFF1F5F9),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        child: ListWidget<ComboPageFamily>(
-          provider: comboPageProvider,
-          builder: (comboData) {
-            return Column(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    leading: const Icon(Icons.folder, color: Colors.orange),
-                    title: Text(comboData['costName']),
-                    subtitle: Text('创建时间 ${comboData['createTime'] ?? '未知'}'),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () {
-                      _navigateToDetail(comboData);
-                    },
-                  ),
-                ),
-                const Divider(
-                  height: 0.5,
-                  color: Color(0xFFE9E8E8),
-                  indent: 12,
-                  endIndent: 12,
-                ),
-              ],
-            );
-          },
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(5.0),
+          child: Container(
+            color: Colors.white,
+            child: ListWidget<ComboPageFamily>(
+              provider: comboPageProvider,
+              builder: (comboData) {
+                return Column(
+                  children: [
+                    Container(
+                      color: Colors.white,
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        leading: const Icon(Icons.folder, color: Colors.orange),
+                        title: Text(comboData['costName']),
+                        subtitle: Text('创建时间 ${comboData['createTime'] ?? '未知'}'),
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: () {
+                          _navigateToDetail(comboData);
+                        },
+                      ),
+                    ),
+                    const Divider(
+                      height: 0.5,
+                      color: Color(0xFFE9E8E8),
+                      indent: 12,
+                      endIndent: 12,
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
         ),
       ),
     );
