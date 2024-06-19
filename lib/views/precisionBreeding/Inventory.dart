@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:easy_collect/api/precisionBreeding.dart';
 import 'package:easy_collect/models/register/index.dart';
+import 'package:easy_collect/utils/dialog.dart';
 import 'package:easy_collect/views/precisionBreeding/data.dart';
 import 'package:easy_collect/widgets/Form/SearchDate.dart';
 import 'package:easy_collect/widgets/Form/BottomSheetPicker.dart';
@@ -95,15 +96,85 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
             child: Column(
               children: [
                 GestureDetector(
+                  behavior: HitTestBehavior.opaque,
                   onTap: () {
-                    
+                    showMyModalBottomSheet(
+                      context: context,
+                      title: '详情信息',
+                      contentBuilder: (BuildContext context) {
+                        resultRender() {
+                          if (data['result'] == null) return const Text('-');
+                          final result = jsonDecode(data['result']);
+                          if (result['imgurl'] == null) return const Text('-');
+                          if (data['model'] == 'cattle-img') {
+                            return Image.network(result['imgurl'], width: 140, errorBuilder: (context, error, stackTrace) {
+                              return const Text('图片加载错误');
+                            });
+                          } else if (data['model'] == 'cattle-video') {
+                            return const Text('视频');
+                          }
+                          return const Text('-');
+                        }
+                        
+                        return Column(
+                          children: [
+                            Row(
+                              children: [
+                                const SizedBox(
+                                  width: 100,
+                                  child: Text('模型类型', style: TextStyle(color: Color(0xFF666666))),
+                                ),
+                                Text(data['orgName'] ?? '-')
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              children: [
+                                const SizedBox(
+                                  width: 100,
+                                  child: Text('客户唯一索引', style: TextStyle(color: Color(0xFF666666))),
+                                ),
+                                Text(data['source'] ?? '-')
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              children: [
+                                const SizedBox(
+                                  width: 100,
+                                  child: Text('识别数量', style: TextStyle(color: Color(0xFF666666))),
+                                ),
+                                Text('${jsonDecode(data['result'] ?? '{}')?['total'] ?? 0}只'),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              children: [
+                                const SizedBox(
+                                  width: 100,
+                                  child: Text('算法返回结果', style: TextStyle(color: Color(0xFF666666))),
+                                ),
+                                resultRender()
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              children: [
+                                const Text('创建时间：', style: TextStyle(color: Color(0xFF999999))),
+                                Text(data['createTime'] ?? '-', style: const TextStyle(color: Color(0xFF999999))),
+                              ],
+                            )
+                          ],
+                        );
+                      }
+                    );
                   },
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 8),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(data['orgName'] ?? '去万达玩', style: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.w500)),
+                        Text(data['orgName'] ?? '-', style: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.w500)),
                         const Icon(Icons.arrow_forward_ios)
                       ],
                     ),
