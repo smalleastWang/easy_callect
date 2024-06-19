@@ -1,3 +1,4 @@
+import 'package:easy_collect/api/health.dart';
 import 'package:easy_collect/api/precisionBreeding.dart';
 import 'package:easy_collect/enums/Route.dart';
 import 'package:easy_collect/models/register/index.dart';
@@ -32,12 +33,12 @@ class _HealthCheckPageState extends ConsumerState<HealthCheckPage> {
             Expanded(
               child: weightInfoTree.when(
                 data: (data) {
-                  return ListWidget<WeightInfoPageFamily>(
+                  return ListWidget<HealthPageFamily>(
                     pasture: PastureModel(
                       field: 'orgId',
                       options: data,
                     ),
-                    provider: weightInfoPageProvider,
+                    provider: healthPageProvider,
                     builder: (rowData) {
                       return HealthCheckItem(rowData: rowData);
                     },
@@ -55,6 +56,7 @@ class _HealthCheckPageState extends ConsumerState<HealthCheckPage> {
 }
 
 class HealthCheckItem extends StatelessWidget {
+  // ignore: prefer_typing_uninitialized_variables
   final rowData;
 
   const HealthCheckItem({super.key, required this.rowData});
@@ -79,12 +81,12 @@ class HealthCheckItem extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Color(0xFF5D8FFD),
+                    color: const Color(0xFF5D8FFD),
                     borderRadius: BorderRadius.circular(5),
                   ),
-                  child: const Text(
-                    '健康',
-                    style: TextStyle(color: Colors.white),
+                  child: Text(
+                    rowData["postureName"],
+                    style: const TextStyle(color: Colors.white),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -98,14 +100,14 @@ class HealthCheckItem extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-            Text('牛耳标:   ${rowData["animalNo"]}'),
+            Text('牛耳标:   ${rowData["no"]}'),
             const SizedBox(height: 12),
             Text(
-                '唯一标识码:   ${rowData["animalNo"]}'), // Assuming the unique ID is the same as animalNo
+                '唯一标识码:   ${rowData["algorithmCode"]}'), // Assuming the unique ID is the same as animalNo
             const SizedBox(height: 12),
             const Divider(height: 0.5, color: Color(0xFFE2E2E2)),
             const SizedBox(height: 12),
-            Text('检测时间: ${rowData["date"]}',
+            Text('检测时间: ${rowData["createTime"]}',
                 style: const TextStyle(color: Color(0xFF999999))),
           ],
         ),
