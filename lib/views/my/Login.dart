@@ -6,6 +6,7 @@ import 'package:easy_collect/enums/Route.dart';
 import 'package:easy_collect/enums/StorageKey.dart';
 import 'package:easy_collect/utils/const.dart';
 import 'package:easy_collect/utils/storage.dart';
+import 'package:easy_collect/widgets/Button/BlockButton.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -109,29 +110,16 @@ class _LoginPageState extends State<LoginPage> {
                     // 登录按钮
                     Padding(
                       padding: const EdgeInsets.only(top: 70),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Theme.of(context).primaryColor,
-                                foregroundColor: Theme.of(context).primaryColor.withOpacity(0.3)
-                              ),
-                              child: const Padding(
-                                padding: EdgeInsets.all(10),
-                                child: Text('登录', style: TextStyle(fontSize: 18, color: Colors.white)),
-                              ),
-                              onPressed: () async {
-                                // 通过_formKey.currentState 获取FormState后，
-                                // 调用validate()方法校验用户名密码是否合法，校验
-                                // 通过后再提交数据。
-                                if ((_formKey.currentState as FormState).validate()) {
-                                  handlesSubmit();
-                                }
-                              },
-                            ),
-                          ),
-                        ],
+                      child: BlockButton(
+                        onPressed: () async {
+                          // 通过_formKey.currentState 获取FormState后，
+                          // 调用validate()方法校验用户名密码是否合法，校验
+                          // 通过后再提交数据。
+                          if ((_formKey.currentState as FormState).validate()) {
+                            handlesSubmit();
+                          }
+                        },
+                        text: '登录',
                       ),
                     )
                   ],
