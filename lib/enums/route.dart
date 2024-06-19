@@ -6,6 +6,7 @@ enum RouteEnum {
   downLoad('/downLoad', '资料下载', '/downLoad'),
   userInfo('/userInfo', '用户基本信息', '/userInfo'),
   comboList('/comboList', '套餐信息', '/comboList'),
+  comboDetail('/comboDetail', '套餐详情', '/comboDetail'),
   packageScreen('/packageScreen', '已购套餐信息', '/packageScreen'),
 
   // 智慧保险
