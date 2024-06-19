@@ -5,6 +5,7 @@ import 'package:easy_collect/enums/index.dart';
 import 'package:easy_collect/enums/register.dart';
 import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/utils/tool/common.dart';
+import 'package:easy_collect/widgets/Button/BlockButton.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
 import 'package:easy_collect/widgets/Form/PickerImageField.dart';
 import 'package:easy_collect/widgets/Register/EnclosurePicker.dart';
@@ -155,13 +156,13 @@ class _StandardVerificationPageState extends ConsumerState<StandardVerificationP
   List<Widget> get _getImgWidget {
     // 单个注册-牛脸注册
     if (registerType == RegisterTypeEnum.single.value && registerMedia == RegisterMediaEnum.face.value) {
-      return [PickerImageField(controller: _faceImgsController, maxNum: 1, label: '请上传牛脸图片')];
+      return [PickerImageField(controller: _faceImgsController, maxNum: 1, label: '牛脸图片')];
     }
     // 单个注册-牛背注册
     if (registerType == RegisterTypeEnum.single.value && registerMedia == RegisterMediaEnum.back.value) {
       return [
-        PickerImageField(controller: _bodyImgsController, maxNum: 1, label: '请上传牛背图片'),
-        PickerImageField(controller: _faceImgsController, maxNum: 1, label: '请上传牛脸图片'),
+        PickerImageField(controller: _bodyImgsController, maxNum: 1, label: '牛背图片'),
+        PickerImageField(controller: _faceImgsController, maxNum: 1, label: '牛脸图片'),
       ];
     }
     // 批量注册-无人机
@@ -212,14 +213,9 @@ class _StandardVerificationPageState extends ConsumerState<StandardVerificationP
                 ..._getImgWidget,
 
                 const SizedBox(height: 50),
-                ElevatedButton(
+                BlockButton(
                   onPressed: submitLoading ? null : () => _handleSubmit(enclosureList.value ?? []),
-                  
-                  child: Container(
-                    width: double.infinity,
-                    alignment: Alignment.center,
-                    child: const Text('注册', style: TextStyle(fontSize: 16))
-                  ),
+                  text: '注册',
                 )
               ],
             ),
