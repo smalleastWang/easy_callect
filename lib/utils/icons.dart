@@ -14,4 +14,5 @@ class MyIcons {
   static const IconData moduleActive = IconData(0xe00c, fontFamily: _fontFamily);
   static const IconData person = IconData(0xe00b, fontFamily: _fontFamily);
   static const IconData personActive = IconData(0xe00e, fontFamily: _fontFamily);
+  static const IconData pdf = IconData(0xe08f, fontFamily: _fontFamily);
 }
