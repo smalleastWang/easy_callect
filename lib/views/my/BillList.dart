@@ -14,7 +14,7 @@ class BillListPage extends StatefulWidget {
 
 class _BillListPageState extends State<BillListPage> {
   void _navigateToDetail(Bill bill) {
-    // context.push(RouteEnum.billDetail.path, extra: bill);
+    context.push(RouteEnum.billDetail.path, extra: bill);
   }
 
   @override
@@ -39,11 +39,14 @@ class _BillListPageState extends State<BillListPage> {
             final bill = Bill.fromJson(billData);
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(6.0),
-                child: Container(
-                  color: Colors.white,
-                  child: BillCard(bill: bill),
+              child: GestureDetector(
+                onTap: () => _navigateToDetail(bill),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(6.0),
+                  child: Container(
+                    color: Colors.white,
+                    child: BillCard(bill: bill),
+                  ),
                 ),
               ),
             );
