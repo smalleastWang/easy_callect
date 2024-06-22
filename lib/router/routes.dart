@@ -9,6 +9,7 @@ import 'package:easy_collect/utils/storage.dart';
 import 'package:easy_collect/views/home/index.dart';
 import 'package:easy_collect/views/my/Login.dart';
 import 'package:easy_collect/views/my/ComboList.dart';
+import 'package:easy_collect/views/my/BillList.dart';
 import 'package:easy_collect/views/my/ComboDetail.dart';
 import 'package:easy_collect/views/my/PackageScreen.dart';
 import 'package:easy_collect/views/my/UserInfo.dart';
@@ -51,6 +52,11 @@ final List<GoRoute> routes = [
   GoRoute(
     path: RouteEnum.comboDetail.path,
     builder: (context, state) => ComboDetailPage(state: state),
+    routes: const []
+  ),
+  GoRoute(
+    path: RouteEnum.billList.path,
+    builder: (context, state) => const BillListPage(),
     routes: const []
   ),
   GoRoute(
