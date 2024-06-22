@@ -3,6 +3,8 @@ import 'package:easy_collect/api/combo.dart';
 import 'package:easy_collect/widgets/List/index.dart';
 import 'package:go_router/go_router.dart';
 import 'package:easy_collect/enums/Route.dart';
+// import 'package:easy_collect/utils/icons.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
 
 class ComboListPage extends StatefulWidget {
   const ComboListPage({Key? key}) : super(key: key);
@@ -45,7 +47,11 @@ class _ComboListPageState extends State<ComboListPage> {
                       color: Colors.white,
                       child: ListTile(
                         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        leading: const Icon(Icons.folder, color: Colors.orange),
+                        leading: Image.asset(
+                          'assets/icon/my/combo.png',
+                          width: 24, // 设置图片宽度
+                          height: 26, // 设置图片高度
+                        ),
                         title: Text(comboData['costName']),
                         subtitle: Text('创建时间 ${comboData['createTime'] ?? '未知'}'),
                         trailing: const Icon(Icons.chevron_right),
