@@ -125,27 +125,15 @@ class BillCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('账单生成时间：${_buildSubtitle(bill)}'),
-                  // TextButton(
-                  //   onPressed: () {
-                  //     _navigateToDetail(bill);
-                  //   },
-                  //   child: const Text('查看凭证'),
-                  // ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 0),
                     child: GestureDetector(
-                      onTap: () => _navigateToDetail(bill),
+                      onTap: () => _showVoucherDialog(context, bill.voucherImg),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 0, vertical: 0),
-                        // decoration: BoxDecoration(
-                        //   borderRadius: BorderRadius.circular(20),
-                        //   color: const Color(0xFF297DFF),
-                        // ),
+                        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                         child: const Text(
                           '查看凭证',
-                          style:
-                              TextStyle(color: Color(0xFF297DFF), fontSize: 14),
+                          style: TextStyle(color: Color(0xFF297DFF), fontSize: 14),
                         ),
                       ),
                     ),
@@ -210,8 +198,76 @@ class BillCard extends StatelessWidget {
     }
   }
 
-  void _navigateToDetail(Bill bill) {
-    // 导航到详情页
-    // context.push(RouteEnum.billDetail.path, extra: bill); // 需要 GoRouter 支持
+  void _showVoucherDialog(BuildContext context, String? voucherImg) {
+    if (voucherImg == null || voucherImg.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('未找到凭证图像')),
+      );
+      return;
+    }
+
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(10.0),
+          topRight: Radius.circular(10.0),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(10.0),
+            topRight: Radius.circular(10.0),
+          ),
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(12, 16, 12, 21),
+            color: Colors.white, // 确保背景色为白色
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const SizedBox(width: 24), // 占位，保证标题居中
+                    const Text(
+                      '缴费凭证',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: GestureDetector(
+                        onTap: () => Navigator.of(context).pop(),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 6),
+                          child: const Icon(Icons.close),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Center(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: const Color(0xFFDADADA),
+                        width: 0.5,
+                      ), // 优化项2：添加边框
+                    ),
+                    child: Image.network(
+                      voucherImg,
+                      fit: BoxFit.cover, // 图片铺满容器
+                      width: double.infinity, // 使图片宽度适应容器
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }
