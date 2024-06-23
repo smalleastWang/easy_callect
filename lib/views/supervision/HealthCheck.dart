@@ -56,7 +56,6 @@ class _HealthCheckPageState extends ConsumerState<HealthCheckPage> {
 }
 
 class HealthCheckItem extends StatelessWidget {
-  // ignore: prefer_typing_uninitialized_variables
   final rowData;
 
   const HealthCheckItem({super.key, required this.rowData});
@@ -69,7 +68,6 @@ class HealthCheckItem extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(5),
       ),
-      // color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -101,12 +99,6 @@ class HealthCheckItem extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text('牧场名称     ${rowData["orgName"]}', style: const TextStyle(color: Color(0xFF666666))),
-            // const SizedBox(height: 12),
-            // Text('牧场牛只数量     ${rowData["orgName"]}', style: const TextStyle(color: Color(0xFF666666))),
-            // const SizedBox(height: 12),
-            // Text('健康牛只数     ${rowData["orgName"]}', style: const TextStyle(color: Color(0xFF666666))),
-            // const SizedBox(height: 12),
-            // Text('区域牛只数量     ${rowData["orgName"]}', style: const TextStyle(color: Color(0xFF666666))),
             const SizedBox(height: 12),
             const Divider(height: 0.5, color: Color(0xFFE2E2E2)),
             const SizedBox(height: 12),
