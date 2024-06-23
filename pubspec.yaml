@@ -65,6 +65,7 @@ dependencies:
   logging: ^1.2.0
   open_file: ^3.2.1
   smooth_page_indicator: ^1.1.0
+  flutter_native_splash: ^2.0.0
 
 dev_dependencies:
   flutter_test:
@@ -81,6 +82,15 @@ dev_dependencies:
   riverpod_generator: ^2.4.0
   custom_lint: ^0.6.4
   riverpod_lint: ^2.3.10
+
+flutter_native_splash:
+  color: "#ffffff"
+  image: assets/images/splash.png
+  android: true
+  ios: true
+  android_gravity: fill
+  ios_content_mode: scaleAspectFill
+  web: false
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
