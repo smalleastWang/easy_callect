@@ -100,10 +100,9 @@ class HealthCheckItem extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-            Text('牛耳标:   ${rowData["no"]}'),
+            Text('牛耳标     ${rowData["no"]}', style: const TextStyle(color: Color(0xFF666666))),
             const SizedBox(height: 12),
-            Text(
-                '唯一标识码:   ${rowData["algorithmCode"]}'), // Assuming the unique ID is the same as animalNo
+            Text('唯一标识码     ${rowData["algorithmCode"]}', style: const TextStyle(color: Color(0xFF666666))), // Assuming the unique ID is the same as animalNo
             const SizedBox(height: 12),
             const Divider(height: 0.5, color: Color(0xFFE2E2E2)),
             const SizedBox(height: 12),
