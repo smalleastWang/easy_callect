@@ -62,7 +62,7 @@ final List<GoRoute> routes = [
   ),
   GoRoute(
     path: RouteEnum.billDetail.path,
-    builder: (context, state) => const BillDetailPage(),
+    builder: (context, state) => BillDetailPage(state: state),
     routes: const []
   ),
   GoRoute(
