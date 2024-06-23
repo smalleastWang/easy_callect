@@ -92,11 +92,11 @@ class _ComboDetailState extends State<ComboDetailPage> {
       body: _buildPackagePage(
           combo['costName'],
           comboType.description,
-          'assets/images/套餐-安享套餐.png',
+          'assets/images/combo_header.png',
           const LinearGradient(
             colors: [Color(0xFFEABB7E), Color(0xFFF9D9A7)],
           ),
-          const Color(0xFFB67C1F), // 替换为实际颜色字段
+          const Color(0xFFB67C1F),
           combo['costType'] ?? '-',
           combo['chargeType'] ?? '-',
           combo['canUseFunctions'] ?? [],
