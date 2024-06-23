@@ -29,12 +29,12 @@ class _BillDetailPageState extends State<BillDetailPage> {
         backgroundColor: const Color(0xFF5082F6),
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
-        title: Text(
+        title: const Text(
           '账单详情',
           style: TextStyle(color: Colors.white),
         ),
@@ -51,7 +51,7 @@ class _BillDetailPageState extends State<BillDetailPage> {
                 ),
                 Container(
                   child: Padding(
-                    padding: EdgeInsets.fromLTRB(12, 20, 12, 0),
+                    padding: const EdgeInsets.fromLTRB(12, 20, 12, 0),
                     child: Image.asset(
                       'assets/images/bill_header.png', 
                       fit: BoxFit.cover,
@@ -67,17 +67,17 @@ class _BillDetailPageState extends State<BillDetailPage> {
                     children: [
                       Text(
                         '账单生成时间：${bill?.createTime ?? '未知'}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 13,
                           color: Color(0xFF999999),
                         ),
                       ),
-                      SizedBox(height: 12.0), // Add space between the texts
+                      const SizedBox(height: 12.0), // Add space between the texts
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text(
+                          const Text(
                             '实付：',
                             style: TextStyle(
                               fontSize: 14,
@@ -85,10 +85,10 @@ class _BillDetailPageState extends State<BillDetailPage> {
                               color: Color(0xFF333333),
                             ),
                           ),
-                          SizedBox(width: 4), // 添加一个小的间距
+                          const SizedBox(width: 4), // 添加一个小的间距
                           Text(
                             bill?.totalPrice ?? '0.00',
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
                               color: Color(0xFF333333),
@@ -102,12 +102,12 @@ class _BillDetailPageState extends State<BillDetailPage> {
               ],
             ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12.0),
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 12.0),
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
                 color: Colors.white,
                 child: Container(
-                  padding: EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 128.0),
+                  padding: const EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 128.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -202,20 +202,20 @@ class _BillDetailPageState extends State<BillDetailPage> {
         children: <Widget>[
           Text(
             title,
-            style: TextStyle(fontSize: 16, color: const Color(0xFF666666)),
+            style: const TextStyle(fontSize: 16, color: Color(0xFF666666)),
           ),
           if (isLink)
             GestureDetector(
               onTap: () {},
               child: Text(
                 value,
-                style: TextStyle(fontSize: 16, color: const Color(0xFF5082F6)),
+                style: const TextStyle(fontSize: 16, color: Color(0xFF5082F6)),
               ),
             )
           else
             Text(
               value,
-              style: TextStyle(fontSize: 16, color: const Color(0xFF444444)),
+              style: const TextStyle(fontSize: 16, color: Color(0xFF444444)),
             ),
         ],
       ),
@@ -226,7 +226,7 @@ class _BillDetailPageState extends State<BillDetailPage> {
     return Container(
       height: 0.5,
       color: const Color(0xFFE9E8E8),
-      margin: EdgeInsets.symmetric(vertical: 4.0),
+      margin: const EdgeInsets.symmetric(vertical: 4.0),
     );
   }
 }
