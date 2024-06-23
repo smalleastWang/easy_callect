@@ -4,14 +4,12 @@ import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/api/precisionBreeding.dart';
 import 'package:easy_collect/widgets/List/index.dart';
 import 'package:easy_collect/api/behavior.dart';
-import 'package:easy_collect/widgets/List/ListItem.dart';
 
 class BehaviorPage extends ConsumerStatefulWidget {
   const BehaviorPage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
-  _BehaviorPageState createState() => _BehaviorPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _BehaviorPageState();
 }
 
 class _BehaviorPageState extends ConsumerState<BehaviorPage> {
@@ -23,25 +21,85 @@ class _BehaviorPageState extends ConsumerState<BehaviorPage> {
       appBar: AppBar(
         title: const Text('行为分析'),
       ),
-      body: ListWidget<BehaviorPageFamily>(
-       pasture: PastureModel(
-          field: 'orgId',
-          options: weightInfoTree.value ?? []
+      body: Container(
+        color: const Color(0xFFF1F5F9),
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: Column(
+          children: [
+            const SizedBox(height: 10),
+            Expanded(
+              child: weightInfoTree.when(
+                data: (data) {
+                  return ListWidget<BehaviorPageFamily>(
+                    pasture: PastureModel(
+                      field: 'orgId',
+                      options: data,
+                    ),
+                    provider: behaviorPageProvider,
+                    builder: (behaviorData) {
+                      return BehaviorItem(rowData: behaviorData);
+                    },
+                  );
+                },
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (err, stack) => Center(child: Text('加载数据时出错: $err')),
+              ),
+            ),
+          ],
         ),
-        provider: behaviorPageProvider,
-        builder: (behaviorData) {
-          return ListItemWidget(
-            rowData: behaviorData,
-            columns: [
-              ListColumnModal(label: '牧场', field: 'orgName'),
-              ListColumnModal(label: '牛耳标', field: 'no'),
-              ListColumnModal(label: '唯一标识码', field: 'algorithmCode'),
-              ListColumnModal(label: '行为类型', field: 'postureName'),
-              ListColumnModal(label: '数量', field: 'times'),
-              ListColumnModal(label: '检测时间', field: 'createTime'),
-            ],
-          );
-        },
+      ),
+    );
+  }
+}
+
+class BehaviorItem extends StatelessWidget {
+  final rowData;
+
+  const BehaviorItem({super.key, required this.rowData});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF5D8FFD),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Text(
+                    rowData["postureName"],
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
+                const Spacer(),
+                const Icon(Icons.chevron_right),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text('牛耳标     ${rowData["no"]}', style: const TextStyle(color: Color(0xFF666666))),
+            const SizedBox(height: 12),
+            Text('数量     ${rowData["times"] == null || rowData["times"] == "" ? '未知' : rowData["times"]}',
+                style: const TextStyle(color: Color(0xFF666666))),
+            const SizedBox(height: 12),
+            const Divider(height: 0.5, color: Color(0xFFE2E2E2)),
+            const SizedBox(height: 12),
+            Text('检测时间: ${rowData["createTime"]}',
+                style: const TextStyle(color: Color(0xFF999999))),
+          ],
+        ),
       ),
     );
   }
