@@ -3,7 +3,7 @@ import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
 import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/utils/tool/common.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
-import 'package:easy_collect/widgets/LoadingWidget.dart';
+// import 'package:easy_collect/widgets/LoadingWidget.dart';
 import 'package:easy_collect/widgets/Register/EnclosurePicker.dart';
 import 'package:easy_collect/widgets/Search/index.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +11,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 enum Action { refresh, loading }
-
 
 typedef Api<T> = Future<PageVoModel> Function(Map<String, dynamic> params);
 typedef Builder = Widget Function(Map<String, dynamic> data);
@@ -179,63 +178,62 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
 
     _handleAction(data);
     return  Scaffold(
-      // key: _scaffoldKey,
       body:Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           _pastureWidget,
           _getSearchForm,
           _dropDownSearchWidget,
-          LoadingWidget(
-            data: data,
-            builder: (BuildContext context, PageVoModel value) {
-              if (value.total <= 0) {
-                return _buildNoDataWidget();
-              }
-              // 更新分页信息
-              params['current'] = value.current;
-              params['pages'] = value.pages;
-              params['size'] = value.size;
-              params['total'] = value.total;
-              return Expanded(
-                child: Container(
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFF1F5F9)
-                  ),
-                  child: RefreshConfiguration(
-                    headerBuilder: () => const ClassicHeader(
-                      idleText: "下拉刷新",
-                      refreshingText: "数据加载中...",
-                      completeText: "加载成功",
-                      releaseText: "松开立即刷新",
-                      failedText: '刷新失败',
-                    ),
-                    footerBuilder:  () => const ClassicFooter(
-                      idleText: "上拉加载",
-                      loadingText: "加载中…",
-                      canLoadingText: "松手开始加载数据",
-                      failedText: "加载失败",
-                      noDataText: "没有更多数据了", //没有内容的文字
-                      // noMoreIcon: ,
-                    ),
-                    child: SmartRefresher(
-                      enablePullUp: true,
-                      controller: _refreshController,
-                      onLoading:_onLoading,
-                      onRefresh: _onRefresh,
-                      child: ListView.builder(
+          Expanded(
+            child: Container(
+              decoration: const BoxDecoration(
+                color: Color(0xFFF1F5F9)
+              ),
+              child: RefreshConfiguration(
+                headerBuilder: () => const ClassicHeader(
+                  idleText: "下拉刷新",
+                  refreshingText: "数据加载中...",
+                  completeText: "加载成功",
+                  releaseText: "松开立即刷新",
+                  failedText: '刷新失败',
+                ),
+                footerBuilder:  () => const ClassicFooter(
+                  idleText: "上拉加载",
+                  loadingText: "加载中…",
+                  canLoadingText: "松手开始加载数据",
+                  failedText: "加载失败",
+                  noDataText: "没有更多数据了",
+                ),
+                child: SmartRefresher(
+                  enablePullUp: true,
+                  controller: _refreshController,
+                  onLoading:_onLoading,
+                  onRefresh: _onRefresh,
+                  child: data.when(
+                    data: (PageVoModel value) {
+                      if (value.total <= 0) {
+                        return _buildNoDataWidget();
+                      }
+                      // 更新分页信息
+                      params['current'] = value.current;
+                      params['pages'] = value.pages;
+                      params['size'] = value.size;
+                      params['total'] = value.total;
+                      return ListView.builder(
                         shrinkWrap: true,
                         itemCount: value.records.length,
                         itemBuilder: (BuildContext context, int index) {
                           return widget.builder(value.records[index]);
                         }
-                      ),
-                    )
-                  )
+                      );
+                    },
+                    loading: () => const Center(child: CircularProgressIndicator()),
+                    error: (err, stack) => Center(child: Text('加载数据时出错: $err')),
+                  ),
                 ),
-              );
-            }
-          )
+              ),
+            ),
+          ),
         ],
       ),
     );
