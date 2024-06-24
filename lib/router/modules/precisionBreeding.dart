@@ -2,6 +2,7 @@
 
 import 'package:easy_collect/enums/route.dart';
 import 'package:easy_collect/views/precisionBreeding/Performance.dart';
+import 'package:easy_collect/views/precisionBreeding/Security.dart';
 import 'package:easy_collect/views/precisionBreeding/index.dart';
 import 'package:easy_collect/views/precisionBreeding/Inventory.dart';
 import 'package:easy_collect/views/precisionBreeding/Weight.dart';
@@ -46,6 +47,11 @@ final precisionBreedingRoutes = GoRoute(
     GoRoute(
       path: RouteEnum.intelligencewarn.path,
       builder: (context, state) => const IntelligencewarnPage(),
+    ),
+     // 智能安防
+    GoRoute(
+      path: RouteEnum.security.path,
+      builder: (context, state) => const SecurityPage(),
     ),
     // 实时定位
     GoRoute(
