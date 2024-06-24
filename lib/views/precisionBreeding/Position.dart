@@ -23,10 +23,21 @@ class _PositionPageState extends ConsumerState<PositionPage> {
       appBar: AppBar(
         title: Text(RouteEnum.position.title),
       ),
-      body: weightInfoTree.when(
-        data: (data) => buildListWidget(data),
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(child: Text('加载数据时出错: $err')),
+      body: Container(
+        color: const Color(0xFFF1F5F9),
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: Column(
+          children: [
+            const SizedBox(height: 6),
+            Expanded(
+              child: weightInfoTree.when(
+                data: (data) => buildListWidget(data),
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (err, stack) => Center(child: Text('加载数据时出错: $err')),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -53,7 +64,7 @@ class PositionItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
+      margin: const EdgeInsets.symmetric(vertical: 3),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(5),
@@ -64,22 +75,21 @@ class PositionItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '圈舍名称: ${rowData["buildingName"]}',
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              '牛耳标: ${rowData["animalNo"]}',
+              '圈舍名称     ${rowData["buildingName"]}',
               style: const TextStyle(color: Color(0xFF666666)),
             ),
             const SizedBox(height: 12),
             Text(
-              '唯一标识码: ${rowData["algorithmCode"]}',
+              '牛耳标     ${rowData["animalNo"]}',
               style: const TextStyle(color: Color(0xFF666666)),
             ),
+            // const SizedBox(height: 12),
+            // Text(
+            //   '唯一标识码: ${rowData["algorithmCode"]}',
+            //   style: const TextStyle(color: Color(0xFF666666)),
+            // ),
+            const SizedBox(height: 12),
+            const Divider(height: 0.5, color: Color(0xFFE2E2E2)),
             const SizedBox(height: 12),
             Text(
               '采集日期: ${rowData["inventoryDate"]}',

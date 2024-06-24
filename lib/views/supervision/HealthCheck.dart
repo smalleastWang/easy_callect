@@ -29,7 +29,7 @@ class _HealthCheckPageState extends ConsumerState<HealthCheckPage> {
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Column(
           children: [
-            const SizedBox(height: 10),
+            const SizedBox(height: 6),
             Expanded(
               child: weightInfoTree.when(
                 data: (data) {
@@ -63,7 +63,7 @@ class HealthCheckItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
+      margin: const EdgeInsets.symmetric(vertical: 3),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(5),
