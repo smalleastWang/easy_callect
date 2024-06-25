@@ -94,7 +94,7 @@ class HealthCheckItem extends StatelessWidget {
                       fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
-                const Icon(Icons.chevron_right),
+                // const Icon(Icons.chevron_right),
               ],
             ),
             const SizedBox(height: 12),

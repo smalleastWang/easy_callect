@@ -93,7 +93,7 @@ class BehaviorItem extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-                const Icon(Icons.chevron_right),
+                // const Icon(Icons.chevron_right),
               ],
             ),
             const SizedBox(height: 12),

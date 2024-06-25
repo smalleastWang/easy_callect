@@ -42,7 +42,7 @@ class _PerformancePageState extends ConsumerState<PerformancePage> {
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Column(
           children: [
-            const SizedBox(height: 10),
+            const SizedBox(height: 6),
             Expanded(
               child: weightInfoTree.when(
                 data: (data) {
@@ -76,7 +76,7 @@ class PerformanceItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
+      margin: const EdgeInsets.symmetric(vertical: 3),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(5),
@@ -108,7 +108,7 @@ class PerformanceItem extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-                const Icon(Icons.chevron_right),
+                // const Icon(Icons.chevron_right),
               ],
             ),
             const SizedBox(height: 12),
