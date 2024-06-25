@@ -7,6 +7,7 @@ import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/utils/tool/common.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
 import 'package:easy_collect/widgets/Form/PickerImageField.dart';
+import 'package:easy_collect/widgets/List/PickerPastureWidget.dart';
 import 'package:easy_collect/widgets/Register/EnclosurePicker.dart';
 import 'package:easy_collect/widgets/Register/RegisterType.dart';
 import 'package:flutter/material.dart';
@@ -160,26 +161,67 @@ class _SurveyComparedPageState extends ConsumerState<SurveyComparedPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                TextFormField(
-                  controller: _numController,
-                  decoration: getInputDecoration(
-                    labelText: '耳标号',
-                    hintText: '请输入牛耳耳标号(不支持中文)',
+                Container(
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(color: Color(0xFFE9E8E8))
+                    )
                   ),
-                  validator: (v) {
-                    return v!.trim().isNotEmpty ? null : "耳标号不能为空";
-                  },
+                  child: Row(
+                    children: [
+                      const SizedBox(
+                        width: 80,
+                        child: Text('耳标号', style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w500)),
+                      ),
+                      Expanded(
+                        child: TextFormField(
+                          controller: _numController,
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            hintText: '请输入牛耳耳标号(不支持中文)'
+                          ),
+                          validator: (v) {
+                            return v!.trim().isNotEmpty ? null : "耳标号不能为空";
+                          },
+                        )
+                      )
+                      
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 16),
-                EnclosurePickerWidget(
-                  scaffoldKey: _scaffoldKey,
-                  options: enclosureList.value ?? [],
-                  controller: _enclosureController,
-                  decoration: getInputDecoration(
-                    labelText: '牧场/圈舍',
-                    hintText: '请输入牛耳耳标号(不支持中文)',
+                Container(
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(color: Color(0xFFE9E8E8))
+                    )
+                  ),
+                  child: Row(
+                    children: [
+                      const SizedBox(
+                        width: 80,
+                        child: Text('牧场/圈舍', style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w500)),
+                      ),
+                      Expanded(
+                        child: PickerPastureWidget(
+                          isShed: true,
+                          controller: _enclosureController,
+                          options: enclosureList.value ?? [],
+                        ),
+                      )
+                      
+                    ],
                   ),
                 ),
+                // EnclosurePickerWidget(
+                //   scaffoldKey: _scaffoldKey,
+                //   options: enclosureList.value ?? [],
+                //   controller: _enclosureController,
+                //   decoration: getInputDecoration(
+                //     labelText: '牧场/圈舍',
+                //     hintText: '请输入牛耳耳标号(不支持中文)',
+                //   ),
+                // ),
                 RegisterTypeWidget<int>(defaultValue: registerType, options: enumsToOptions(RegisterTypeEnum.values), onChange: _changeRegisterType),
                 _getRegisterCnt,
 

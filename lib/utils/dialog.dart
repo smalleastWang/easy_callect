@@ -1,5 +1,6 @@
 
 
+import 'package:easy_collect/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -42,7 +43,7 @@ showMyModalBottomSheet({required BuildContext context, required WidgetBuilder co
 }
 
 
-showConfirmModalBottomSheet({required BuildContext context, required WidgetBuilder contentBuilder, required String title, required Function onConfirm}) {
+showConfirmModalBottomSheet({required BuildContext context, required WidgetBuilder contentBuilder, required String title, required Function? onConfirm}) {
   return showModalBottomSheet(
     context: context,
     builder: (BuildContext context) {
@@ -70,10 +71,12 @@ showConfirmModalBottomSheet({required BuildContext context, required WidgetBuild
                 Text(title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
                 TextButton(
                   onPressed: () {
-                    onConfirm();
-                    context.pop();
+                    if (onConfirm != null) {
+                      onConfirm();
+                      context.pop();
+                    }
                   },
-                  child: const Text('确定'),
+                  child: Text('确定', style: TextStyle(color: onConfirm != null  ? MyColors.primaryColor : Colors.grey, fontSize: 14)),
                 )
               ],
             ),

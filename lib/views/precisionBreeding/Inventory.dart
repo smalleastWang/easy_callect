@@ -277,23 +277,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
             ],
           ),
         );
-          return ListItemWidget(
-            rowData: data,
-            columns: [
-              ListColumnModal(label: '牧场简称', field: 'orgName'),
-              ListColumnModal(label: '圈舍名称', field: 'buildingName'),
-              ListColumnModal(label: '盘点时间', field: 'checkTime'),
-              ListColumnModal(label: '盘点状态', field: 'state', render: (value, record, column) => Text(InventoryStatus.getLabel(value))),
-              ListColumnModal(label: '实际数量', field: 'actualNum'),
-              ListColumnModal(label: '授权牛数量', field: 'authNum'),
-              ListColumnModal(label: '盘点总数量', field: 'inventoryNum'),
-              ListColumnModal(label: '盘点授权牛总数量', field: 'inventoryTotalNum'),
-              ListColumnModal(label: '匹配失败数量', field: 'inventoryFailNum'),
-              ListColumnModal(label: '昨天盘点总数', field: 'lastInventoryAuthTotalNum'),
-              ListColumnModal(label: '盘点人', field: 'stateName'),
-            ]
-          );
-        },
+      },
     );
   }
   //计数盘点

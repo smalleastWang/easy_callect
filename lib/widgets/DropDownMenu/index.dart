@@ -1,7 +1,6 @@
 import 'package:easy_collect/models/dict/Dict.dart';
 import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
 import 'package:easy_collect/utils/OverlayManager.dart';
-import 'package:easy_collect/widgets/Button/BlockButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_picker/picker.dart';
 

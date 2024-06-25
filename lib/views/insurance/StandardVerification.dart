@@ -4,11 +4,10 @@ import 'package:easy_collect/enums/Route.dart';
 import 'package:easy_collect/enums/index.dart';
 import 'package:easy_collect/enums/register.dart';
 import 'package:easy_collect/models/register/index.dart';
-import 'package:easy_collect/utils/tool/common.dart';
 import 'package:easy_collect/widgets/Button/BlockButton.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
 import 'package:easy_collect/widgets/Form/PickerImageField.dart';
-import 'package:easy_collect/widgets/Register/EnclosurePicker.dart';
+import 'package:easy_collect/widgets/List/PickerPastureWidget.dart';
 import 'package:easy_collect/widgets/Register/RegisterType.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -105,8 +104,7 @@ class _StandardVerificationPageState extends ConsumerState<StandardVerificationP
 
       String isRegister  = await RegisterApi.isRegister({
         "cattleNo": _numController.text,
-        // "pastureId": houseData.parentId,
-        "pastureId": 'b42336226e624f778224d1e98d7341aa',
+        "pastureId": houseData.parentId,
       });
       if (isRegister.toLowerCase() != 'false') {
         return EasyLoading.showError('牛编号在该牧场已注册');
@@ -114,10 +112,8 @@ class _StandardVerificationPageState extends ConsumerState<StandardVerificationP
 
       RegisterQueryModel params = RegisterQueryModel(
         cattleNo: _numController.text,
-        // houseId: houseData.id,
-        // pastureId: houseData.parentId,
-        houseId: '1659097329619111937',
-        pastureId: 'b42336226e624f778224d1e98d7341aa',
+        houseId: houseData.id,
+        pastureId: houseData.parentId,
         // faceImgs: _imageController.value!.map((e) => e.value).toList()
       );
       // 无人机注册
@@ -186,29 +182,60 @@ class _StandardVerificationPageState extends ConsumerState<StandardVerificationP
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                TextFormField(
-                  controller: _numController,
-                  decoration: getInputDecoration(
-                    labelText: '耳标号',
-                    hintText: '请输入牛耳耳标号(不支持中文)',
+                Container(
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(color: Color(0xFFE9E8E8))
+                    )
                   ),
-                  validator: (v) {
-                    return v!.trim().isNotEmpty ? null : "耳标号不能为空";
-                  },
+                  child: Row(
+                    children: [
+                      const SizedBox(
+                        width: 80,
+                        child: Text('耳标号', style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w500)),
+                      ),
+                      Expanded(
+                        child: TextFormField(
+                          controller: _numController,
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            hintText: '请输入牛耳耳标号(不支持中文)'
+                          ),
+                          validator: (v) {
+                            return v!.trim().isNotEmpty ? null : "耳标号不能为空";
+                          },
+                        )
+                      )
+                      
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 16),
-                EnclosurePickerWidget(
-                  scaffoldKey: _scaffoldKey,
-                  options: enclosureList.value ?? [],
-                  controller: _enclosureController,
-                  decoration: getInputDecoration(
-                    labelText: '牧场/圈舍',
-                    hintText: '请输入牛耳耳标号(不支持中文)',
+                Container(
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(color: Color(0xFFE9E8E8))
+                    )
+                  ),
+                  child: Row(
+                    children: [
+                      const SizedBox(
+                        width: 80,
+                        child: Text('牧场/圈舍', style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w500)),
+                      ),
+                      Expanded(
+                        child: PickerPastureWidget(
+                          isShed: true,
+                          controller: _enclosureController,
+                          options: enclosureList.value ?? [],
+                        ),
+                      )
+                      
+                    ],
                   ),
                 ),
                 RegisterTypeWidget<int>(defaultValue: registerType, options: enumsToOptions(RegisterTypeEnum.values), onChange: _changeRegisterType),
                 _getRegisterCnt,
-
                 
                 ..._getImgWidget,
 
