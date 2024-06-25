@@ -15,6 +15,11 @@ flutter packages pub run build_runner build --delete-conflicting-outputs
 flutter run --dart-define=APP_ENV=DEV
 ```
 
+### 生成启动屏幕配置
+```shell
+flutter pub run flutter_native_splash:create
+```
+
 ### 打包
 Android
 ```shell

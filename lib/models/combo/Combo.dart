@@ -13,15 +13,15 @@ class Combo {
   @JsonKey(name: 'costName')
   final String costName;
 
-  /// 套餐类型
+  /// 套餐类型（数据字典：COMBO_TYPE，0按功能收费，1按设备收费）
   @JsonKey(name: 'comboType')
   final String? comboType;
 
-  /// 授权方式
+  /// 授权方式（数据字典：authorization_type，0临时授权；1永久授权;2其他）
   @JsonKey(name: 'costType')
   final String? costType;
 
-  /// 计费类型
+  /// 收费类型（数据字典：CHARGE_TYPE，0按年;1按季;2按月;3按头;4按次）
   @JsonKey(name: 'chargeType')
   final String? chargeType;
 

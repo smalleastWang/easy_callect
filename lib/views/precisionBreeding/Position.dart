@@ -1,47 +1,102 @@
+import 'package:easy_collect/api/precisionBreeding.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_collect/models/register/index.dart';
-import 'package:easy_collect/api/precisionBreeding.dart';
 import 'package:easy_collect/widgets/List/index.dart';
 import 'package:easy_collect/api/position.dart';
-import 'package:easy_collect/widgets/List/ListItem.dart';
 import 'package:easy_collect/enums/Route.dart';
 
 class PositionPage extends ConsumerStatefulWidget {
   const PositionPage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _PositionPageState createState() => _PositionPageState();
 }
 
 class _PositionPageState extends ConsumerState<PositionPage> {
   @override
   Widget build(BuildContext context) {
-    final AsyncValue<List<EnclosureModel>> weightInfoTree = ref.watch(weightInfoTreeProvider);
+    final AsyncValue<List<EnclosureModel>> weightInfoTree =
+        ref.watch(weightInfoTreeProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(RouteEnum.position.title),
       ),
-      body: ListWidget<PositionPageFamily>(
-       pasture: PastureModel(
-          field: 'orgId',
-          options: weightInfoTree.value ?? []
+      body: Container(
+        color: const Color(0xFFF1F5F9),
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: Column(
+          children: [
+            const SizedBox(height: 6),
+            Expanded(
+              child: weightInfoTree.when(
+                data: (data) => buildListWidget(data),
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (err, stack) => Center(child: Text('加载数据时出错: $err')),
+              ),
+            ),
+          ],
         ),
-        provider: positionPageProvider,
-        builder: (positionData) {
-          return ListItemWidget(
-            rowData: positionData,
-            columns: [
-              ListColumnModal(label: '牧场', field: 'orgName'),
-              ListColumnModal(label: '圈舍名称', field: 'buildingName'),
-              ListColumnModal(label: '牛耳标', field: 'animalNo'),
-              ListColumnModal(label: '唯一标识码', field: 'algorithmCode'),
-              ListColumnModal(label: '采集日期', field: 'inventoryDate'),
-            ],
-          );
-        },
+      ),
+    );
+  }
+
+  Widget buildListWidget(List<EnclosureModel> data) {
+    return ListWidget<PositionPageFamily>(
+      pasture: PastureModel(
+        field: 'orgId',
+        options: data,
+      ),
+      provider: positionPageProvider,
+      builder: (positionData) {
+        return PositionItem(rowData: positionData);
+      },
+    );
+  }
+}
+
+class PositionItem extends StatelessWidget {
+  final rowData;
+
+  const PositionItem({super.key, required this.rowData});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 3),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '圈舍名称     ${rowData["buildingName"]}',
+              style: const TextStyle(color: Color(0xFF666666)),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              '牛耳标     ${rowData["animalNo"]}',
+              style: const TextStyle(color: Color(0xFF666666)),
+            ),
+            // const SizedBox(height: 12),
+            // Text(
+            //   '唯一标识码: ${rowData["algorithmCode"]}',
+            //   style: const TextStyle(color: Color(0xFF666666)),
+            // ),
+            const SizedBox(height: 12),
+            const Divider(height: 0.5, color: Color(0xFFE2E2E2)),
+            const SizedBox(height: 12),
+            Text(
+              '采集日期: ${rowData["inventoryDate"]}',
+              style: const TextStyle(color: Color(0xFF999999)),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -17,11 +17,11 @@ class Bill {
   @JsonKey(name: 'gmName')
   final String? gmName;
 
-  /// 缴费状态
+  /// 缴费状态(数据字典：BILL_PAYMENTSTATUS，0已发布、1已缴费待审批、2财务审批通过、3审批通过、4审批打回)
   @JsonKey(name: 'chargeState')
   final String? chargeState;
 
-  /// 账单类型
+  /// 账单类型(数据字典：BILL_TYPE，0购买、1自动)
   @JsonKey(name: 'billType')
   final String? billType;
 
@@ -29,7 +29,7 @@ class Bill {
   @JsonKey(name: 'payNo')
   final String? payNo;
 
-  /// 授权方式
+  /// 授权方式（数据字典：authorization_type，0临时授权；1永久授权;2其他）
   @JsonKey(name: 'costType')
   final String? costType;
 
@@ -81,7 +81,7 @@ class Bill {
   @JsonKey(name: 'voucherImg')
   final String? voucherImg;
 
-  /// 套餐类型
+  /// 套餐类型（数据字典，0按功能收费，1按设备收费）
   @JsonKey(name: 'comboType')
   final String? comboType;
 

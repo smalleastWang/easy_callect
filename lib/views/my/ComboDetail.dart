@@ -30,7 +30,7 @@ extension ComboTypeExtension on ComboType {
 class ComboDetailPage extends StatefulWidget {
   final GoRouterState state;
 
-  const ComboDetailPage({Key? key, required this.state}) : super(key: key);
+  const ComboDetailPage({super.key, required this.state});
 
   @override
   _ComboDetailState createState() => _ComboDetailState();
@@ -79,7 +79,8 @@ class _ComboDetailState extends State<ComboDetailPage> {
 
     return Scaffold(
       appBar: AppBar(
-        flexibleSpace: Container(decoration: BoxDecoration(gradient: _appBarGradient)),
+        flexibleSpace:
+            Container(decoration: BoxDecoration(gradient: _appBarGradient)),
         title: Text(combo['costName']),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -91,37 +92,32 @@ class _ComboDetailState extends State<ComboDetailPage> {
       body: _buildPackagePage(
           combo['costName'],
           comboType.description,
-          'assets/images/套餐-安享套餐.png',
+          'assets/images/combo_header.png',
           const LinearGradient(
             colors: [Color(0xFFEABB7E), Color(0xFFF9D9A7)],
           ),
-          const Color(0xFFB67C1F), // 替换为实际颜色字段
-          combo['giveMaxTimes'] ?? '未知',
-          '3.0元', // 替换为实际单价字段
-          '15.4元', // 替换为实际套餐总费用字段
-          combo['comboType'] ?? '未知',
-          combo['costType'] ?? '未知',
-          combo['chargeType'] ?? '未知',
-          combo['isEnable'] ?? '未知',
-          combo['extendDay'] ?? '未知',
-        ),
+          const Color(0xFFB67C1F),
+          combo['costType'] ?? '-',
+          combo['chargeType'] ?? '-',
+          combo['canUseFunctions'] ?? [],
+          combo['isEnable'] ?? '-',
+          combo['extendDay'] ?? '-',
+          combo['createTime'] ?? '-'),
     );
   }
 
   Widget _buildPackagePage(
-    String title,
+    String costName,
     String comboType,
     String imagePath,
     Gradient backgroundColor,
     Color textColor,
-    String cattleCount,
-    String unitPrice,
-    String totalCost,
-    String packageType,
-    String authorizationType,
-    String billingType,
+    String costType,
+    String chargeType,
+    List<dynamic> canUseFunctions,
     String isEnabled,
-    String enabledDays,
+    String extendDay,
+    String createTime,
   ) {
     return Column(
       children: [
@@ -133,7 +129,8 @@ class _ComboDetailState extends State<ComboDetailPage> {
           child: Stack(
             children: [
               Transform.translate(
-                offset: const Offset(0, -20), // Move the container up by 20 pixels
+                offset:
+                    const Offset(0, -20), // Move the container up by 20 pixels
                 child: ClipRRect(
                   child: Container(
                     height: double.infinity,
@@ -148,19 +145,20 @@ class _ComboDetailState extends State<ComboDetailPage> {
                       child: Column(
                         children: [
                           Container(
-                            padding: const EdgeInsets.fromLTRB(16.0, 50, 16.0, 0),
+                            padding:
+                                const EdgeInsets.fromLTRB(16.0, 50, 16.0, 0),
                             child: Column(
                               children: [
                                 PackageDetails(
                                   backgroundColor: textColor,
-                                  cattleCount: cattleCount,
-                                  unitPrice: unitPrice,
-                                  totalCost: totalCost,
-                                  packageType: packageType,
-                                  authorizationType: authorizationType,
-                                  billingType: billingType,
+                                  costName: costName,
+                                  comboType: comboType,
+                                  chargeType: chargeType,
+                                  costType: costType,
+                                  canUseFunctions: canUseFunctions,
+                                  extendDay: extendDay,
                                   isEnabled: isEnabled,
-                                  enabledDays: enabledDays,
+                                  createTime: createTime,
                                 ),
                               ],
                             ),
@@ -176,7 +174,7 @@ class _ComboDetailState extends State<ComboDetailPage> {
                 left: 0,
                 right: 0,
                 child: PackageHeader(
-                  title: title,
+                  costName: costName,
                   comboType: comboType,
                   imagePath: imagePath,
                   textColor: textColor,
@@ -192,7 +190,7 @@ class _ComboDetailState extends State<ComboDetailPage> {
 }
 
 class PackageHeader extends StatelessWidget {
-  final String title;
+  final String costName;
   final String comboType;
   final String imagePath;
   final Color textColor;
@@ -200,7 +198,7 @@ class PackageHeader extends StatelessWidget {
 
   const PackageHeader({
     super.key,
-    required this.title,
+    required this.costName,
     required this.comboType,
     required this.imagePath,
     required this.textColor,
@@ -233,7 +231,7 @@ class PackageHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  title,
+                  costName,
                   style: TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.bold,
@@ -259,27 +257,27 @@ class PackageHeader extends StatelessWidget {
 
 class PackageDetails extends StatelessWidget {
   final Color backgroundColor;
-  final String cattleCount;
-  final String unitPrice;
-  final String totalCost;
-  final String packageType;
-  final String authorizationType;
-  final String billingType;
+  final String costName;
+  final String comboType;
+  final String chargeType;
+  final String costType;
+  final List<dynamic> canUseFunctions;
+  final String extendDay;
   final String isEnabled;
-  final String enabledDays;
+  final String createTime;
 
   const PackageDetails({
-    Key? key,
+    super.key,
     required this.backgroundColor,
-    required this.cattleCount,
-    required this.unitPrice,
-    required this.totalCost,
-    required this.packageType,
-    required this.authorizationType,
-    required this.billingType,
+    required this.costName,
+    required this.comboType,
+    required this.chargeType,
+    required this.costType,
+    required this.canUseFunctions,
+    required this.extendDay,
     required this.isEnabled,
-    required this.enabledDays,
-  }) : super(key: key);
+    required this.createTime,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -288,7 +286,7 @@ class PackageDetails extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10.0), // Add border radius
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Colors.black12,
             blurRadius: 6.0,
@@ -300,7 +298,7 @@ class PackageDetails extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+            padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
             child: Row(
               children: [
                 Container(
@@ -310,7 +308,7 @@ class PackageDetails extends StatelessWidget {
                   color: backgroundColor,
                   margin: const EdgeInsets.only(right: 8.0),
                 ),
-                Text(
+                const Text(
                   '套餐权益',
                   style: TextStyle(
                     fontSize: 18.0,
@@ -330,17 +328,57 @@ class PackageDetails extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                PackageDetailRow(label: '套餐牛只/次数', value: cattleCount),
-                PackageDetailRow(label: '单价', value: unitPrice),
-                PackageDetailRow(label: '套餐总费用', value: totalCost),
-                PackageDetailRow(label: '套餐类型', value: packageType),
-                PackageDetailRow(label: '授权方式', value: authorizationType),
-                PackageDetailRow(label: '收费类型', value: billingType),
-                PackageDetailRow(label: '是否启用', value: isEnabled),
-                PackageDetailRow(label: '启用天数', value: enabledDays),
+                PackageDetailRow(label: '套餐名称', value: costName),
+                PackageDetailRow(label: '套餐类型', value: comboType),
+                // PackageDetailRow(label: '收费类型', value: chargeType),
+                // PackageDetailRow(label: '授权方式', value: costType),
+                const SizedBox(height: 8.0),
+                const Divider(
+                  height: 0.5,
+                  color: Color(0xFFE9E8E8),
+                ),
+                const SizedBox(height: 8.0),
+                const Text(
+                  '可使用功能',
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8.0),
+                Wrap(
+                  spacing: 8.0,
+                  runSpacing: 8.0,
+                  children: canUseFunctions
+                      .map((function) => Chip(
+                            label: Text(
+                              function["name"],
+                              style: const TextStyle(color: Color(0xFF666666)),
+                            ),
+                            backgroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              side: const BorderSide(
+                                color: Color(0xFFA2ABBE), // 边框颜色
+                                width: 0.5, // 边框宽度
+                              ),
+                              borderRadius:
+                                  BorderRadius.circular(3.0), // 圆角半径，可以根据需要调整
+                            ),
+                          ))
+                      .toList(),
+                ),
+                const SizedBox(height: 16.0),
+                const Divider(
+                  height: 0.5,
+                  color: Color(0xFFE9E8E8),
+                ),
+                const SizedBox(height: 8.0),
+                // PackageDetailRow(label: '延期天数', value: extendDay),
+                PackageDetailRow(label: '创建时间', value: createTime),
               ],
             ),
           ),
+          const SizedBox(height: 16.0), // Bottom padding
         ],
       ),
     );
@@ -360,37 +398,25 @@ class PackageDetailRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
         children: [
-          Container(
-            width: 180.0, // 设置宽度
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: const TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold, // Left column in bold
-                  ),
-                ),
-              ],
+          Text(
+            '$label: ',
+            style: const TextStyle(
+              fontSize: 16.0,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          Container(
-            width: 100.0, // 设置宽度
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  value,
-                  style: const TextStyle(
-                    fontSize: 16.0,
-                    color: Colors.black54,
-                  ),
-                ),
-              ],
+          const SizedBox(width: 20.0), // 添加20px的间距
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(
+                fontSize: 16.0,
+                color: Color(0xFF666666),
+              ),
+              textAlign: TextAlign.left,
             ),
           ),
         ],

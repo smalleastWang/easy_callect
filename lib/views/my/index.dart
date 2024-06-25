@@ -129,8 +129,8 @@ class _MyWidgetState extends State<MyWidget> {
                       ),
                       CellWidget(
                         assetIcon: "assets/icon/my/shopping_bag.png",
-                        title: '已经订购套餐',
-                        onTap: () => _navigateTo(RouteEnum.packageScreen.path),
+                        title: '我的账单',
+                        onTap: () => _navigateTo(RouteEnum.billList.path),
                       ),
                       CellWidget(
                         assetIcon: "assets/icon/my/feed.png",
