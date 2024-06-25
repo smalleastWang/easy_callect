@@ -78,7 +78,7 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
       params['current'] = 1; // 重置为第一页
     } else {
       // 数据加载完了
-      if (params['current'] >= params['pages'] && !params['current'] == 1) {
+      if (params['current'] >= params['pages']) {
         _refreshController.loadNoData();
         return null;
       }
