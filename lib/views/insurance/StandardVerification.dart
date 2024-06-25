@@ -210,7 +210,7 @@ class _StandardVerificationPageState extends ConsumerState<StandardVerificationP
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 10),
                 Container(
                   decoration: const BoxDecoration(
                     border: Border(

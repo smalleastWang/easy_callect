@@ -189,7 +189,7 @@ class _SurveyComparedPageState extends ConsumerState<SurveyComparedPage> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 10),
                 Container(
                   decoration: const BoxDecoration(
                     border: Border(

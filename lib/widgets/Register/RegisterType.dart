@@ -33,7 +33,6 @@ class _RegisterTypeWidgetState<T> extends State<RegisterTypeWidget> {
 
   @override
   Widget build(BuildContext context) {
-    print(MediaQuery.of(context).size.width);
     return Padding(
       padding: const EdgeInsets.only(top: 10),
       child: Column(
@@ -42,10 +41,11 @@ class _RegisterTypeWidgetState<T> extends State<RegisterTypeWidget> {
           widget.label != null ? Text(widget.label!, style: const TextStyle(fontSize: 18)) : const SizedBox.shrink(),
           Wrap(
             alignment: WrapAlignment.start,
+            runSpacing: 5,
             children: widget.options.map((option) {
               return Container(
                 alignment: Alignment.centerLeft,
-                width: (MediaQuery.of(context).size.width - 30) / (widget.options.length < 3 ? widget.options.length : 3),
+                width: (MediaQuery.of(context).size.width - 30) / (widget.options.length < 2 ? widget.options.length : 2),
                 child: Row(
                   children: [
                     Radio<T>(
