@@ -109,6 +109,7 @@ class _SearchDateWidgetState extends State<SearchDateWidget> {
                 decoration: InputDecoration(
                   contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                   border: const OutlineInputBorder(),
+                  fillColor: Colors.black12,
                   hintText: widget.hintText ?? '请选择时间',
                 ),
                 onTap: () => _handleDate(context),

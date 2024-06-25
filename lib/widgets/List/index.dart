@@ -1,8 +1,10 @@
+import 'package:collection/collection.dart';
 import 'package:easy_collect/models/PageVo.dart';
 import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
 import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/utils/tool/common.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
+import 'package:easy_collect/widgets/List/PickerPastureWidget.dart';
 import 'package:easy_collect/widgets/LoadingWidget.dart';
 import 'package:easy_collect/widgets/Register/EnclosurePicker.dart';
 import 'package:easy_collect/widgets/Search/index.dart';
@@ -76,11 +78,11 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
   // 获取table数据
   AsyncValue<PageVoModel>? _getList([int? current, bool? isRefresh]) {
     // 判断是否需要刷新
-    if (isRefresh == true) {
+    if (isRefresh == true || current == 1) {
       params['current'] = 1; // 重置为第一页
     } else {
       // 数据加载完了
-      if (params['current'] >= params['pages']) {
+      if (params['current'] >= params['pages'] && !params['current'] == 1) {
         _refreshController.loadNoData();
         return null;
       }
@@ -105,7 +107,15 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
   }
 
   _handleFilter(String field, dynamic value) {
-    params[field] = value;
+    if (field.contains(',')) {
+      List<String> fields = field.split(',');
+      List<String> values = value.split(',');
+      fields.forEachIndexed((index, e) {
+        params[fields[index]] = values[index];
+      });
+    } else {
+      params[field] = value;
+    }
     _getList(1);
   }
   void _onRefresh() async {
@@ -136,22 +146,25 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
 
   Widget get _pastureWidget {
     if (widget.pasture == null) return const SizedBox.shrink();
-    return Padding(
+    return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-      child: EnclosurePickerWidget(
-        // scaffoldKey: _scaffoldKey,
-        controller: _enclosureController,
-        options: widget.pasture!.options, 
-        decoration: getInputDecoration(
-          // labelText: '牧场/圈舍',
-          hintText: '请选择牧场/圈舍',
-        ),
-        onChange: (value) {
-          action = Action.refresh;
-          _refreshController.requestRefresh();
-          _getList(1);
-        },
-      )
+      child: PickerPastureWidget(
+        options: widget.pasture!.options,
+      ),
+      // child: EnclosurePickerWidget(
+      //   // scaffoldKey: _scaffoldKey,
+      //   controller: _enclosureController,
+      //   options: widget.pasture!.options, 
+      //   decoration: getInputDecoration(
+      //     // labelText: '牧场/圈舍',
+      //     hintText: '请选择牧场/圈舍',
+      //   ),
+      //   onChange: (value) {
+      //     action = Action.refresh;
+      //     _refreshController.requestRefresh();
+      //     _getList(1);
+      //   },
+      // )
     );
   }
 

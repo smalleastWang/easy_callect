@@ -5,9 +5,8 @@ import 'package:flutter/material.dart';
 enum WidgetType {
   select,
   input,
-  picker,
   datePacker,
-  rangePicker
+  dateRangePicker
 }
 
 class DropDownMenuModel {
@@ -15,6 +14,7 @@ class DropDownMenuModel {
   String name;
   String fieldName;
   WidgetType widget;
+  String? selectText;
   List<Option> list;
 
   DropDownMenuModel({

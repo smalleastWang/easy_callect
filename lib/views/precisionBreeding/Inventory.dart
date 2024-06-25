@@ -1,11 +1,15 @@
 import 'dart:convert';
 
 import 'package:easy_collect/api/precisionBreeding.dart';
+import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
 import 'package:easy_collect/models/register/index.dart';
+import 'package:easy_collect/utils/OverlayManager.dart';
 import 'package:easy_collect/utils/dialog.dart';
 import 'package:easy_collect/views/precisionBreeding/data.dart';
+import 'package:easy_collect/widgets/DropDownMenu/index.dart';
 import 'package:easy_collect/widgets/Form/SearchDate.dart';
 import 'package:easy_collect/widgets/Form/BottomSheetPicker.dart';
+import 'package:easy_collect/widgets/List/ListCard.dart';
 import 'package:easy_collect/widgets/List/ListItem.dart';
 import 'package:easy_collect/widgets/List/index.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +40,9 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
     _tabController = TabController(length: 3, vsync: this);
     _startTimeController = TextEditingController();
     _endTimeController = TextEditingController();
+    _tabController.addListener(() {
+      overlayEntryAllRemove();
+    });
   }
 
   @override
@@ -175,65 +182,17 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(data['orgName'] ?? '-', style: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.w500)),
-                        const Icon(Icons.arrow_forward_ios)
+                        const Icon(Icons.arrow_forward_ios, color: Color(0xff888888), size: 16)
                       ],
                     ),
                   ),
                 ),
-                Row(
-                  children: [
-                    const SizedBox(
-                      width: 100,
-                      child: Text('客户唯一索引'),
-                    ),
-                    Text(data['source'] ?? '-'),
-                  ],
-                ),
-                Row(
-                  children: [
-                    const SizedBox(
-                      width: 100,
-                      child: Text('识别数量'),
-                    ),
-                    Text('${jsonDecode(data['result'] ?? '{}')?['total'] ?? 0}只'),
-                  ],
-                ),
-                const Divider(),
-                Row(
-                  children: [
-                    const Text('盘点时间：', style: TextStyle(color: Color(0xFF999999))),
-                    Text(data['createTime'] ?? '-', style: const TextStyle(color: Color(0xFF999999))),
-                  ],
-                ),
+                ListCardCell(label: '客户唯一索引', value: data['source']),
+                ListCardCell(label: '识别数量', value: '${jsonDecode(data['result'] ?? '{}')?['total'] ?? 0}只'),
+                ListCardCellTime(label: '盘点时间：', value: data['createTime'])
               ],
               
             ),
-          );
-          return ListItemWidget(
-            rowData: data,
-            columns: [
-              ListColumnModal(label: '模型类型', field: 'orgName'),
-              ListColumnModal(label: '客户唯一索引', field: 'source'),
-              ListColumnModal(label: '资源', field: 'input'),
-              ListColumnModal(label: '识别数量', field: 'result', render: (value, record, column) {
-                return Text('${jsonDecode(value ?? '{}')?['total'] ?? 0}只');
-              }),
-
-              ListColumnModal(label: '算法返回结果', field: 'result', render: (value, record, column) {
-                if (value == null) return const Text('-');
-                final result = jsonDecode(value);
-                if (result['imgurl'] == null) return const Text('-');
-                if (record['model'] == 'cattle-img') {
-                  return Image.network(result['imgurl'], width: 140, errorBuilder: (context, error, stackTrace) {
-                    return const Text('图片加载错误');
-                  });
-                } else if (record['model'] == 'cattle-video') {
-                  return const Text('视频');
-                }
-                return const Text('-');
-              }),
-              ListColumnModal(label: '创建时间', field: 'createTime'),
-            ]
           );
         },
     );
@@ -242,43 +201,82 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
   Widget _buildRegInventoryInfoPage(AsyncValue<List<EnclosureModel>> weightInfoTree) {
     return ListWidget<RegInventoryInfoPageFamily>(
       key: regWidgetKey,
-      searchForm: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-        child: Column(
-        children: [
-          BottomSheetPickerWidget(
-            hintText: '请选择盘点状态',
-            options: const [
-              {'': '不限'},
-              {'0': '盘点中'},
-              {'1': '盘点结束'},
-            ],
-            onSelect: (option) {
-              // Handle the selected option
-              print('Selected option: $option');
-              final key = option.keys.first;
-              final value = option[key];
-              print('Selected key: $key, value: $value');
-              regWidgetKey.currentState!.getList({'state': key});
-            },
-          ),
-          const SizedBox(height: 10), // Add some space between the widgets
-          SearchDateWidget(
-            hintText: '请选择盘点时间',
-            onChange: (String first, String last) {
-              print('Selected first: $first, last: $last');
-              regWidgetKey.currentState!.getList({'first': first, 'last': last});
-            },
-          ),
-        ],
-        )
-      ),
+      filterList: [
+        DropDownMenuModel(name: '选择状态', list: [
+          Option(check: false, dictLabel: '不限', dictValue: ''),
+          Option(check: false, dictLabel: '盘点中', dictValue: '0'),
+          Option(check: false, dictLabel: '盘点结束', dictValue: '1'),
+        ], layerLink: LayerLink(), fieldName: 'state'),
+        DropDownMenuModel(name: '选择盘点时间', layerLink: LayerLink(), fieldName: 'first,last', widget: WidgetType.dateRangePicker),
+      ],
+      // searchForm: Container(
+      //   padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+      //   child: Column(
+      //   children: [
+      //     BottomSheetPickerWidget(
+      //       hintText: '请选择盘点状态',
+      //       options: const [
+      //         {'': '不限'},
+      //         {'0': '盘点中'},
+      //         {'1': '盘点结束'},
+      //       ],
+      //       onSelect: (option) {
+      //         // Handle the selected option
+      //         print('Selected option: $option');
+      //         final key = option.keys.first;
+      //         final value = option[key];
+      //         print('Selected key: $key, value: $value');
+      //         regWidgetKey.currentState!.getList({'state': key});
+      //       },
+      //     ),
+      //     const SizedBox(height: 10), // Add some space between the widgets
+      //     SearchDateWidget(
+      //       hintText: '请选择盘点时间',
+      //       onChange: (String first, String last) {
+      //         print('Selected first: $first, last: $last');
+      //         regWidgetKey.currentState!.getList({'first': first, 'last': last});
+      //       },
+      //     ),
+      //   ],
+      //   )
+      // ),
       pasture: PastureModel(
         field: 'orgId',
         options: weightInfoTree.value ?? []
       ),
       provider: regInventoryInfoPageProvider,
       builder: (data) {
+        return Container(
+          margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            color: Colors.white
+          ),
+          child: Column(
+            children: [
+              ListCardTitle(
+                title: Row(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(right: 5),
+                      padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFCCD2E1),
+                        borderRadius: BorderRadius.circular(3)
+                      ),
+                      child: Text(InventoryStatus.getLabel(data['state']), style: const TextStyle(color: Colors.white)),
+                    ),
+                    Text(data['orgName'], style: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.w500)),
+                  ],
+                ),
+              ),
+              ListCardCell(label: '圈舍名称', value: data['buildingName']),
+              ListCardCell(label: '盘点类型', value: data['buildingName']),
+              ListCardCellTime(label: '盘点时间：', value: data['checkTime'])
+            ],
+          ),
+        );
           return ListItemWidget(
             rowData: data,
             columns: [
