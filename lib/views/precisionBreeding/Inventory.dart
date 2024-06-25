@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:easy_collect/api/precisionBreeding.dart';
+import 'package:easy_collect/enums/register.dart';
 import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
 import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/utils/OverlayManager.dart';
@@ -131,7 +132,27 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
                                   width: 100,
                                   child: Text('模型类型', style: TextStyle(color: Color(0xFF666666))),
                                 ),
-                                Text(data['orgName'] ?? '-')
+                                Text(CountMediaEnum.getLabel(data['model']))
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                             Row(
+                              children: [
+                                const SizedBox(
+                                  width: 100,
+                                  child: Text('用户名称', style: TextStyle(color: Color(0xFF666666))),
+                                ),
+                                Text(data['name'])
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                             Row(
+                              children: [
+                                const SizedBox(
+                                  width: 100,
+                                  child: Text('用户账号', style: TextStyle(color: Color(0xFF666666))),
+                                ),
+                                Text(data['account'])
                               ],
                             ),
                             const SizedBox(height: 10),
@@ -181,13 +202,15 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(data['orgName'] ?? '-', style: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.w500)),
+                        Text(CountMediaEnum.getLabel(data['model']), style: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.w500)),
                         const Icon(Icons.arrow_forward_ios, color: Color(0xff888888), size: 16)
                       ],
                     ),
                   ),
                 ),
-                ListCardCell(label: '客户唯一索引', value: data['source']),
+                ListCardCell(label: '用户名称', value: data['name']),
+                ListCardCell(label: '用户账号', value: data['account']),
+                // ListCardCell(label: '客户唯一索引', value: data['source']),
                 ListCardCell(label: '识别数量', value: '${jsonDecode(data['result'] ?? '{}')?['total'] ?? 0}只'),
                 ListCardCellTime(label: '盘点时间：', value: data['createTime'])
               ],
@@ -267,12 +290,13 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
                       ),
                       child: Text(InventoryStatus.getLabel(data['state']), style: const TextStyle(color: Colors.white)),
                     ),
-                    Text(data['orgName'], style: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.w500)),
+                    Text(data['buildingName'], style: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.w500)),
                   ],
                 ),
               ),
-              ListCardCell(label: '圈舍名称', value: data['buildingName']),
-              ListCardCell(label: '盘点类型', value: data['buildingName']),
+              ListCardCell(label: '盘点总数量', value: data['inventoryTotalNum']),
+              ListCardCell(label: '昨天盘点总数量', value: data['lastInventoryTotalNum']),
+              ListCardCell(label: '盘点人', value: data['createUser']),
               ListCardCellTime(label: '盘点时间：', value: data['checkTime'])
             ],
           ),
@@ -321,19 +345,40 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
       ),
       provider: cntInventoryInfoPageProvider,
       builder: (data) {
-          return ListItemWidget(
-            rowData: data,
-            columns: [
-              ListColumnModal(label: '牧场简称', field: 'orgName'),
-              ListColumnModal(label: '圈舍名称', field: 'buildingName'),
-              ListColumnModal(label: '盘点时间', field: 'checkTime'),
-              ListColumnModal(label: '盘点类型', field: 'type', render: (value, _, __) => Text(InventoryType.getLabel(value))),
-              ListColumnModal(label: '盘点状态', field: 'state', render: (value, _, __) => Text(InventoryStatus.getLabel(value))),
-              ListColumnModal(label: '盘点数量', field: 'actualNum'),
-              ListColumnModal(label: '上次盘点时间', field: 'lastTime'),
-              ListColumnModal(label: '上次盘点数量', field: 'lastNum'),
-            ]
-          );
+          return Container(
+          margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            color: Colors.white
+          ),
+          child: Column(
+            children: [
+              ListCardTitle(
+                title: Row(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(right: 5),
+                      padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFCCD2E1),
+                        borderRadius: BorderRadius.circular(3)
+                      ),
+                      child: Text(InventoryStatus.getLabel(data['state']), style: const TextStyle(color: Colors.white)),
+                    ),
+                    Text(data['buildingName'], style: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.w500)),
+                  ],
+                ),
+              ),
+              ListCardCell(label: '盘点类型', value: data['typeName']),
+              ListCardCell(label: '盘点数量', value: data['actualNum']),
+              ListCardCell(label: '上次盘点数量', value: data['lastNum']),
+              ListCardCell(label: '盘点人', value: data['createUser']),
+              ListCardCell(label: '上次盘点时间', value: data['lastTime']),
+              ListCardCellTime(label: '盘点时间：', value: data['checkTime'])
+            ],
+          ),
+        );
         },
     );
   }
