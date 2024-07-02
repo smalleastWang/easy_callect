@@ -199,6 +199,7 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
               decoration: const BoxDecoration(
                 color: Color(0xFFF1F5F9)
               ),
+              padding: const EdgeInsets.symmetric(horizontal: 12),
               child: RefreshConfiguration(
                 headerBuilder: () => const ClassicHeader(
                   idleText: "下拉刷新",
@@ -233,7 +234,15 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
                         shrinkWrap: true,
                         itemCount: value.records.length,
                         itemBuilder: (BuildContext context, int index) {
-                          return widget.builder(value.records[index]);
+                          return Container(
+                            margin: const EdgeInsets.only(top: 6),
+                            padding: const EdgeInsets.only(top: 14, left: 12, right: 12, bottom: 10),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(6)
+                            ),
+                            child: widget.builder(value.records[index]),
+                          );
                         }
                       );
                     },

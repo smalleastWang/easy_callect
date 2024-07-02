@@ -1,7 +1,9 @@
 import 'package:easy_collect/api/health.dart';
 import 'package:easy_collect/api/precisionBreeding.dart';
 import 'package:easy_collect/enums/Route.dart';
+import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
 import 'package:easy_collect/models/register/index.dart';
+import 'package:easy_collect/widgets/DropDownMenu/index.dart';
 import 'package:easy_collect/widgets/List/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,7 +28,6 @@ class _HealthCheckPageState extends ConsumerState<HealthCheckPage> {
       ),
       body: Container(
         color: const Color(0xFFF1F5F9),
-        padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Column(
           children: [
             const SizedBox(height: 6),
@@ -39,6 +40,15 @@ class _HealthCheckPageState extends ConsumerState<HealthCheckPage> {
                       options: data,
                     ),
                     provider: healthPageProvider,
+                    filterList: [
+                      DropDownMenuModel(name: '输入牛耳标', layerLink: LayerLink(), fieldName: 'state', widget: WidgetType.input),
+                      DropDownMenuModel(name: '健康检测类型', list: [
+                        Option(check: false, dictLabel: '不限', dictValue: ''),
+                        Option(check: false, dictLabel: '盘点中', dictValue: '0'),
+                        Option(check: false, dictLabel: '盘点结束', dictValue: '1'),
+                      ], layerLink: LayerLink(), fieldName: 'state'),
+                      DropDownMenuModel(name: '检测时间', layerLink: LayerLink(), fieldName: 'first,last', widget: WidgetType.dateRangePicker),
+                    ],
                     builder: (rowData) {
                       return HealthCheckItem(rowData: rowData);
                     },
@@ -56,7 +66,7 @@ class _HealthCheckPageState extends ConsumerState<HealthCheckPage> {
 }
 
 class HealthCheckItem extends StatelessWidget {
-  final rowData;
+  final Map<String, dynamic> rowData;
 
   const HealthCheckItem({super.key, required this.rowData});
 

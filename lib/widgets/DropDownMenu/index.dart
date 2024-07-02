@@ -120,126 +120,9 @@ class _DropDownMenuState extends State<DropDownMenu> with SingleTickerProviderSt
 
   Widget _renderContent(DropDownMenuModel data, int index) {
     if (data.widget == WidgetType.dateRangePicker) {
-      
-      datePicker(String title) {
-        return StatefulBuilder(builder: (context, state) {
-          return Expanded(
-            child: GestureDetector(
-              onTap: () {
-                Picker ps = Picker(
-                  hideHeader: true,
-                  adapter: DateTimePickerAdapter(type: PickerDateTimeType.kYMD, isNumberMonth: true),
-                  onConfirm: (Picker picker, List value) {
-                    dropDownMenuRangeDateOverlayEntryRemove();
-                    print((picker.adapter as DateTimePickerAdapter).value);
-                    DateTime? date = (picker.adapter as DateTimePickerAdapter).value;
-                    if (date == null) return;
-                    state(() {
-                      if (title == '开始时间') {
-                        firstDate = '${date.year}-${date.month}-${date.day}';
-                      } else {
-                        lastDate = '${date.year}-${date.month}-${date.day}';
-                      }
-                    });
-                    
-                  },
-                );
-                dropDownMenuRangeDateOverlayEntry = OverlayEntry(builder: (context) {
-                  return  Stack(
-                    children: [
-                      Positioned(  
-                        bottom: 0,  
-                        left: 0,
-                        right: 0,
-                        child: Column(
-                          children: [
-                            Container(
-                              decoration: const BoxDecoration(
-                                color: Colors.white
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  TextButton(onPressed: () {
-                                    dropDownMenuRangeDateOverlayEntryRemove();
-                                  }, child: const Text('取消')),
-                                  Text(title),
-                                  TextButton(onPressed: () {
-                                    ps.onConfirm?.call(ps, ps.selecteds);
-                                  }, child: const Text('确认'))
-                                ],
-                              ),
-                            ),
-                            ps.makePicker()
-                          ],
-                        ),
-                      )
-                    ],
-                  );
-                });
-                
-                Overlay.of(context).insert(dropDownMenuRangeDateOverlayEntry!);
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black12)
-                ),
-                child: Expanded(
-                  child: Text((title == '开始时间' ? firstDate : lastDate) ?? title),
-                ),
-              )
-            ),
-          );
-        });
-        
-      }
-      return Container(
-        padding: const EdgeInsets.symmetric(vertical: 8,horizontal: 10),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                datePicker('开始时间'),
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 6),
-                  child: const Text('-', style: TextStyle(fontSize: 16)),
-                ),
-                datePicker('结束时间'),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    _isExpanded = false;
-                    overlayEntryAllRemove();
-                    firstDate = null;
-                    lastDate = null;
-                    widget.onChange(data.fieldName, '$firstDate,$lastDate');
-                    data.selectText = null;
-                  },
-                  child: const Text('清除'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    _isExpanded = false;
-                    overlayEntryAllRemove();
-                    widget.onChange(data.fieldName, '$firstDate,$lastDate');
-                    data.selectText = '$firstDate-$lastDate';
-                  },
-                  child: const Text('确定'),
-                ),
-              ],
-            
-            )
-          ],
-        ),
-      );
+      return _renderDateRangePicker(data, index);
+    } else if (data.widget == WidgetType.input) {
+      return _renderInput(data, index);
     }
     return ListView(
       shrinkWrap: true,
@@ -248,6 +131,171 @@ class _DropDownMenuState extends State<DropDownMenu> with SingleTickerProviderSt
         Option item = e.value;
         return _menuItem(cate: item, index: itemIndex, rootIndex: index);
       }).toList(),
+    );
+  }
+  // 输入框渲染
+  Widget _renderInput(DropDownMenuModel data, int index) {
+    TextEditingController inputController = TextEditingController();
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8,horizontal: 10),
+      child: Column(
+        children: [
+          TextFormField(
+            autofocus: true,
+            controller: inputController,
+            decoration: InputDecoration(
+              hintText: data.name,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextButton(
+                onPressed: () {
+                  _isExpanded = false;
+                  overlayEntryAllRemove();
+                  inputController.text = '';
+                  widget.onChange(data.fieldName, null);
+                  data.selectText = null;
+                },
+                child: const Text('清除'),
+              ),
+              TextButton(
+                onPressed: () {
+                  _isExpanded = false;
+                  overlayEntryAllRemove();
+                  widget.onChange(data.fieldName, inputController.text);
+                  data.selectText = inputController.text.isNotEmpty ? inputController.text : null;
+                },
+                child: const Text('确定'),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+  
+  // 区间时间选择器渲染
+  Widget _renderDateRangePicker(DropDownMenuModel data, int index) {
+    datePicker(String title) {
+      return StatefulBuilder(builder: (context, state) {
+        return Expanded(
+          child: GestureDetector(
+            onTap: () {
+              Picker ps = Picker(
+                hideHeader: true,
+                adapter: DateTimePickerAdapter(type: PickerDateTimeType.kYMD, isNumberMonth: true),
+                onConfirm: (Picker picker, List value) {
+                  dropDownMenuRangeDateOverlayEntryRemove();
+                  print((picker.adapter as DateTimePickerAdapter).value);
+                  DateTime? date = (picker.adapter as DateTimePickerAdapter).value;
+                  if (date == null) return;
+                  state(() {
+                    if (title == '开始时间') {
+                      firstDate = '${date.year}/${date.month}/${date.day}';
+                    } else {
+                      lastDate = '${date.year}/${date.month}/${date.day}';
+                    }
+                  });
+                  
+                },
+              );
+              dropDownMenuRangeDateOverlayEntry = OverlayEntry(builder: (context) {
+                return  Stack(
+                  children: [
+                    Positioned(  
+                      bottom: 0,  
+                      left: 0,
+                      right: 0,
+                      child: Column(
+                        children: [
+                          Container(
+                            decoration: const BoxDecoration(
+                              color: Colors.white
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                TextButton(onPressed: () {
+                                  dropDownMenuRangeDateOverlayEntryRemove();
+                                }, child: const Text('取消')),
+                                Text(title),
+                                TextButton(onPressed: () {
+                                  ps.onConfirm?.call(ps, ps.selecteds);
+                                }, child: const Text('确认'))
+                              ],
+                            ),
+                          ),
+                          ps.makePicker()
+                        ],
+                      ),
+                    )
+                  ],
+                );
+              });
+              
+              Overlay.of(context).insert(dropDownMenuRangeDateOverlayEntry!);
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black12)
+              ),
+              child: Expanded(
+                child: Text((title == '开始时间' ? firstDate : lastDate) ?? title),
+              ),
+            )
+          ),
+        );
+      });
+      
+    }
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8,horizontal: 10),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              datePicker('开始时间'),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 6),
+                child: const Text('-', style: TextStyle(fontSize: 16)),
+              ),
+              datePicker('结束时间'),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextButton(
+                onPressed: () {
+                  _isExpanded = false;
+                  overlayEntryAllRemove();
+                  firstDate = null;
+                  lastDate = null;
+                  widget.onChange(data.fieldName, '$firstDate,$lastDate');
+                  data.selectText = null;
+                },
+                child: const Text('清除'),
+              ),
+              TextButton(
+                onPressed: () {
+                  _isExpanded = false;
+                  overlayEntryAllRemove();
+                  widget.onChange(data.fieldName, '$firstDate,$lastDate');
+                  data.selectText = '$firstDate-$lastDate';
+                },
+                child: const Text('确定'),
+              ),
+            ],
+          )
+        ],
+      ),
     );
   }
 
@@ -333,14 +381,21 @@ class _DropDownMenuState extends State<DropDownMenu> with SingleTickerProviderSt
                       }
                     });
                   },
-                  child: SizedBox(
+                  child: Container(
                     height: 30,
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          widget.filterList[index].selectText ?? widget.filterList[index].name,
-                          style: const TextStyle(fontSize: 14, color: Colors.black87),
+                        Expanded(
+                          child: Text(
+                            widget.filterList[index].selectText ?? widget.filterList[index].name,
+                            style: const TextStyle(fontSize: 14, color: Colors.black87),
+                            maxLines: 1,
+                            softWrap: false,
+                            overflow: TextOverflow.fade,
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                         const Icon(
                           Icons.keyboard_arrow_down_rounded,
