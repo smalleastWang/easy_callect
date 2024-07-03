@@ -24,7 +24,7 @@ class _MilksidentifyPageState extends ConsumerState<MilksidentifyPage> {
       ),
       body: Container(
         color: const Color(0xFFF1F5F9),
-        padding: const EdgeInsets.symmetric(horizontal: 12),
+        // padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Column(
           children: [
             const SizedBox(height: 6),

@@ -4,6 +4,7 @@ import 'package:easy_collect/enums/Route.dart';
 import 'package:easy_collect/enums/index.dart';
 import 'package:easy_collect/enums/register.dart';
 import 'package:easy_collect/models/register/index.dart';
+import 'package:easy_collect/widgets/Button/BlockButton.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
 import 'package:easy_collect/widgets/Form/PickerImageField.dart';
 import 'package:easy_collect/widgets/List/PickerPastureWidget.dart';
@@ -227,14 +228,9 @@ class _SurveyComparedPageState extends ConsumerState<SurveyComparedPage> {
                 ..._getImgWidget,
 
                 const SizedBox(height: 50),
-                ElevatedButton(
+                BlockButton(
                   onPressed: submitLoading ? null : () => _handleSubmit(enclosureList.value ?? []),
-                  
-                  child: Container(
-                    width: double.infinity,
-                    alignment: Alignment.center,
-                    child: const Text('注册', style: TextStyle(fontSize: 16))
-                  ),
+                  text: '注册'
                 )
               ],
             ),

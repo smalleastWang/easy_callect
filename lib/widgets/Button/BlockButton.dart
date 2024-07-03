@@ -16,7 +16,10 @@ class BlockButton extends StatelessWidget {
             onPressed: onPressed,
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).primaryColor,
-              foregroundColor: Theme.of(context).primaryColor.withOpacity(0.3)
+              foregroundColor: Theme.of(context).primaryColor.withOpacity(0.3),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(6.0), // 设置圆角半径为6.0
+              ),
             ),
             child: Padding(
               padding: const EdgeInsets.all(10),

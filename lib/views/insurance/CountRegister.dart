@@ -4,6 +4,7 @@ import 'package:easy_collect/enums/Route.dart';
 import 'package:easy_collect/enums/index.dart';
 import 'package:easy_collect/enums/register.dart';
 import 'package:easy_collect/models/register/index.dart';
+import 'package:easy_collect/widgets/Button/BlockButton.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
 import 'package:easy_collect/widgets/Form/PickerImageField.dart';
 import 'package:easy_collect/widgets/List/PickerPastureWidget.dart';
@@ -161,14 +162,9 @@ class _CountRegisterPageState extends ConsumerState<CountRegisterPage> {
                 PickerImageField(controller: _imgsController, maxNum: 1, label: CountMediaEnum.getLabel(countMedia), uploadApi: RegisterApi.scanAmountUpload),
 
                 const SizedBox(height: 50),
-                ElevatedButton(
+                BlockButton(
                   onPressed: submitLoading ? null : () => _handleSubmit(enclosureList.value ?? []),
-                  
-                  child: Container(
-                    width: double.infinity,
-                    alignment: Alignment.center,
-                    child: const Text('注册', style: TextStyle(fontSize: 16))
-                  ),
+                  text: '注册'
                 )
               ],
             ),
