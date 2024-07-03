@@ -3,8 +3,6 @@ import 'package:easy_collect/api/combo.dart';
 import 'package:easy_collect/widgets/List/index.dart';
 import 'package:go_router/go_router.dart';
 import 'package:easy_collect/enums/Route.dart';
-// import 'package:easy_collect/utils/icons.dart';
-// import 'package:flutter_svg/flutter_svg.dart';
 
 class ComboListPage extends StatefulWidget {
   const ComboListPage({super.key});
@@ -32,9 +30,7 @@ class _ComboListPageState extends State<ComboListPage> {
         ),
       ),
       backgroundColor: const Color(0xFFF1F5F9),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        child: ClipRRect(
+      body: ClipRRect(
           borderRadius: BorderRadius.circular(5.0),
           child: Container(
             color: Colors.white,
@@ -44,9 +40,8 @@ class _ComboListPageState extends State<ComboListPage> {
                 return Column(
                   children: [
                     Container(
-                      color: Colors.white,
+                      color: const Color.fromRGBO(255, 255, 255, 1),
                       child: ListTile(
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         leading: Image.asset(
                           'assets/icon/my/combo.png',
                           width: 24, // 设置图片宽度
@@ -60,19 +55,12 @@ class _ComboListPageState extends State<ComboListPage> {
                         },
                       ),
                     ),
-                    const Divider(
-                      height: 0.5,
-                      color: Color(0xFFE9E8E8),
-                      indent: 12,
-                      endIndent: 12,
-                    ),
                   ],
                 );
               },
             ),
           ),
         ),
-      ),
     );
   }
 }
