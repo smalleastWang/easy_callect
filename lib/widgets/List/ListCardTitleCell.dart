@@ -71,7 +71,7 @@ class ListCardTitleCell extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _renderTitle,
-            const Icon(Icons.arrow_forward_ios, color: Color(0xff888888), size: 16)
+            detailColumns != null ? const Icon(Icons.arrow_forward_ios, color: Color(0xff888888), size: 16) : const SizedBox.shrink()
           ],
         ),
       ),

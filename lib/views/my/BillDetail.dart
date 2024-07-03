@@ -49,14 +49,12 @@ class _BillDetailPageState extends State<BillDetailPage> {
                   height: 100,
                   width: double.infinity,
                 ),
-                Container(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(12, 20, 12, 0),
-                    child: Image.asset(
-                      'assets/images/bill_header.png', 
-                      fit: BoxFit.cover,
-                    ),
-                  )
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 20, 12, 0),
+                  child: Image.asset(
+                    'assets/images/bill_header.png', 
+                    fit: BoxFit.cover,
+                  ),
                 ),
                 Positioned(
                   top: 60.0,
@@ -156,26 +154,26 @@ class _BillDetailPageState extends State<BillDetailPage> {
     }
   }
 
-  String _getComboType(String? comboType) {
-    switch (comboType) {
-      case '0':
-        return '按功能收费';
-      case '1':
-        return '按设备收费';
-      default:
-        return '未知';
-    }
-  }
+  // String _getComboType(String? comboType) {
+  //   switch (comboType) {
+  //     case '0':
+  //       return '按功能收费';
+  //     case '1':
+  //       return '按设备收费';
+  //     default:
+  //       return '未知';
+  //   }
+  // }
 
-  String _buildSubtitle(Bill bill) {
-    if (bill.createTime != null) {
-      DateTime dateTime = DateTime.parse(bill.createTime!);
-      String formattedDate =
-          '${dateTime.year}-${dateTime.month}-${dateTime.day}';
-      return formattedDate;
-    }
-    return '未知';
-  }
+  // String _buildSubtitle(Bill bill) {
+  //   if (bill.createTime != null) {
+  //     DateTime dateTime = DateTime.parse(bill.createTime!);
+  //     String formattedDate =
+  //         '${dateTime.year}-${dateTime.month}-${dateTime.day}';
+  //     return formattedDate;
+  //   }
+  //   return '未知';
+  // }
 
   String _getChargeStateText(String? chargeState) {
     switch (chargeState) {

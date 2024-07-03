@@ -119,7 +119,7 @@ class DownloadItem extends StatefulWidget {
   });
 
   @override
-  _DownloadItemState createState() => _DownloadItemState();
+  State<DownloadItem> createState() => _DownloadItemState();
 }
 
 class _DownloadItemState extends State<DownloadItem> {
@@ -171,7 +171,7 @@ class _DownloadItemState extends State<DownloadItem> {
           ],
         ),
         trailing: isDownloading
-            ? SizedBox(
+            ? const SizedBox(
                 child: Text(
                   '下载中',
                   textAlign: TextAlign.center,

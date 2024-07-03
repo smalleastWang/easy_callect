@@ -24,7 +24,6 @@ class _WeightPageState extends ConsumerState<WeightPage> {
       ),
       body: Container(
         color: const Color(0xFFF1F5F9),
-        padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Column(
           children: [
             const SizedBox(height: 6),
@@ -54,60 +53,50 @@ class _WeightPageState extends ConsumerState<WeightPage> {
 }
 
 class WeightItem extends StatelessWidget {
-  final rowData;
+  final Map<String, dynamic> rowData;
 
   const WeightItem({super.key, required this.rowData});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 3),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(5),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
           children: [
-            Row(
-              children: [
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF5D8FFD),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Text(
-                    '${rowData["dataValue"]}KG',
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Text(
-                  rowData["animalNo"],
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const Spacer(),
-                // const Icon(Icons.chevron_right),
-              ],
+            Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: const Color(0xFF5D8FFD),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: Text(
+                '${rowData["dataValue"]}KG',
+                style: const TextStyle(color: Colors.white),
+              ),
             ),
-            const SizedBox(height: 12),
-            Text('与上一次的体重变化值     ${rowData["changeWeight"] ?? '未知'}', style: const TextStyle(color: Color(0xFF666666))),
-            const SizedBox(height: 12),
-            Text('日增重     ${rowData["dailyGain"] ?? '未知'}', style: const TextStyle(color: Color(0xFF666666))),
-            const SizedBox(height: 12),
-            const Divider(height: 0.5, color: Color(0xFFE2E2E2)),
-            const SizedBox(height: 12),
-            Text('测定日期:   ${rowData["date"] ?? '未知'}', style: const TextStyle(color: Color(0xFF999999))),
+            const SizedBox(width: 10),
+            Text(
+              rowData["animalNo"],
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const Spacer(),
+            // const Icon(Icons.chevron_right),
           ],
         ),
-      ),
+        const SizedBox(height: 12),
+        Text('与上一次的体重变化值     ${rowData["changeWeight"] ?? '未知'}', style: const TextStyle(color: Color(0xFF666666))),
+        const SizedBox(height: 12),
+        Text('日增重     ${rowData["dailyGain"] ?? '未知'}', style: const TextStyle(color: Color(0xFF666666))),
+        const SizedBox(height: 12),
+        const Divider(height: 0.5, color: Color(0xFFE2E2E2)),
+        const SizedBox(height: 12),
+        Text('测定日期:   ${rowData["date"] ?? '未知'}', style: const TextStyle(color: Color(0xFF999999))),
+      ],
     );
   }
 }

@@ -7,7 +7,7 @@ import 'package:easy_collect/enums/Route.dart';
 // import 'package:flutter_svg/flutter_svg.dart';
 
 class ComboListPage extends StatefulWidget {
-  const ComboListPage({Key? key}) : super(key: key);
+  const ComboListPage({super.key});
 
   @override
   State<ComboListPage> createState() => _ComboListPageState();

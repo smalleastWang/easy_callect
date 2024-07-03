@@ -167,27 +167,27 @@ class _MyWidgetState extends State<MyWidget> {
   }
 }
 
-class _MyHeaderWidget extends StatelessWidget {
-  final String version;
-  const _MyHeaderWidget({required this.version});
+// class _MyHeaderWidget extends StatelessWidget {
+//   final String version;
+//   const _MyHeaderWidget({required this.version});
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.center,
-      margin: const EdgeInsets.only(bottom: 20),
-      child: Column(
-        children: [
-          const Padding(
-            padding: EdgeInsets.only(top: 28, bottom: 10),
-            child: Image(
-              width: 100,
-              image: AssetImage("assets/images/logo02.png"),
-            ),
-          ),
-          Text(version),
-        ],
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       alignment: Alignment.center,
+//       margin: const EdgeInsets.only(bottom: 20),
+//       child: Column(
+//         children: [
+//           const Padding(
+//             padding: EdgeInsets.only(top: 28, bottom: 10),
+//             child: Image(
+//               width: 100,
+//               image: AssetImage("assets/images/logo02.png"),
+//             ),
+//           ),
+//           Text(version),
+//         ],
+//       ),
+//     );
+//   }
+// }

@@ -33,7 +33,7 @@ class ComboDetailPage extends StatefulWidget {
   const ComboDetailPage({super.key, required this.state});
 
   @override
-  _ComboDetailState createState() => _ComboDetailState();
+  State<ComboDetailPage> createState() => _ComboDetailState();
 }
 
 class _ComboDetailState extends State<ComboDetailPage> {

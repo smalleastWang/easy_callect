@@ -72,51 +72,41 @@ class HealthCheckItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 3),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(5),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
           children: [
-            Row(
-              children: [
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF5D8FFD),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Text(
-                    rowData["postureName"],
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Text(
-                  rowData["no"],
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                const Spacer(),
-                // const Icon(Icons.chevron_right),
-              ],
+            Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: const Color(0xFF5D8FFD),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: Text(
+                rowData["postureName"],
+                style: const TextStyle(color: Colors.white),
+              ),
             ),
-            const SizedBox(height: 12),
-            Text('牧场名称     ${rowData["orgName"]}', style: const TextStyle(color: Color(0xFF666666))),
-            const SizedBox(height: 12),
-            const Divider(height: 0.5, color: Color(0xFFE2E2E2)),
-            const SizedBox(height: 12),
-            Text('检测时间: ${rowData["createTime"]}',
-                style: const TextStyle(color: Color(0xFF999999))),
+            const SizedBox(width: 10),
+            Text(
+              rowData["no"],
+              style: const TextStyle(
+                  fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const Spacer(),
+            // const Icon(Icons.chevron_right),
           ],
         ),
-      ),
+        const SizedBox(height: 12),
+        Text('牧场名称     ${rowData["orgName"]}', style: const TextStyle(color: Color(0xFF666666))),
+        const SizedBox(height: 12),
+        const Divider(height: 0.5, color: Color(0xFFE2E2E2)),
+        const SizedBox(height: 12),
+        Text('检测时间: ${rowData["createTime"]}',
+            style: const TextStyle(color: Color(0xFF999999))),
+      ],
     );
   }
 }

@@ -38,14 +38,7 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
       body: ListWidget<OrderListFamily>(
         provider: orderListProvider,
         builder: (data) {
-          return Container(
-          margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            color: Colors.white
-          ),
-          child: Column(
+          return Column(
             children: [
               ListCardTitle(
                 title: Row(
@@ -69,8 +62,7 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
               ListCardCell(label: '联系电话', value: data['phone']),
               ListCardCellTime(label: '保单创建时间：', value: data['createTime'])
             ],
-          ),
-        );
+          );
         },
       )
     );

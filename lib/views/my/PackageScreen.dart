@@ -7,7 +7,7 @@ class PackageScreenPage extends StatefulWidget {
   const PackageScreenPage({super.key});
 
   @override
-  _PackageScreenState createState() => _PackageScreenState();
+  State<PackageScreenPage> createState() => _PackageScreenState();
 }
 
 class _PackageScreenState extends State<PackageScreenPage> {
@@ -380,7 +380,7 @@ class PackageDetailRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Row(
         children: [
-          Container(
+          SizedBox(
             width: 180.0, // 设置宽度
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -395,7 +395,7 @@ class PackageDetailRow extends StatelessWidget {
               ],
             ),
           ),
-          Container(
+          SizedBox(
             width: 100.0, // 设置宽度
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,

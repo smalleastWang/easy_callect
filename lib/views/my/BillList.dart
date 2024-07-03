@@ -6,7 +6,7 @@ import 'package:easy_collect/widgets/List/index.dart';
 import 'package:easy_collect/enums/Route.dart';
 
 class BillListPage extends StatefulWidget {
-  const BillListPage({Key? key}) : super(key: key);
+  const BillListPage({super.key});
 
   @override
   State<BillListPage> createState() => _BillListPageState();
@@ -31,28 +31,17 @@ class _BillListPageState extends State<BillListPage> {
         ),
       ),
       backgroundColor: const Color(0xFFF1F5F9),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        child: ListWidget<BillPageFamily>(
-          provider: billPageProvider, // 确保这个provider提供了Bill数据
-          builder: (billData) {
-            final bill = Bill.fromJson(billData);
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: GestureDetector(
-                onTap: () => _navigateToDetail(bill),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(6.0),
-                  child: Container(
-                    color: Colors.white,
-                    child: BillCard(bill: bill),
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
+      body: ListWidget<BillPageFamily>(
+        provider: billPageProvider, // 确保这个provider提供了Bill数据
+        builder: (billData) {
+          final bill = Bill.fromJson(billData);
+          return GestureDetector(
+            onTap: () => _navigateToDetail(bill),
+            child: BillCard(bill: bill),
+          );
+        },
       ),
+      
     );
   }
 }
@@ -60,93 +49,88 @@ class _BillListPageState extends State<BillListPage> {
 class BillCard extends StatelessWidget {
   final Bill bill;
 
-  const BillCard({required this.bill});
+  const BillCard({super.key, required this.bill});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-          title: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF5D8FFD),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text(
-                  _getChargeStateText(bill.chargeState),
-                  style: const TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 0),
+      title: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: const Color(0xFF5D8FFD),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Text(
+              _getChargeStateText(bill.chargeState),
+              style: const TextStyle(
+                color: Colors.white,
               ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  bill.costName ?? '图像盘点名称',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              const Icon(Icons.chevron_right),
-            ],
+            ),
           ),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 12),
-              Text('授权方式：${_getAuthorizationType(bill.costType)}'),
-              const SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('套餐类型：${_getComboType(bill.comboType)}'),
-                  Text(
-                    '￥${bill.totalPrice ?? '0.00'}',
-                    style: const TextStyle(
-                      color: Color(0xFFFE6B01),
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              bill.costName ?? '图像盘点名称',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
               ),
-              const SizedBox(height: 12),
-              const Divider(
-                height: 0.5,
-                color: Color(0xFFE2E2E2),
-              ),
-              const SizedBox(height: 12), // 调整行间距为8px
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('账单生成时间：${_buildSubtitle(bill)}'),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 0),
-                    child: GestureDetector(
-                      onTap: () => _showVoucherDialog(context, bill.voucherImg),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-                        child: const Text(
-                          '查看凭证',
-                          style: TextStyle(color: Color(0xFF297DFF), fontSize: 14),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
-        ),
+          const Icon(Icons.chevron_right),
+        ],
       ),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 12),
+          Text('授权方式：${_getAuthorizationType(bill.costType)}'),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('套餐类型：${_getComboType(bill.comboType)}'),
+              Text(
+                '￥${bill.totalPrice ?? '0.00'}',
+                style: const TextStyle(
+                  color: Color(0xFFFE6B01),
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          const Divider(
+            height: 0.5,
+            color: Color(0xFFE2E2E2),
+          ),
+          const SizedBox(height: 12), // 调整行间距为8px
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('账单生成时间：${_buildSubtitle(bill)}'),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 0),
+                child: GestureDetector(
+                  onTap: () => _showVoucherDialog(context, bill.voucherImg),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                    child: const Text(
+                      '查看凭证',
+                      style: TextStyle(color: Color(0xFF297DFF), fontSize: 14),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    
     );
   }
 
@@ -204,7 +188,7 @@ class BillCard extends StatelessWidget {
   void _showVoucherDialog(BuildContext context, String? voucherImg) {
     if (voucherImg == null || voucherImg.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('未找到凭证图像')),
+        const SnackBar(content: Text('未找到凭证图像')),
       );
       return;
     }
