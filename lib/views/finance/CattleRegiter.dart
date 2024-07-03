@@ -6,6 +6,7 @@ import 'package:easy_collect/enums/register.dart';
 import 'package:easy_collect/mock.dart';
 import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/utils/tool/common.dart';
+import 'package:easy_collect/widgets/Button/BlockButton.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
 import 'package:easy_collect/widgets/Form/PickerImageField.dart';
 import 'package:easy_collect/widgets/Register/EnclosurePicker.dart';
@@ -125,13 +126,9 @@ class _CattleRegiterPageState extends State<CattleRegiterPage> {
                 PickerImageField(controller: _imageController, maxNum: 1),
 
                 const SizedBox(height: 50),
-                ElevatedButton(
+                BlockButton(
                   onPressed: _handleSubmit,
-                  child: Container(
-                    width: double.infinity,
-                    alignment: Alignment.center,
-                    child: const Text('注册', style: TextStyle(fontSize: 16))
-                  ),
+                  text: '注册'
                 )
               ],
             ),
