@@ -146,6 +146,10 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
       child: PickerPastureWidget(
         options: widget.pasture!.options,
+        onChange: (values) {
+          _enclosureController.value = values;
+          _getList(1);
+        }
       ),
       // child: EnclosurePickerWidget(
       //   // scaffoldKey: _scaffoldKey,

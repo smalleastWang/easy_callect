@@ -187,7 +187,7 @@ class _PickerPastureWidgetState extends State<PickerPastureWidget> {
                 EasyLoading.showError('请选至最后一级');
                 return;
               }
-              List<String> values = tabs.map((e) => e.id!).toList();
+              List<String> values = tabs.where((e) => e.id != null).map((e) => e.id!).toList();
               if (widget.isShed  && !lastIsBld(widget.options, values.last)) {
                 EasyLoading.showError('改选项最后一级不是圈舍');
                 return;
