@@ -5,6 +5,7 @@ import 'package:easy_collect/router/modules/finance.dart';
 import 'package:easy_collect/router/modules/insurance.dart';
 import 'package:easy_collect/router/modules/precisionBreeding.dart';
 import 'package:easy_collect/router/modules/supervision.dart';
+import 'package:easy_collect/router/modules/common.dart';
 import 'package:easy_collect/utils/storage.dart';
 import 'package:easy_collect/views/home/index.dart';
 import 'package:easy_collect/views/my/Login.dart';
@@ -83,6 +84,8 @@ final List<GoRoute> routes = [
   // 精准养殖
   precisionBreedingRoutes,
   // 行业监督
-  supervisionRoutes
+  supervisionRoutes,
+  // 管理员设置
+  commonRoutes,
 ];
 

@@ -43,7 +43,10 @@ enum RouteEnum {
   breedingScale('breedingScale', '养殖规模', '/supervision/breedingScale'),
   mortgageInfo('mortgageInfo', '抵押信息', '/supervision/mortgageInfo'),
   insureInfo('insureInfo', '投保信息', '/supervision/insureInfo'),
-  healthCheck('healthCheck', '健康检测', '/supervision/healthCheck');
+  healthCheck('healthCheck', '健康检测', '/supervision/healthCheck'),
+
+  common('/common', '管理员设置', '/common'),
+  aibox('aibox', 'AI盒子', '/common/aibox');
 
   const RouteEnum(this.path, this.title, this.fullpath);
 
