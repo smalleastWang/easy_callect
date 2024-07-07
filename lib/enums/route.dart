@@ -48,7 +48,8 @@ enum RouteEnum {
   common('/common', '管理员设置', '/common'),
   aibox('aibox', 'AI盒子', '/common/aibox'),
   building('building', '圈舍信息', '/common/building'),
-  camera('camera', '摄像头管理', '/common/camera');
+  camera('camera', '摄像头管理', '/common/camera'),
+  animal('animal', '牛只信息', '/common/animal');
 
   const RouteEnum(this.path, this.title, this.fullpath);
 

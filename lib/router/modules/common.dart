@@ -4,6 +4,7 @@ import 'package:easy_collect/views/common/index.dart';
 import 'package:easy_collect/views/common/Building.dart';
 import 'package:easy_collect/views/common/AIBox.dart';
 import 'package:easy_collect/views/common/Camera.dart';
+import 'package:easy_collect/views/common/Animal.dart';
 import 'package:go_router/go_router.dart';
 
 final commonRoutes = GoRoute(
@@ -23,8 +24,8 @@ final commonRoutes = GoRoute(
       builder: (context, state) => const CameraPage(),
     ),
     GoRoute(
-      path: RouteEnum.aibox.path,
-      builder: (context, state) => const AIBoxPage(),
+      path: RouteEnum.animal.path,
+      builder: (context, state) => const AnimalPage(),
     ),
   ]
 );
