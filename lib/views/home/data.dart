@@ -70,9 +70,9 @@ final List<ModuleModel> moduleList = [
     route: RouteEnum.common,
     bgColor: MyColors.manageColor,
     children: [
-      ModuleItemModel(route: RouteEnum.aibox, iconPath: 'assets/icon/common/1.png'),
+      ModuleItemModel(route: RouteEnum.building, iconPath: 'assets/icon/common/1.png'),
       ModuleItemModel(route: RouteEnum.aibox, iconPath: 'assets/icon/common/2.png'),
-      ModuleItemModel(route: RouteEnum.aibox, iconPath: 'assets/icon/common/3.png'),
+      ModuleItemModel(route: RouteEnum.camera, iconPath: 'assets/icon/common/3.png'),
       ModuleItemModel(route: RouteEnum.aibox, iconPath: 'assets/icon/common/4.png'),
       ModuleItemModel(route: RouteEnum.aibox, iconPath: 'assets/icon/common/5.png'),
     ]

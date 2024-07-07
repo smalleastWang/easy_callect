@@ -46,7 +46,9 @@ enum RouteEnum {
   healthCheck('healthCheck', '健康检测', '/supervision/healthCheck'),
 
   common('/common', '管理员设置', '/common'),
-  aibox('aibox', 'AI盒子', '/common/aibox');
+  aibox('aibox', 'AI盒子', '/common/aibox'),
+  building('building', '圈舍信息', '/common/building'),
+  camera('camera', '摄像头管理', '/common/camera');
 
   const RouteEnum(this.path, this.title, this.fullpath);
 
