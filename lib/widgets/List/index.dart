@@ -178,10 +178,32 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
   }
 
   Widget _buildNoDataWidget() {
-    return const Center(
-      child: Text(
-        '没有查询到数据',
-        style: TextStyle(fontSize: 16),
+    return Container(
+      color: Colors.white,
+      width: double.infinity,
+      height: double.infinity,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/images/empty.png',
+              fit: BoxFit.contain,
+              width: double.infinity,
+              height: 200,
+            ),
+            Transform.translate(
+              offset: const Offset(0, -40),
+              child: const Text(
+                '没有查询到数据',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Color(0xFF666666),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
