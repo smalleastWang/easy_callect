@@ -5,6 +5,7 @@ import 'package:easy_collect/views/common/Building.dart';
 import 'package:easy_collect/views/common/AIBox.dart';
 import 'package:easy_collect/views/common/Camera.dart';
 import 'package:easy_collect/views/common/Animal.dart';
+import 'package:easy_collect/views/common/Email.dart';
 import 'package:go_router/go_router.dart';
 
 final commonRoutes = GoRoute(
@@ -26,6 +27,10 @@ final commonRoutes = GoRoute(
     GoRoute(
       path: RouteEnum.animal.path,
       builder: (context, state) => const AnimalPage(),
+    ),
+    GoRoute(
+      path: RouteEnum.email.path,
+      builder: (context, state) => const EmailPage(),
     ),
   ]
 );

@@ -74,7 +74,7 @@ final List<ModuleModel> moduleList = [
       ModuleItemModel(route: RouteEnum.aibox, iconPath: 'assets/icon/common/2.png'),
       ModuleItemModel(route: RouteEnum.camera, iconPath: 'assets/icon/common/3.png'),
       ModuleItemModel(route: RouteEnum.animal, iconPath: 'assets/icon/common/4.png'),
-      ModuleItemModel(route: RouteEnum.aibox, iconPath: 'assets/icon/common/5.png'),
+      ModuleItemModel(route: RouteEnum.email, iconPath: 'assets/icon/common/5.png'),
     ]
 
   ),
