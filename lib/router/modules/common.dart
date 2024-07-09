@@ -2,6 +2,7 @@
 import 'package:easy_collect/enums/route.dart';
 import 'package:easy_collect/views/common/index.dart';
 import 'package:easy_collect/views/common/Building.dart';
+import 'package:easy_collect/views/common/EditBuilding.dart';
 import 'package:easy_collect/views/common/AIBox.dart';
 import 'package:easy_collect/views/common/Camera.dart';
 import 'package:easy_collect/views/common/Animal.dart';

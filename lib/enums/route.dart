@@ -10,6 +10,7 @@ enum RouteEnum {
   billList('/billList', '账单列表', '/billList'),
   billDetail('/billDetail', '账单详情', '/billDetail'),
   packageScreen('/packageScreen', '已购套餐信息', '/packageScreen'),
+  editBuilding('/editBuilding', '添加圈舍信息', '/editBuilding'),
 
   // 智慧保险
   insurance('/insurance', '智慧保险', '/insurance'),

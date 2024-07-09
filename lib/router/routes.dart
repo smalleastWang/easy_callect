@@ -7,6 +7,7 @@ import 'package:easy_collect/router/modules/precisionBreeding.dart';
 import 'package:easy_collect/router/modules/supervision.dart';
 import 'package:easy_collect/router/modules/common.dart';
 import 'package:easy_collect/utils/storage.dart';
+import 'package:easy_collect/views/common/EditBuilding.dart';
 import 'package:easy_collect/views/home/index.dart';
 import 'package:easy_collect/views/my/Login.dart';
 import 'package:easy_collect/views/my/ComboList.dart';
@@ -75,6 +76,10 @@ final List<GoRoute> routes = [
     path: RouteEnum.downLoad.path,
     builder: (context, state) => const DownloadPage(),
     routes: const []
+  ),
+  GoRoute(
+    path: RouteEnum.editBuilding.path,
+    builder: (context, state) => const EditBuildingPage(),
   ),
   
   // 智慧保险

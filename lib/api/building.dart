@@ -17,12 +17,12 @@ Future<PageVoModel> buildingPage(BuildingPageRef ref, Map<String, dynamic> param
 }
 
 // 新增/编辑圈舍
-Future<void> editBuilding(Building params) async {
-  if(params.id != null) {
-      await HttpUtils.post('/biz/buildings/edit', params: params.toJson());
+Future<void> editBuilding(Map<String, dynamic> params) async {
+  if(params['id'] != null) {
+      await HttpUtils.post('/biz/buildings/edit', params: params);
       return;
   }
-  await HttpUtils.post('/biz/buildings/add', params: params.toJson());
+  await HttpUtils.post('/biz/buildings/add', params: params);
 }
 
 // 删除圈舍

@@ -1,3 +1,4 @@
+import 'package:easy_collect/enums/route.dart';
 import 'package:easy_collect/models/buildings/building.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,6 +6,7 @@ import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/api/precisionBreeding.dart';
 import 'package:easy_collect/widgets/List/index.dart';
 import 'package:easy_collect/api/building.dart';
+import 'package:go_router/go_router.dart';
 
 class BuildingPage extends ConsumerStatefulWidget {
   const BuildingPage({super.key});
@@ -21,13 +23,37 @@ class _BuildingPageState extends ConsumerState<BuildingPage> {
     listWidgetKey.currentState?.refreshWithPreviousParams();
   }
 
+  void _navigateTo(String path) async {
+    bool? result = await context.push(path);
+    // 如果返回结果为true，则刷新列表
+    if (result == true) {
+      listWidgetKey.currentState?.refreshWithPreviousParams();
+    }
+  }
+
+  void _addNewBuilding() {
+    _navigateTo(RouteEnum.editBuilding.path);
+  }
+
   @override
   Widget build(BuildContext context) {
     final AsyncValue<List<EnclosureModel>> weightInfoTree = ref.watch(weightInfoTreeProvider);
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
         title: const Text('圈舍信息'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: _addNewBuilding,
+          ),
+        ],
       ),
       body: Container(
         color: const Color(0xFFF1F5F9),
