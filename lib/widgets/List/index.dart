@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:collection/collection.dart';
 import 'package:easy_collect/models/PageVo.dart';
 import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
@@ -8,6 +10,7 @@ import 'package:easy_collect/widgets/Search/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 enum Action { refresh, loading }
 
@@ -24,7 +27,7 @@ class PastureModel {
 /// 列表组件
 /// 参数 {pasture} 牧场筛选
 /// 参数 {searchForm} 自定义删选
-/// 参数 {filterList} 下拉塞选
+/// 参数 {filterList} 下拉筛选
 /// 
 /// builder 可以用  ListItemWidget 组件 也可以传入自定义组件
 ///
@@ -66,9 +69,23 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
     super.initState();
   }
 
+  Future<void> _saveCurrentParams() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('queryParams', json.encode(params));
+  }
+
   getList(Map<String, dynamic> query) {
     params.addAll(query);
     return _getList(1);
+  }
+
+  refreshWithPreviousParams() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? savedParams = prefs.getString('queryParams');
+    if (savedParams != null) {
+      params = Map<String, dynamic>.from(json.decode(savedParams));
+      _fetchData();
+    }
   }
 
   // 获取table数据
@@ -86,11 +103,20 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
       params['current'] = current ?? params['current'] + 1;
     }
 
+    _fetchData();
+    return null;
+  }
+
+  // 调用接口
+  AsyncValue<PageVoModel>? _fetchData() {
     // 加入筛选参数
     if (widget.pasture != null && _enclosureController.value != null) {
       final pastureVal = _enclosureController.value![_enclosureController.value!.length - 1];
       params.addAll({widget.pasture!.field: pastureVal});
     }
+
+    // 保存当前的查询参数
+    _saveCurrentParams();
 
     // 请求数据
     final AsyncValue<PageVoModel> res = ref.refresh(widget.provider(params));
@@ -151,20 +177,6 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
           _getList(1);
         }
       ),
-      // child: EnclosurePickerWidget(
-      //   // scaffoldKey: _scaffoldKey,
-      //   controller: _enclosureController,
-      //   options: widget.pasture!.options, 
-      //   decoration: getInputDecoration(
-      //     // labelText: '牧场/圈舍',
-      //     hintText: '请选择牧场/圈舍',
-      //   ),
-      //   onChange: (value) {
-      //     action = Action.refresh;
-      //     _refreshController.requestRefresh();
-      //     _getList(1);
-      //   },
-      // )
     );
   }
 
@@ -213,8 +225,8 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
     final AsyncValue<PageVoModel> data = ref.watch(widget.provider(params));
 
     _handleAction(data);
-    return  Scaffold(
-      body:Column(
+    return Scaffold(
+      body: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           _pastureWidget,
@@ -234,7 +246,7 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
                   releaseText: "松开立即刷新",
                   failedText: '刷新失败',
                 ),
-                footerBuilder:  () => const ClassicFooter(
+                footerBuilder: () => const ClassicFooter(
                   idleText: "上拉加载",
                   loadingText: "加载中…",
                   canLoadingText: "松手开始加载数据",
@@ -244,7 +256,7 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
                 child: SmartRefresher(
                   enablePullUp: true,
                   controller: _refreshController,
-                  onLoading:_onLoading,
+                  onLoading: _onLoading,
                   onRefresh: _onRefresh,
                   child: data.when(
                     data: (PageVoModel value) {

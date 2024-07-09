@@ -5,7 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'building.g.dart';
 
-// 圈舍管理
+// 圈舍管理列表
 @riverpod
 Future<PageVoModel> buildingPage(BuildingPageRef ref, Map<String, dynamic> params) async {
   Map<String, dynamic> res = await HttpUtils.get('/biz/buildings/page', params: params);
@@ -34,8 +34,10 @@ Future<void> deleteBuilding(Map<String, dynamic> params) async {
 // 启用/禁用圈舍
 Future<void> toggleEnableBuilding(Building params) async {
   if(params.state != "1") {
-      await HttpUtils.post('/biz/buildings/disableState', params: params.toJson());
-      return;
+    params.state = "1";
+    await HttpUtils.post('/biz/buildings/enableState', params: params.toJson());
+    return;
   }
-  await HttpUtils.post('/biz/buildings/enableState', params: params.toJson());
+  params.state = "0";
+  await HttpUtils.post('/biz/buildings/disableState', params: params.toJson());
 }

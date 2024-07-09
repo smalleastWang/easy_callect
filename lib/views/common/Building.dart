@@ -1,3 +1,4 @@
+import 'package:easy_collect/models/buildings/building.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_collect/models/register/index.dart';
@@ -13,6 +14,13 @@ class BuildingPage extends ConsumerStatefulWidget {
 }
 
 class _BuildingPageState extends ConsumerState<BuildingPage> {
+  final GlobalKey<ListWidgetState> listWidgetKey = GlobalKey<ListWidgetState>();
+
+  Future<void> _toggleEnable(Building params) async {
+    await toggleEnableBuilding(params);
+    listWidgetKey.currentState?.refreshWithPreviousParams();
+  }
+
   @override
   Widget build(BuildContext context) {
     final AsyncValue<List<EnclosureModel>> weightInfoTree = ref.watch(weightInfoTreeProvider);
@@ -30,13 +38,17 @@ class _BuildingPageState extends ConsumerState<BuildingPage> {
               child: weightInfoTree.when(
                 data: (data) {
                   return ListWidget<BuildingPageFamily>(
+                    key: listWidgetKey,
                     pasture: PastureModel(
                       field: 'orgId',
                       options: data,
                     ),
                     provider: buildingPageProvider,
                     builder: (rowData) {
-                      return BuildingItem(rowData: rowData);
+                      return BuildingItem(
+                        rowData: rowData,
+                        onToggle: _toggleEnable,
+                      );
                     },
                   );
                 },
@@ -53,30 +65,30 @@ class _BuildingPageState extends ConsumerState<BuildingPage> {
 
 class BuildingItem extends StatelessWidget {
   final Map<String, dynamic> rowData;
+  final Future<void> Function(Building) onToggle;
 
-  const BuildingItem({super.key, required this.rowData});
+  const BuildingItem({super.key, required this.rowData, required this.onToggle});
+
+  Widget _buildInfoRow(String label, String? value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Text(
+        '$label     ${value == null || value.isEmpty ? '未知' : value}',
+        style: const TextStyle(color: Color(0xFF666666)),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     String onlineStatus = rowData["state"] == "0" ? "启用" : "禁用";
+    bool isEnabled = rowData["state"] == "0";
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: rowData["state"] == "0" ? const Color(0xFF5D8FFD) : const Color(0xFFCCCCCC),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: Text(
-                onlineStatus,
-                style: const TextStyle(color: Colors.white),
-              ),
-            ),
-            const SizedBox(width: 10),
             Text(
               rowData["buildingName"],
               style: const TextStyle(
@@ -85,28 +97,25 @@ class BuildingItem extends StatelessWidget {
               ),
             ),
             const Spacer(),
+            Text(
+              onlineStatus
+            ),
+            Switch(
+              value: isEnabled,
+              onChanged: (value) {
+                Building building = Building.fromJson(rowData);
+                building.state = value ? "0" : "1";
+                onToggle(building);
+              },
+            ),
           ],
         ),
         const SizedBox(height: 12),
-        Text('牧场     ${rowData["orgName"] == null || rowData["orgName"] == "" ? '未知' : rowData["orgName"]}',
-            style: const TextStyle(color: Color(0xFF666666))),
-        const SizedBox(height: 12),
-        Text('期初数量     ${rowData["maxNum"] == null || rowData["maxNum"] == "" ? '未知' : rowData["maxNum"]}',
-            style: const TextStyle(color: Color(0xFF666666))),
-        const SizedBox(height: 12),
-        Text('当前牛数量     ${rowData["currentNum"] == null || rowData["currentNum"] == "" ? '未知' : rowData["currentNum"]}',
-            style: const TextStyle(color: Color(0xFF666666))),
-        const SizedBox(height: 12),
-        Text('栋别     ${rowData["blockNum"] == null || rowData["blockNum"] == "" ? '未知' : rowData["blockNum"]}',
-          style: const TextStyle(color: Color(0xFF666666))),
-        const SizedBox(height: 12),
-        Text('栏别     ${rowData["hurdleNum"] == null || rowData["hurdleNum"] == "" ? '未知' : rowData["hurdleNum"]}',
-          style: const TextStyle(color: Color(0xFF666666))),
-        // const SizedBox(height: 12),
-        // const Divider(height: 0.5, color: Color(0xFFE2E2E2)),
-        // const SizedBox(height: 12),
-        // Text('创建时间: ${rowData["createTime"]}',
-        //     style: const TextStyle(color: Color(0xFF999999))),
+        _buildInfoRow('牧场', rowData["orgName"]),
+        _buildInfoRow('期初数量', rowData["maxNum"]),
+        _buildInfoRow('当前牛数量', rowData["currentNum"]),
+        _buildInfoRow('栋别', rowData["blockNum"]),
+        _buildInfoRow('栏别', rowData["hurdleNum"]),
       ],
     );
   }
