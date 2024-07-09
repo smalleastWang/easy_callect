@@ -83,7 +83,9 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? savedParams = prefs.getString('queryParams');
     if (savedParams != null) {
-      params = Map<String, dynamic>.from(json.decode(savedParams));
+      // params = Map<String, dynamic>.from(json.decode(savedParams));
+      params.removeWhere((key, value) => true);
+      params.addAll(json.decode(savedParams));
       _fetchData();
     }
   }
@@ -103,8 +105,7 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
       params['current'] = current ?? params['current'] + 1;
     }
 
-    _fetchData();
-    return null;
+    return _fetchData();
   }
 
   // 调用接口
