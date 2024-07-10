@@ -21,9 +21,13 @@ A new Flutter FFI plugin project.
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
   s.platform = :ios, '11.0'
+  s.static_framework = true
 
   # Flutter.framework does not contain a i386 slice.
-  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386 arm64' }
+  s.pod_target_xcconfig = { 
+    'DEFINES_MODULE' => 'YES', 
+    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386 arm64' 
+  }
     s.swift_version = '5.0'
 
     ## If you do not need to download the ncnn library, remove it.
@@ -31,12 +35,12 @@ A new Flutter FFI plugin project.
     ## Up to here
 
     # https://medium.com/flutter-community/integrating-c-library-in-a-flutter-app-using-dart-ffi-38a15e16bc14
-    s.preserve_paths = 'ncnn.xcframework', 'openmp.xcframework'
+    s.preserve_paths = 'ncnn.framework', 'openmp.framework'
     s.xcconfig = {
       'OTHER_LDFLAGS' => '-framework ncnn -framework openmp',
-      'OTHER_CFLAGS' => '-DUSE_NCNN_SIMPLEOCV -DNCNN_YOLOX_FLUTTER_IOS',
+      'OTHER_CFLAGS' => '-DNCNN_YOLOX_FLUTTER_IOS',
     }
-    s.ios.vendored_frameworks = 'ncnn.xcframework', 'openmp.xcframework'
+    s.ios.vendored_frameworks = 'ncnn.framework', 'openmp.framework'
     s.library = 'c++'
 
 

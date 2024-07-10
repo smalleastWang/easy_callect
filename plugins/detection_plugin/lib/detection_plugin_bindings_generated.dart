@@ -8,7 +8,7 @@
 // ignore_for_file: type=lint
 import 'dart:ffi' as ffi;
 
-/// Bindings for `src/detection_plugin.h`.
+/// Bindings for 'ios/Classes/detection_plugin.h'.
 ///
 /// Regenerate bindings with `flutter pub run ffigen --config ffigen.yaml`.
 ///
@@ -165,7 +165,7 @@ abstract class DETType {
   static const int BODY_TYPE = 2;
 }
 
-final class Rect extends ffi.Struct {
+final class ObjectRect extends ffi.Struct {
   @ffi.Float()
   external double x;
 
@@ -186,7 +186,7 @@ final class Object extends ffi.Struct {
   @ffi.Float()
   external double prob;
 
-  external Rect rect;
+  external ObjectRect rect;
 }
 
 final class DetectResult extends ffi.Struct {

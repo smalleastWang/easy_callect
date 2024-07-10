@@ -32,20 +32,20 @@ message(STATUS "ncnn_FOUND: ${ncnn_FOUND}")
 # targets
 
 include_directories(
-        ${MY_PROJ}/src
+    ../ios/Classes
 )
 
 ## ncnn_yolox
 
 
 add_library(detection_plugin SHARED
-  "detection_plugin.cpp"
+  "../ios/Classes/detection_plugin.cpp"
 )
 
 target_link_libraries(detection_plugin ncnn)
 
 set_target_properties(detection_plugin PROPERTIES
-  PUBLIC_HEADER detection_plugin.h
+  PUBLIC_HEADER ../ios/Classes/detection_plugin.h
   OUTPUT_NAME "detection_plugin"
 )
 
