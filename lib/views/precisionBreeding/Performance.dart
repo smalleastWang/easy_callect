@@ -35,13 +35,14 @@ class _PerformancePageState extends ConsumerState<PerformancePage> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: const Text('体征信息'),
       ),
       body: Container(
         color: const Color(0xFFF1F5F9),
         child: Column(
           children: [
-            const SizedBox(height: 6),
+            // const SizedBox(height: 6),
             Expanded(
               child: weightInfoTree.when(
                 data: (data) {
