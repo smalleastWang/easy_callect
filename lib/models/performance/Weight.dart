@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'Weight.g.dart';
 
-//智能估重
+//体征信息
 
 @JsonSerializable()
 class Weight {

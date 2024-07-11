@@ -11,6 +11,7 @@ enum RouteEnum {
   billDetail('/billDetail', '账单详情', '/billDetail'),
   packageScreen('/packageScreen', '已购套餐信息', '/packageScreen'),
   editBuilding('/editBuilding', '添加圈舍信息', '/editBuilding'),
+  performanceDetail('/performanceDetail', '体征详情', '/performanceDetail'),
 
   // 智慧保险
   insurance('/insurance', '智慧保险', '/insurance'),

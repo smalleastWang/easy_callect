@@ -1,13 +1,13 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_collect/api/precisionBreeding.dart';
 import 'package:easy_collect/enums/Route.dart';
 import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/widgets/List/index.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:go_router/go_router.dart';
 class ModuleListModel {
-  RouteEnum route;
-  Color background;
+  final RouteEnum route;
+  final Color background;
   ModuleListModel({required this.route, required this.background});
 }
 
@@ -19,7 +19,7 @@ class PerformancePage extends ConsumerStatefulWidget {
 }
 
 class _PerformancePageState extends ConsumerState<PerformancePage> {
-  final List moduleList = [
+  final List<ModuleListModel> moduleList = [
     ModuleListModel(route: RouteEnum.inventory, background: Colors.black),
     ModuleListModel(route: RouteEnum.performance, background: Colors.black),
     ModuleListModel(route: RouteEnum.weight, background: Colors.black),
@@ -72,86 +72,104 @@ class PerformanceItem extends StatelessWidget {
 
   const PerformanceItem({super.key, required this.rowData});
 
+  void _navigateToDetail(BuildContext context, String algorithmCode, String dataType) {
+    print('algorithmCode: ${algorithmCode}');
+    print('dataType: ${dataType}');
+    context.push(
+      RouteEnum.performanceDetail.path,
+      extra: {'algorithmCode': algorithmCode, 'dataType': dataType},
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: const Color(0xFF5D8FFD),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: Text(
-                rowData["buildingName"],
-                style: const TextStyle(color: Colors.white),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Text(
-              rowData["animalNo"],
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const Spacer(),
-            // const Icon(Icons.chevron_right),
-          ],
-        ),
+        _buildHeader(),
         const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(
-              child: Text('身长/CM     ${rowData["length"]}', style: const TextStyle(color: Color(0xFF666666))),
-            ),
-            Expanded(
-              child: Text('身高/CM     ${rowData["high"]}', style: const TextStyle(color: Color(0xFF666666))),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(
-              child: Text('肩宽/CM     ${rowData["width"]}', style: const TextStyle(color: Color(0xFF666666))),
-            ),
-            Expanded(
-              child: Text('十字部高/CM     ${rowData["crossHigh"]}', style: const TextStyle(color: Color(0xFF666666))),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(
-              child: Text('体斜长/CM     ${rowData["plag"]}', style: const TextStyle(color: Color(0xFF666666))),
-            ),
-            Expanded(
-              child: Text('胸围/CM     ${rowData["bust"]}', style: const TextStyle(color: Color(0xFF666666))),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(
-              child: Text('腹围/CM     ${rowData["circum"]}', style: const TextStyle(color: Color(0xFF666666))),
-            ),
-            Expanded(
-              child: Text('管围/CM     ${rowData["canno"]}', style: const TextStyle(color: Color(0xFF666666))),
-            ),
-          ],
-        ),
+        _buildInfoRows(context),
         const SizedBox(height: 12),
         const Divider(height: 0.5, color: Color(0xFFE2E2E2)),
         const SizedBox(height: 12),
-        Text('测定日期: ${rowData["date"]}',
-            style: const TextStyle(color: Color(0xFF999999))),
+        Text('测定日期: ${rowData["date"]}', style: const TextStyle(color: Color(0xFF999999))),
       ],
+    );
+  }
+
+  Widget _buildHeader() {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: const Color(0xFF5D8FFD),
+            borderRadius: BorderRadius.circular(5),
+          ),
+          child: Text(
+            rowData["buildingName"],
+            style: const TextStyle(color: Colors.white),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Text(
+          rowData["animalNo"],
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const Spacer(),
+      ],
+    );
+  }
+
+  Widget _buildInfoRows(BuildContext context) {
+    return Column(
+      children: [
+        _buildTwoColumns(context, '身长/CM', rowData["length"], '0', '身高/CM', rowData["high"], '2'),
+        const SizedBox(height: 12),
+        _buildTwoColumns(context, '肩宽/CM', rowData["width"], '4', '十字部高/CM', rowData["crossHigh"], '5'),
+        const SizedBox(height: 12),
+        _buildTwoColumns(context, '体斜长/CM', rowData["plag"], '6', '胸围/CM', rowData["bust"], '7'),
+        const SizedBox(height: 12),
+        _buildTwoColumns(context, '腹围/CM', rowData["circum"], '8', '管围/CM', rowData["canno"], '9'),
+      ],
+    );
+  }
+
+  Widget _buildTwoColumns(
+    BuildContext context,
+    String label1, dynamic value1, String dataType1,
+    String label2, dynamic value2, String dataType2,
+  ) {
+    return Row(
+      children: [
+        Expanded(child: _buildInfoRow(context, label1, value1, rowData["algorithmCode"], dataType1)),
+        Expanded(child: _buildInfoRow(context, label2, value2, rowData["algorithmCode"], dataType2)),
+      ],
+    );
+  }
+
+  Widget _buildInfoRow(BuildContext context, String label, dynamic value, String algorithmCode, String dataType) {
+    return GestureDetector(
+      onTap: () => _navigateToDetail(context, algorithmCode, dataType),
+      child: RichText(
+        text: TextSpan(
+          children: [
+            TextSpan(
+              text: '$label',
+              style: const TextStyle(color: Color(0xFF3B81F2)),
+            ),
+            WidgetSpan(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 20.0),
+                child: Text(
+                  '$value',
+                  style: const TextStyle(color: Color(0xFF666666)),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

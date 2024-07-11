@@ -17,6 +17,7 @@ import 'package:easy_collect/views/my/BillDetail.dart';
 import 'package:easy_collect/views/my/PackageScreen.dart';
 import 'package:easy_collect/views/my/UserInfo.dart';
 import 'package:easy_collect/views/my/Download.dart';
+import 'package:easy_collect/views/precisionBreeding/PerformanceDetail.dart';
 import 'package:go_router/go_router.dart';
 
 final List<GoRoute> routes = [
@@ -80,6 +81,16 @@ final List<GoRoute> routes = [
   GoRoute(
     path: RouteEnum.editBuilding.path,
     builder: (context, state) => const EditBuildingPage(),
+  ),
+  GoRoute(
+    path: RouteEnum.performanceDetail.path,
+    builder: (context, state) {
+      final extra = state.extra as Map<String, String>;
+      return PerformanceDetailPage(
+        algorithmCode: extra['algorithmCode']!,
+        dataType: extra['dataType']!,
+      );
+    },
   ),
   
   // 智慧保险
