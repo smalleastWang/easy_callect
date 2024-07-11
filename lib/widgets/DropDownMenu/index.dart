@@ -359,7 +359,9 @@ class _DropDownMenuState extends State<DropDownMenu> with SingleTickerProviderSt
                 child: GestureDetector(
                   onTap: () {
                     if (_curFilterIndex == index || dropDownMenuOverlayEntry == null) {
-                      _isExpanded = !_isExpanded;
+                      setState(() {
+                        _isExpanded = !_isExpanded;
+                      });
                       if (_isExpanded) {
                         _animationController.forward();
                       } else {
@@ -369,7 +371,9 @@ class _DropDownMenuState extends State<DropDownMenu> with SingleTickerProviderSt
                     } else {
                       overlayEntryAllRemove();
                     }
-                    _curFilterIndex = index;
+                    setState(() {
+                      _curFilterIndex = index;
+                    });
                     changeOverlay(index: index, reset: true);
                     if (_isExpanded) {
                       _maskColor = Colors.black12;
@@ -397,8 +401,8 @@ class _DropDownMenuState extends State<DropDownMenu> with SingleTickerProviderSt
                             textAlign: TextAlign.center,
                           ),
                         ),
-                        const Icon(
-                          Icons.keyboard_arrow_down_rounded,
+                        Icon(
+                          _isExpanded && _curFilterIndex == index ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
                           size: 20,
                           color: Colors.black26,
                         ),

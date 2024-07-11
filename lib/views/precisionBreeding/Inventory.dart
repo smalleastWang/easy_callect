@@ -7,7 +7,6 @@ import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/utils/OverlayManager.dart';
 import 'package:easy_collect/views/precisionBreeding/data.dart';
 import 'package:easy_collect/widgets/DropDownMenu/index.dart';
-import 'package:easy_collect/widgets/Form/SearchDate.dart';
 import 'package:easy_collect/widgets/List/ListCard.dart';
 import 'package:easy_collect/widgets/List/ListCardTitleCell.dart';
 import 'package:easy_collect/widgets/List/ListItem.dart';
@@ -71,7 +70,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
       body: TabBarView(
         controller: _tabController,
         children: [
-          _buildImageInventoryPage,
+          _buildImageInventoryPage(weightInfoTree),
           _buildRegInventoryInfoPage(weightInfoTree),
           _buildCntInventoryInfoPage(weightInfoTree)
         ],
@@ -93,17 +92,21 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
   }
 
   // 图像盘点
-  Widget get _buildImageInventoryPage {
+  Widget _buildImageInventoryPage(AsyncValue<List<EnclosureModel>> weightInfoTree) {
     return ListWidget<ImageInventoryFamily>(
       key: imgWidgetKey,
-      searchForm: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-        child: SearchDateWidget(
-          hintText: '请选择盘点时间',
-          onChange: (String first, String last) {
-            imgWidgetKey.currentState!.getList({'first': first, 'last': last});
-          },
-        )
+      // searchForm: Container(
+      //   padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+      //   child: SearchDateWidget(
+      //     hintText: '请选择盘点时间',
+      //     onChange: (String first, String last) {
+      //       imgWidgetKey.currentState!.getList({'first': first, 'last': last});
+      //     },
+      //   )
+      // ),
+      pasture: PastureModel(
+        field: 'orgId',
+        options: weightInfoTree.value ?? []
       ),
       provider: imageInventoryProvider,
       builder: (data) {

@@ -1,4 +1,5 @@
 import 'package:easy_collect/api/performanceDetail.dart';
+import 'package:easy_collect/models/PageVo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_collect/widgets/List/index.dart';
@@ -20,20 +21,18 @@ class PerformanceDetailPage extends ConsumerStatefulWidget {
 }
 
 class _PerformanceDetailPageState extends ConsumerState<PerformanceDetailPage> {
-  late DateTime _startDate;
-  late DateTime _endDate;
+  final GlobalKey<ListWidgetState> _listWidgetKey = GlobalKey<ListWidgetState>();
+  DateTime _startDate = DateTime(DateTime.now().year, DateTime.now().month - 1, DateTime.now().day);
+  DateTime _endDate = DateTime.now();
 
   @override
   void initState() {
     super.initState();
-    final today = DateTime.now();
-    _startDate = DateTime(today.year, today.month - 1, today.day);
-    _endDate = today;
-    _refreshData();
   }
 
   void _refreshData() {
-    ref.refresh(performanceDetailPageProvider(_createRequestParams()));
+    _listWidgetKey.currentState!.getList(_createRequestParams());
+    // ref.refresh(performanceDetailPageProvider(_createRequestParams()));
   }
 
   Map<String, dynamic> _createRequestParams() {
@@ -62,9 +61,10 @@ class _PerformanceDetailPageState extends ConsumerState<PerformanceDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    final AsyncValue<List<PerformanceDetail>> performanceDetails = ref.watch(
-      performanceDetailPageProvider(_createRequestParams()) as ProviderListenable<AsyncValue<List<PerformanceDetail>>>
-    );
+    // final AsyncValue<PageVoModel> performanceDetails = ref.watch(
+    //   // performanceDetailPageProvider(_createRequestParams()) as ProviderListenable<AsyncValue<List<PerformanceDetail>>>
+    //   performanceDetailPageProvider(_createRequestParams())
+    // );
 
     return Scaffold(
       appBar: AppBar(
@@ -89,18 +89,26 @@ class _PerformanceDetailPageState extends ConsumerState<PerformanceDetailPage> {
               ),
             ),
             Expanded(
-              child: performanceDetails.when(
-                data: (data) {
-                  return ListWidget<PerformanceDetailPageFamily>(
-                    provider: performanceDetailPageProvider,
-                    builder: (rowData) {
-                      return PerformanceDetailItem(rowData: rowData);
-                    },
-                  );
+              // child: performanceDetails.when(
+              //   data: (data) {
+              //     return ListWidget<PerformanceDetailPageFamily>(
+              //       provider: performanceDetailPageProvider,
+              //       builder: (rowData) {
+              //         return PerformanceDetailItem(rowData: rowData);
+              //       },
+              //     );
+              //   },
+              //   loading: () => const Center(child: CircularProgressIndicator()),
+              //   error: (err, stack) => Center(child: Text('加载数据时出错: $err')),
+              // ),
+              child: ListWidget<PerformanceDetailPageFamily>(
+                key: _listWidgetKey,
+                params: _createRequestParams(),
+                provider: performanceDetailPageProvider,
+                builder: (rowData) {
+                  return PerformanceDetailItem(rowData: rowData);
                 },
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (err, stack) => Center(child: Text('加载数据时出错: $err')),
-              ),
+              )
             ),
           ],
         ),
@@ -110,7 +118,7 @@ class _PerformanceDetailPageState extends ConsumerState<PerformanceDetailPage> {
 }
 
 class PerformanceDetailItem extends StatelessWidget {
-  final rowData;
+  final Map<String, dynamic> rowData;
 
   const PerformanceDetailItem({super.key, required this.rowData});
 
@@ -123,7 +131,7 @@ class PerformanceDetailItem extends StatelessWidget {
           children: [
             const Spacer(),
             Text(
-              rowData.animalNo ?? '未知',
+              rowData['animalNo'] ?? '未知',
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -133,9 +141,9 @@ class PerformanceDetailItem extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 12),
-        _buildInfoRow('唯一识别码', rowData.algorithmCode),
-        _buildInfoRow('测定值', rowData.dataValue),
-        _buildInfoRow('采集时间', rowData.date),
+        _buildInfoRow('唯一识别码', rowData['algorithmCode']),
+        _buildInfoRow('测定值', rowData['dataValue']),
+        _buildInfoRow('采集时间', rowData['date']),
         const SizedBox(height: 12),
         const Divider(height: 0.5, color: Color(0xFFE2E2E2)),
         const SizedBox(height: 12),

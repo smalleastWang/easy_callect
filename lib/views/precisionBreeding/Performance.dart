@@ -155,14 +155,14 @@ class PerformanceItem extends StatelessWidget {
         text: TextSpan(
           children: [
             TextSpan(
-              text: '$label',
+              text: label,
               style: const TextStyle(color: Color(0xFF3B81F2)),
             ),
             WidgetSpan(
               child: Padding(
                 padding: const EdgeInsets.only(left: 20.0),
                 child: Text(
-                  '$value',
+                  value,
                   style: const TextStyle(color: Color(0xFF666666)),
                 ),
               ),
