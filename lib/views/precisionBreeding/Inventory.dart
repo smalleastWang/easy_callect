@@ -174,6 +174,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
             ListCardCell(label: '盘点总数', value: data['inventoryTotalNum']),
             ListCardCell(label: '昨天盘点总数', value: data['lastInventoryTotalNum']),
             ListCardCell(label: '盘点时间：', value: data['checkTime']),
+            const SizedBox(height: 10),
             Row(
               children: [
                 PrimaryActionButton(text: '设置盘点时间', onPressed: () {}),
