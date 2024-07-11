@@ -6,6 +6,7 @@ import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
 import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/utils/OverlayManager.dart';
 import 'package:easy_collect/views/precisionBreeding/data.dart';
+import 'package:easy_collect/widgets/Button/PrimaryActionButton.dart';
 import 'package:easy_collect/widgets/DropDownMenu/index.dart';
 import 'package:easy_collect/widgets/List/ListCard.dart';
 import 'package:easy_collect/widgets/List/ListCardTitleCell.dart';
@@ -16,6 +17,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_collect/enums/Route.dart';
 import 'package:easy_collect/api/inventory.dart';
 
+enum MoreAction {
+  totalnum(1, '盘点总数'),
+  failNUm(2, '匹配失败数');
+  final int value;
+  final String label;
+
+  const MoreAction(this.value, this.label);
+
+}
 
 class InventoryPage extends ConsumerStatefulWidget {
   const InventoryPage({super.key});
@@ -160,10 +170,29 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
               rowData: data,
               title: data['buildingName'],
             ),
-            ListCardCell(label: '盘点总数量', value: data['inventoryTotalNum']),
-            ListCardCell(label: '昨天盘点总数量', value: data['lastInventoryTotalNum']),
             ListCardCell(label: '盘点人', value: data['createUser']),
-            ListCardCellTime(label: '盘点时间：', value: data['checkTime'])
+            ListCardCell(label: '盘点总数', value: data['inventoryTotalNum']),
+            ListCardCell(label: '昨天盘点总数', value: data['lastInventoryTotalNum']),
+            ListCardCell(label: '盘点时间：', value: data['checkTime']),
+            Row(
+              children: [
+                PrimaryActionButton(text: '设置盘点时间', onPressed: () {}),
+                const SizedBox(width: 10),
+                OutlineActionButton(text: '设置上传时间', onPressed: () {}),
+                const SizedBox(width: 10),
+                OutlineActionButton(text: '历史数据', onPressed: () {}),
+                const SizedBox(width: 10),
+                MoreActionWidget(
+                  onSelected: (value) {
+                    print(value);
+                  },
+                  items: MoreAction.values.map((e) => PopupMenuItem(
+                    value: e.value,
+                    child: Text(e.label),
+                  )).toList()
+                )
+              ],
+            )
           ],
         );
       },
