@@ -8,6 +8,7 @@ import 'package:easy_collect/utils/const.dart';
 import 'package:easy_collect/utils/storage.dart';
 import 'package:easy_collect/widgets/Button/BlockButton.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
 
@@ -88,9 +89,10 @@ class _LoginPageState extends State<LoginPage> {
                   const Text('密码', style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.bold)),
                     TextFormField(
                       controller: _pwdController,
+                      textAlignVertical: TextAlignVertical.center,
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.symmetric(horizontal: 6),
-                        // border: const OutlineInputBorder(),
+                        // border: const UnderlineInputBorder(),
                         hintText: '请输入您的密码',
                         suffixIcon: IconButton(
                           icon: Icon(pwdVisible ? Icons.visibility : Icons.visibility_off),

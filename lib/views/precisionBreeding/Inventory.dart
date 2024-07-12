@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_collect/enums/Route.dart';
 import 'package:easy_collect/api/inventory.dart';
+import 'package:go_router/go_router.dart';
 
 enum MoreAction {
   totalnum(1, '盘点总数'),
@@ -174,22 +175,23 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
             ListCardCell(label: '盘点总数', value: data['inventoryTotalNum']),
             ListCardCell(label: '昨天盘点总数', value: data['lastInventoryTotalNum']),
             ListCardCell(label: '盘点时间：', value: data['checkTime']),
-            const SizedBox(height: 10),
+            const SizedBox(height: 8),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                PrimaryActionButton(text: '设置盘点时间', onPressed: () {}),
-                const SizedBox(width: 10),
-                OutlineActionButton(text: '设置上传时间', onPressed: () {}),
-                const SizedBox(width: 10),
-                OutlineActionButton(text: '历史数据', onPressed: () {}),
-                const SizedBox(width: 10),
+                PrimaryActionButton(text: '设置盘点时间', onPressed: () => context.go(RouteEnum.inventorySetTime.fullpath)),
+                OutlineActionButton(text: '设置上传时间', onPressed: () => context.go(RouteEnum.inventorySetUploadTime.fullpath)),
+                OutlineActionButton(text: '历史数据', onPressed: () {
+                  context.go(RouteEnum.inventoryHistoryData.fullpath, extra: { 'buildingId': data['buildingId'] as String });
+                }),
                 MoreActionWidget(
                   onSelected: (value) {
                     print(value);
                   },
                   items: MoreAction.values.map((e) => PopupMenuItem(
                     value: e.value,
-                    child: Text(e.label),
+                    height: 32,
+                    child:Text(e.label),
                   )).toList()
                 )
               ],

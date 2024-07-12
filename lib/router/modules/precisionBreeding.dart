@@ -11,6 +11,8 @@ import 'package:easy_collect/views/precisionBreeding/Health.dart';
 import 'package:easy_collect/views/precisionBreeding/Intelligencewarn.dart';
 import 'package:easy_collect/views/precisionBreeding/Position.dart';
 import 'package:easy_collect/views/precisionBreeding/Milksidentify.dart';
+import 'package:easy_collect/views/precisionBreeding/inventory/HistoryData.dart';
+import 'package:easy_collect/views/precisionBreeding/inventory/SetTime.dart';
 import 'package:go_router/go_router.dart';
 
 // 精准养殖
@@ -22,6 +24,23 @@ final precisionBreedingRoutes = GoRoute(
     GoRoute(
       path: RouteEnum.inventory.path,
       builder: (context, state) => const InventoryPage(),
+      routes: [
+        GoRoute(
+          path: RouteEnum.inventorySetTime.path,
+          builder: (context, state) => const SetTimePage(RouteEnum.inventorySetTime),
+        ),
+        GoRoute(
+          path: RouteEnum.inventorySetUploadTime.path,
+          builder: (context, state) => const SetTimePage(RouteEnum.inventorySetUploadTime),
+        ),
+        GoRoute(
+          path: RouteEnum.inventoryHistoryData.path,
+          builder: (context, state) {
+            final extra = state.extra as Map<String, String>;
+            return HistoryData(extra['buildingId']!);
+          },
+        ),
+      ]
     ),
     // 性能测定
     GoRoute(
