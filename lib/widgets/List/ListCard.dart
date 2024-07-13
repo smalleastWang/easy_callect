@@ -24,7 +24,8 @@ class ListCardTitle extends StatelessWidget {
 class ListCardCell extends StatelessWidget {
   final String label;
   final String? value;
-  const ListCardCell({super.key, required this.label, this.value});
+  final double? labelWidth;
+  const ListCardCell({super.key, required this.label, this.value, this.labelWidth});
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +34,7 @@ class ListCardCell extends StatelessWidget {
       child: Row(
         children: [
           SizedBox(
-            width: 100,
+            width: labelWidth ?? 100,
             child: Text(label, style: const TextStyle(fontSize: 13, color: Color(0xFF666666))),
           ),
           Text(value ?? '-', style: const TextStyle(fontSize: 13, color: Color(0xFF666666))),

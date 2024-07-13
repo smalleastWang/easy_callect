@@ -12,7 +12,7 @@ class PrimaryActionButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed, 
         style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           backgroundColor: Theme.of(context).primaryColor,
           foregroundColor: Theme.of(context).primaryColor.withOpacity(0.3),
           shape: RoundedRectangleBorder(
@@ -67,9 +67,10 @@ class _MoreActionWidgetState extends State<MoreActionWidget> {
   Widget build(BuildContext context) {
     return PopupMenuButton(
       onSelected: widget.onSelected,
-      color: Colors.white,
+      // color: Colors.red,
+      surfaceTintColor: Colors.white,
       itemBuilder: (context) => widget.items,
-      // offset: Offset(100, 0),
+      offset: const Offset(0, 25),
       child: Text(widget.text ?? '更多'),
     );
   }
