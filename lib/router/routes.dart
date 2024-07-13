@@ -8,6 +8,7 @@ import 'package:easy_collect/router/modules/supervision.dart';
 import 'package:easy_collect/router/modules/common.dart';
 import 'package:easy_collect/utils/storage.dart';
 import 'package:easy_collect/views/common/EditBuilding.dart';
+import 'package:easy_collect/views/common/EditAiBox.dart';
 import 'package:easy_collect/views/home/index.dart';
 import 'package:easy_collect/views/my/Login.dart';
 import 'package:easy_collect/views/my/ComboList.dart';
@@ -81,6 +82,10 @@ final List<GoRoute> routes = [
   GoRoute(
     path: RouteEnum.editBuilding.path,
     builder: (context, state) => const EditBuildingPage(),
+  ),
+  GoRoute(
+    path: RouteEnum.editAiBox.path,
+    builder: (context, state) => const EditAiBoxPage(),
   ),
   GoRoute(
     path: RouteEnum.performanceDetail.path,

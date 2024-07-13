@@ -12,6 +12,7 @@ enum RouteEnum {
   packageScreen('/packageScreen', '已购套餐信息', '/packageScreen'),
   editBuilding('/editBuilding', '添加圈舍信息', '/editBuilding'),
   performanceDetail('/performanceDetail', '体征详情', '/performanceDetail'),
+  editAiBox('/editAiBox', '添加AI盒子', '/editAiBox'),
 
   // 智慧保险
   insurance('/insurance', '智慧保险', '/insurance'),

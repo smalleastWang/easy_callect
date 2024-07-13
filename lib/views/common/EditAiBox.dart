@@ -1,31 +1,46 @@
 import 'package:flutter/material.dart';
-import 'package:easy_collect/api/building.dart';
+import 'package:easy_collect/api/aibox.dart';
 
-class EditBuildingPage extends StatefulWidget {
-  const EditBuildingPage({super.key});
+class EditAiBoxPage extends StatefulWidget {
+  const EditAiBoxPage({super.key});
 
   @override
-  State<EditBuildingPage> createState() => _EditBuildingPageState();
+  State<EditAiBoxPage> createState() => _EditAiBoxPageState();
 }
 
-class _EditBuildingPageState extends State<EditBuildingPage> {
+class _EditAiBoxPageState extends State<EditAiBoxPage> {
   final TextEditingController _orgController = TextEditingController();
-  final TextEditingController _buildingNameController = TextEditingController();
-  final TextEditingController _currentNumController = TextEditingController();
-  final TextEditingController _initialNumController = TextEditingController();
-  final TextEditingController _blockController = TextEditingController();
-  final TextEditingController _remarkController = TextEditingController();
-  String _selectedBuildingType = '正式圈舍';
-  String _selectedMonitorCnt = '1';
-  String _selectedAlgorithmCnt = '1';
+  final TextEditingController _buildingController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _modelController = TextEditingController();
+  final TextEditingController _boxNoController = TextEditingController();
 
-  void _saveBuilding() async {
+  String? online; // 0 离线 1在线
+  String? brand; // HK 海康  XY 谐云  DH 大华
+
+  @override
+  void dispose() {
+    _orgController.dispose();
+    _buildingController.dispose();
+    _nameController.dispose();
+    _modelController.dispose();
+    _boxNoController.dispose();
+    super.dispose();
+  }
+
+  void _saveAiBox() async {
     // 检查必填字段是否为空
-    if (_orgController.text.isEmpty || _buildingNameController.text.isEmpty || _currentNumController.text.isEmpty) {
+    if (_orgController.text.isEmpty ||
+        _buildingController.text.isEmpty ||
+        _nameController.text.isEmpty ||
+        _modelController.text.isEmpty ||
+        _boxNoController.text.isEmpty) {
       String missingFields = '';
-      if (_orgController.text.isEmpty) missingFields += '组织, ';
-      if (_buildingNameController.text.isEmpty) missingFields += '圈舍名称, ';
-      if (_currentNumController.text.isEmpty) missingFields += '当前数量, ';
+      if (_orgController.text.isEmpty) missingFields += '牧场, ';
+      if (_buildingController.text.isEmpty) missingFields += '圈舍, ';
+      if (_nameController.text.isEmpty) missingFields += '设备名称, ';
+      if (_modelController.text.isEmpty) missingFields += '型号, ';
+      if (_boxNoController.text.isEmpty) missingFields += '设备编号, ';
       missingFields = missingFields.substring(0, missingFields.length - 2); // 去掉最后一个逗号和空格
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -37,18 +52,16 @@ class _EditBuildingPageState extends State<EditBuildingPage> {
     // 构建保存数据
     Map<String, dynamic> params = {
       'orgId': _orgController.text,
-      'buildingName': _buildingNameController.text,
-      'currentNum': _currentNumController.text,
-      'initialNum': _initialNumController.text,
-      'blockNum': _blockController.text,
-      'type': _selectedBuildingType == '正式圈舍' ? '0' : '1',
-      'monitorCnt': _selectedMonitorCnt,
-      'algorithmCnt': _selectedAlgorithmCnt,
-      'comment': _remarkController.text,
+      'buildingId': _buildingController.text,
+      'name': _nameController.text,
+      'brand': brand,
+      'model': _modelController.text,
+      'boxNo': _boxNoController.text,
+      'online': online,
     };
 
     // 保存数据到API
-    await editBuilding(params);
+    await editAIBox(params);
 
     // 保存成功提示
     ScaffoldMessenger.of(context).showSnackBar(
@@ -58,20 +71,21 @@ class _EditBuildingPageState extends State<EditBuildingPage> {
     Navigator.of(context).pop(true);
 
     // 清空表单
-    setState(() {
-      _orgController.clear();
-      _buildingNameController.clear();
-      _currentNumController.clear();
-      _initialNumController.clear();
-      _blockController.clear();
-      _remarkController.clear();
-      _selectedBuildingType = '正式圈舍';
-      _selectedMonitorCnt = '1';
-      _selectedAlgorithmCnt = '1';
-    });
+    _clearForm();
   }
 
-  Widget _buildTextField(String label, TextEditingController controller, {bool readOnly = false, Widget? suffixIcon, bool isRequired = false}) {
+  void _clearForm() {
+    _orgController.clear();
+    _buildingController.clear();
+    _nameController.clear();
+    _modelController.clear();
+    _boxNoController.clear();
+    online = null;
+    brand = null;
+  }
+
+  Widget _buildTextField(String label, TextEditingController controller,
+      {bool readOnly = false, Widget? suffixIcon, bool isRequired = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Container(
@@ -114,7 +128,8 @@ class _EditBuildingPageState extends State<EditBuildingPage> {
     );
   }
 
-  Widget _buildDropdownField(String label, String value, List<String> items, Function(String?) onChanged) {
+  Widget _buildDropdownField(String label, List<String> items,
+      {bool isRequired = false, ValueChanged<String?>? onChanged, String? value}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Container(
@@ -124,10 +139,19 @@ class _EditBuildingPageState extends State<EditBuildingPage> {
         child: Row(
           children: [
             Expanded(
-              flex: 3,
-              child: Text(
-                label,
-                style: const TextStyle(color: Colors.black, fontSize: 16),
+              flex: 2,
+              child: Row(
+                children: [
+                  if (isRequired)
+                    const Text(
+                      '*',
+                      style: TextStyle(color: Colors.red, fontSize: 16),
+                    ),
+                  Text(
+                    label,
+                    style: const TextStyle(color: Colors.black, fontSize: 16),
+                  ),
+                ],
               ),
             ),
             Expanded(
@@ -135,12 +159,12 @@ class _EditBuildingPageState extends State<EditBuildingPage> {
               child: DropdownButton<String>(
                 value: value,
                 isExpanded: true,
-                underline: const SizedBox(),
+                underline: Container(),
                 onChanged: onChanged,
                 items: items.map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
-                    child: Text(value, style: const TextStyle(color: Colors.black, fontSize: 16)),
+                    child: Text(value),
                   );
                 }).toList(),
               ),
@@ -155,7 +179,7 @@ class _EditBuildingPageState extends State<EditBuildingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('添加圈舍'),
+        title: const Text('添加AI盒子'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -163,36 +187,38 @@ class _EditBuildingPageState extends State<EditBuildingPage> {
           },
         ),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Column(
           children: [
-            _buildTextField('选择组织', _orgController, isRequired: true),
-            _buildTextField('圈舍名称', _buildingNameController, isRequired: true),
-            _buildTextField('当前数量', _currentNumController, isRequired: true),
-            _buildTextField('初期数量', _initialNumController),
-            _buildTextField('栋别', _blockController),
-            _buildDropdownField('圈舍类型', _selectedBuildingType, ['正式圈舍', '临时圈舍'], (value) {
-              setState(() {
-                _selectedBuildingType = value!;
-              });
-            }),
-            _buildDropdownField('监控视频数量', _selectedMonitorCnt, ['1', '4', '9'], (value) {
-              setState(() {
-                _selectedMonitorCnt = value!;
-              });
-            }),
-            _buildDropdownField('算法视频数量', _selectedAlgorithmCnt, ['1', '4', '9'], (value) {
-              setState(() {
-                _selectedAlgorithmCnt = value!;
-              });
-            }),
-            _buildTextField('备注', _remarkController),
+            _buildTextField('牧场', _orgController, isRequired: true),
+            _buildTextField('圈舍', _buildingController, isRequired: true),
+            _buildTextField('设备名称', _nameController, isRequired: true),
+            _buildDropdownField('品牌', ['HK 海康', 'XY 谐云', 'DH 大华'], 
+              isRequired: true, 
+              value: brand, 
+              onChanged: (value) {
+                setState(() {
+                  brand = value;
+                });
+              },
+            ),
+            _buildTextField('型号', _modelController, isRequired: true),
+            _buildTextField('设备编号', _boxNoController, isRequired: true),
+            _buildDropdownField('在线状态', ['0 离线', '1 在线'], 
+              isRequired: true, 
+              value: online, 
+              onChanged: (value) {
+                setState(() {
+                  online = value;
+                });
+              },
+            ),
             const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _saveBuilding,
+                onPressed: _saveAiBox,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
                   foregroundColor: Colors.white,

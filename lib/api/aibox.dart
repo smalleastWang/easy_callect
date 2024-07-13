@@ -16,7 +16,11 @@ Future<PageVoModel> aiboxPage(AiboxPageRef ref, Map<String, dynamic> params) asy
   return data;
 }
 
-// 新增aibox
-Future<void> addAIBox(AIBox params) async {
-  await HttpUtils.post('/biz/aibox/add', params: params.toJson());
+// 新增/编辑aibox
+Future<void> editAIBox(Map<String, dynamic> params) async {
+  if(params['id'] != null) {
+      await HttpUtils.post('/biz/aibox/edit', params: params);
+      return;
+  }
+  await HttpUtils.post('/biz/aibox/add', params: params);
 }

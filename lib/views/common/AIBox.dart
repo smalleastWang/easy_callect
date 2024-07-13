@@ -1,9 +1,11 @@
+import 'package:easy_collect/enums/route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/api/precisionBreeding.dart';
 import 'package:easy_collect/widgets/List/index.dart';
 import 'package:easy_collect/api/aibox.dart';
+import 'package:go_router/go_router.dart';
 
 class AIBoxPage extends ConsumerStatefulWidget {
   const AIBoxPage({super.key});
@@ -13,6 +15,20 @@ class AIBoxPage extends ConsumerStatefulWidget {
 }
 
 class _AIBoxPageState extends ConsumerState<AIBoxPage> {
+  final GlobalKey<ListWidgetState> listWidgetKey = GlobalKey<ListWidgetState>();
+
+   void _navigateTo(String path) async {
+    bool? result = await context.push(path);
+    // 如果返回结果为true，则刷新列表
+    if (result == true) {
+      listWidgetKey.currentState?.refreshWithPreviousParams();
+    }
+  }
+
+  void _addAiBox() {
+    _navigateTo(RouteEnum.editAiBox.path);
+  }
+
   @override
   Widget build(BuildContext context) {
     final AsyncValue<List<EnclosureModel>> weightInfoTree = ref.watch(weightInfoTreeProvider);
@@ -20,12 +36,18 @@ class _AIBoxPageState extends ConsumerState<AIBoxPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('AI盒子'),
+        backgroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: _addAiBox,
+          ),
+        ],
       ),
       body: Container(
         color: const Color(0xFFF1F5F9),
         child: Column(
           children: [
-            const SizedBox(height: 6),
             Expanded(
               child: weightInfoTree.when(
                 data: (data) {
@@ -88,20 +110,25 @@ class AIBoxItem extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 12),
-        Text('设备编号     ${rowData["boxNo"] == null || rowData["boxNo"] == "" ? '未知' : rowData["boxNo"]}',
-            style: const TextStyle(color: Color(0xFF666666))),
-        const SizedBox(height: 12),
-        Text('牧场     ${rowData["orgName"] == null || rowData["orgName"] == "" ? '未知' : rowData["orgName"]}',
-            style: const TextStyle(color: Color(0xFF666666))),
-        const SizedBox(height: 12),
-        Text('圈舍     ${rowData["buildingName"] == null || rowData["buildingName"] == "" ? '未知' : rowData["buildingName"]}',
-            style: const TextStyle(color: Color(0xFF666666))),
+        _buildInfoRow('设备编号', rowData["boxNo"]),
+        _buildInfoRow('牧场', rowData["orgName"]),
+        _buildInfoRow('圈舍', rowData["buildingName"]),
         const SizedBox(height: 12),
         const Divider(height: 0.5, color: Color(0xFFE2E2E2)),
         const SizedBox(height: 12),
         Text('创建时间: ${rowData["createTime"]}',
             style: const TextStyle(color: Color(0xFF999999))),
       ],
+    );
+  }
+
+  Widget _buildInfoRow(String label, String? value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Text(
+        '$label     ${value == null || value.isEmpty ? '未知' : value}',
+        style: const TextStyle(color: Color(0xFF666666)),
+      ),
     );
   }
 }
