@@ -24,9 +24,9 @@ final List<ModuleModel> moduleList = [
       ModuleItemModel(route: RouteEnum.standardVerification, iconPath: 'assets/icon/insurance/optimized/1.svg'),
       ModuleItemModel(route: RouteEnum.surveyCompared, iconPath: 'assets/icon/insurance/optimized/5.svg'),
       ModuleItemModel(route: RouteEnum.orderList, iconPath: 'assets/icon/insurance/optimized/6.svg'),
+      ModuleItemModel(route: RouteEnum.insuranceApplicant, iconPath: 'assets/icon/insurance/optimized/10.svg'),
       ModuleItemModel(route: RouteEnum.countRegister, iconPath: 'assets/icon/insurance/optimized/8.svg'),
-      ModuleItemModel(route: RouteEnum.countRegister, iconPath: 'assets/icon/insurance/optimized/9.svg'),
-      ModuleItemModel(route: RouteEnum.countRegister, iconPath: 'assets/icon/insurance/optimized/10.svg'),
+      // ModuleItemModel(route: RouteEnum.countRegister, iconPath: 'assets/icon/insurance/optimized/9.svg'),
     ]
   ),
   ModuleModel(
