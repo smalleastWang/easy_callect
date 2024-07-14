@@ -4,6 +4,7 @@ import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/api/precisionBreeding.dart';
 import 'package:easy_collect/widgets/List/index.dart';
 import 'package:easy_collect/api/animal.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 enum StateStatus {
   available,
@@ -116,6 +117,8 @@ class AnimalPage extends ConsumerStatefulWidget {
 }
 
 class _AnimalPageState extends ConsumerState<AnimalPage> {
+  final GlobalKey<ListWidgetState> listWidgetKey = GlobalKey<ListWidgetState>();
+
   @override
   Widget build(BuildContext context) {
     final AsyncValue<List<EnclosureModel>> weightInfoTree = ref.watch(weightInfoTreeProvider);
@@ -128,23 +131,26 @@ class _AnimalPageState extends ConsumerState<AnimalPage> {
         color: const Color(0xFFF1F5F9),
         child: Column(
           children: [
-            const SizedBox(height: 6),
             Expanded(
               child: weightInfoTree.when(
                 data: (data) {
                   return ListWidget<AnimalPageFamily>(
+                    key: listWidgetKey,
                     pasture: PastureModel(
                       field: 'orgId',
                       options: data,
                     ),
                     provider: animalPageProvider,
                     builder: (rowData) {
-                      return AnimalItem(rowData: rowData);
+                      return AnimalItem(
+                        rowData: rowData,
+                        listWidgetKey: listWidgetKey, // 将 listWidgetKey 传递给 AnimalItem
+                      );
                     },
                   );
                 },
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (err, stack) => _buildErrorWidget(err),
+                error: (err, stack) => Center(child: Text('加载数据时出错: $err')),
               ),
             ),
           ],
@@ -152,41 +158,18 @@ class _AnimalPageState extends ConsumerState<AnimalPage> {
       ),
     );
   }
-
-  Widget _buildErrorWidget(Object error) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.error, color: Colors.red, size: 48),
-          const SizedBox(height: 16),
-          Text('加载数据时出错: $error',
-              style: const TextStyle(color: Color(0xFF666666), fontSize: 16)),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                ref.refresh(weightInfoTreeProvider);
-              });
-            },
-            child: const Text('重试'),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 class AnimalItem extends StatelessWidget {
   final Map<String, dynamic> rowData;
+  final GlobalKey<ListWidgetState> listWidgetKey; // 接收传递过来的 listWidgetKey
 
-  const AnimalItem({super.key, required this.rowData});
+  const AnimalItem({super.key, required this.rowData, required this.listWidgetKey});
 
   @override
   Widget build(BuildContext context) {
     StateStatus stateStatus = getStateStatusFromValue(rowData["state"]);
     AuthStatus pastureAuthStatus = getAuthStatusFromValue(rowData["pastureAuth"]);
-    AuthStatus bankAuthStatus = getAuthStatusFromValue(rowData["bankAuth"]);
     String mortgageStatus = rowData["mortgage"] == '0' ? '未抵押' : '已抵押';
 
     return Column(
@@ -209,11 +192,8 @@ class AnimalItem extends StatelessWidget {
         const SizedBox(height: 12),
         _buildInfoRow('牧场', rowData["orgName"]),
         _buildInfoRow('圈舍', rowData["buildName"]),
-        _buildInfoRow('授权状态', pastureAuthStatus.description),
-        // _buildInfoRow('金融机构授权状态', bankAuthStatus.description),
-        _buildInfoRow('抵押状态', mortgageStatus),
-        // _buildInfoRow('种类', rowData["type"]),
-        // _buildInfoRow('繁殖状态', rowData["breed"]),
+        _buildInfoRowWithButton('授权状态', pastureAuthStatus.description, _buildAuthButton(pastureAuthStatus, rowData)),
+        _buildInfoRowWithButton('抵押状态', mortgageStatus, _buildMortgageButton(mortgageStatus, rowData)),
         const SizedBox(height: 12),
         const Divider(height: 0.5, color: Color(0xFFE2E2E2)),
         const SizedBox(height: 12),
@@ -243,6 +223,72 @@ class AnimalItem extends StatelessWidget {
       child: Text(
         '$label     ${value == null || value.isEmpty ? '未知' : value}',
         style: const TextStyle(color: Color(0xFF666666)),
+      ),
+    );
+  }
+
+  Widget _buildInfoRowWithButton(String label, String? value, Widget button) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              '$label     ${value == null || value.isEmpty ? '未知' : value}',
+              style: const TextStyle(color: Color(0xFF666666)),
+            ),
+          ),
+          button,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAuthButton(AuthStatus status, rowData) {
+    final buttonText = status == AuthStatus.authorized ? '取消授权' : '授权';
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 0),
+      child: GestureDetector(
+        onTap: () async {
+          if (status == AuthStatus.authorized) {
+            await checkAuth(rowData);
+            await cancelAuth(rowData);
+            EasyLoading.showToast('取消授权成功');
+          } else {
+            await handAuth(rowData);
+            EasyLoading.showToast('授权成功');
+          }
+          if (listWidgetKey.currentState != null) {
+            listWidgetKey.currentState?.refreshWithPreviousParams();
+          } else {
+            EasyLoading.showToast('刷新失败，listWidgetKey为空');
+          }
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+          child: Text(
+            buttonText,
+            style: const TextStyle(color: Color(0xFF297DFF), fontSize: 14),
+          ),
+        ),
+      ),
+    );
+  }
+  Widget _buildMortgageButton(String status, rowData) {
+    final buttonText = status == '未抵押' ? '抵押' : '解除抵押';
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 0),
+      child: GestureDetector(
+        onTap: () async {
+          // todo
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+          child: Text(
+            buttonText,
+            style: const TextStyle(color: Color(0xFF297DFF), fontSize: 14),
+          ),
+        ),
       ),
     );
   }

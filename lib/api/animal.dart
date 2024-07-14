@@ -33,5 +33,19 @@ Future<void> deleteAnimal(Map<String, dynamic> params) async {
 
 // 牛只授权
 Future<void> handAuth(Map<String, dynamic> params) async {
-  await HttpUtils.post('/biz/animal/handAuth', params: params['ids']);
+  String algorithmCode = params['algorithmCode'];
+List<String> algorithmCodes = [];
+  algorithmCodes.add("\"$algorithmCode\"");
+  print('algorithmCodes: $algorithmCodes');
+  await HttpUtils.post('/biz/animal/handAuth', params: algorithmCodes);
+}
+
+// 检测授权
+Future<void> checkAuth(Map<String, dynamic> params) async {
+  await HttpUtils.post('/biz/animal/checkAuth', params: {'id': params['id']}, showLoading: false);
+}
+
+// 取消授权
+Future<void> cancelAuth(Map<String, dynamic> params) async {
+  await HttpUtils.post('/biz/animal/cancelAuth', params: {'id': params['id']});
 }
