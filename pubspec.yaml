@@ -21,6 +21,9 @@ version: 1.0.0+1
 environment:
   sdk: '>=3.3.1 <4.0.0'
 
+scripts:
+  postinstall: sh optimize-svg.sh
+
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
 # consider running `flutter pub upgrade --major-versions`. Alternatively,
@@ -114,6 +117,11 @@ flutter:
     - assets/icon/supervision/
     - assets/icon/common/
     - assets/icon/my/
+    - assets/icon/finance/optimized/
+    - assets/icon/insurance/optimized/
+    - assets/icon/precisionBreeding/optimized/
+    - assets/icon/supervision/optimized/
+    - assets/icon/common/optimized/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

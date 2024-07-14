@@ -1,6 +1,7 @@
 import 'package:easy_collect/views/home/data.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class ModuleWidget extends StatelessWidget {
   const ModuleWidget({super.key});
@@ -58,8 +59,13 @@ class ModuleWidget extends StatelessWidget {
                               children: [
                                 Flexible(
                                   child: Padding(
-                                    padding: const EdgeInsets.all(8), // 增加内边距
-                                    child: Image.asset(e.iconPath, fit: BoxFit.contain),
+                                    padding: const EdgeInsets.all(0),
+                                    child: Transform.scale(
+                                      scale: 1, // 缩放比例
+                                      child: e.iconPath.endsWith('.svg')
+                                          ? SvgPicture.asset(e.iconPath, fit: BoxFit.fill)
+                                          : Image.asset(e.iconPath, fit: BoxFit.fill),
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(height: 10),

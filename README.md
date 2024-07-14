@@ -15,6 +15,11 @@ flutter packages pub run build_runner build --delete-conflicting-outputs
 flutter run --dart-define=APP_ENV=DEV
 ```
 
+### 优化svg，生成可用的svg图标
+```shell
+sh optimize-svg.sh
+```
+
 ### 生成启动屏幕配置
 ```shell
 flutter pub run flutter_native_splash:create
