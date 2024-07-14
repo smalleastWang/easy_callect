@@ -18,7 +18,7 @@ enum RouteEnum {
   insurance('/insurance', '智慧保险', '/insurance'),
   standardVerification('standardVerification', '验标注册', '/insurance/standardVerification'),
   surveyCompared('surveyCompared', '查勘对比', '/insurance/surveyCompared'),
-  orderList('orderList', '订单列表', '/insurance/orderList'),
+  orderList('orderList', '保单信息', '/insurance/orderList'),
   countRegister('countRegister', '计数盘点', '/insurance/countRegister'),
 
   // 养殖金融

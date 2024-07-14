@@ -41,18 +41,19 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
           return Column(
             children: [
               ListCardTitle(
+                hasDetail: false,
                 title: Row(
                   children: [
                     Container(
-                      margin: const EdgeInsets.only(right: 5),
-                      padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5),
+                      margin: const EdgeInsets.only(right: 10),
+                      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFCCD2E1),
+                        color: data['state'] == 1 ? const Color(0xFF5D8FFD) : const Color(0xFFCCCCCC),
                         borderRadius: BorderRadius.circular(3)
                       ),
                       child: Text(OrderStatus.getLabel(data['state']), style: const TextStyle(color: Colors.white)),
                     ),
-                    Text(data['policyContent'], style: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.w500)),
+                    Text(data['policyContent'], style: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold)),
                   ],
                 ),
               ),
@@ -60,7 +61,10 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
               ListCardCell(label: '保险费', value: data['premium'].toString()),
               ListCardCell(label: '联系人', value: data['person']),
               ListCardCell(label: '联系电话', value: data['phone']),
-              ListCardCellTime(label: '保单创建时间：', value: data['createTime'])
+              ListCardCell(label: '合同生效日期', value: data['effectiveTime']),
+              ListCardCell(label: '合同期满日期', value: data['expiryTime']),
+              const SizedBox(height: 8),
+              ListCardCellTime(label: '创建时间', value: data['createTime'])
             ],
           );
         },

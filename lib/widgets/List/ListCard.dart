@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 class ListCardTitle extends StatelessWidget {
   final Function()? onTap;
   final Widget title;
-  const ListCardTitle({super.key, this.onTap, required this.title});
+  final bool hasDetail;
+  const ListCardTitle({super.key, this.onTap, required this.title, this.hasDetail = true});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +15,8 @@ class ListCardTitle extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           title,
-          const Icon(Icons.arrow_forward_ios, color: Color(0xff888888), size: 16)
+          if (hasDetail) 
+            const Icon(Icons.arrow_forward_ios, color: Color(0xff888888), size: 16),        
         ],
       ),
     );
@@ -30,14 +32,14 @@ class ListCardCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(top: 8),
+      margin: const EdgeInsets.only(top: 12),
       child: Row(
         children: [
           SizedBox(
             width: labelWidth ?? 100,
-            child: Text(label, style: const TextStyle(fontSize: 13, color: Color(0xFF666666))),
+            child: Text(label, style: const TextStyle(fontSize: 14, color: Color(0xFF666666))),
           ),
-          Text(value ?? '-', style: const TextStyle(fontSize: 13, color: Color(0xFF666666))),
+          Text(value ?? '-', style: const TextStyle(fontSize: 14, color: Color(0xFF666666))),
         ],
       ),
     );
