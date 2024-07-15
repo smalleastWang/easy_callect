@@ -1,6 +1,8 @@
 
 import 'package:easy_collect/enums/Route.dart';
 import 'package:easy_collect/enums/StorageKey.dart';
+import 'package:easy_collect/utils/camera/BaseCamerax.dart';
+import 'package:easy_collect/utils/camera/Config.dart';
 import 'package:easy_collect/router/modules/finance.dart';
 import 'package:easy_collect/router/modules/insurance.dart';
 import 'package:easy_collect/router/modules/precisionBreeding.dart';
@@ -22,11 +24,11 @@ import 'package:easy_collect/views/precisionBreeding/PerformanceDetail.dart';
 import 'package:go_router/go_router.dart';
 
 final List<GoRoute> routes = [
-  // GoRoute(
-  //   path: RouteEnum.cameraRegister.path,
-  //   builder: (context, state) => const CameraMlVision(mTaskMode: EnumTaskMode.cowBodyRegister),
-  //   routes: const []
-  // ),
+  GoRoute(
+    path: RouteEnum.cameraRegister.path,
+    builder: (context, state) => const CameraMlVision(mTaskMode: EnumTaskMode.cowBodyRegister),
+    routes: const []
+  ),
   GoRoute(
     path: RouteEnum.home.path,
     builder: (context, state) => const HomePage(),
