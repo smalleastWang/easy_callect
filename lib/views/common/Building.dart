@@ -59,7 +59,6 @@ class _BuildingPageState extends ConsumerState<BuildingPage> {
         color: const Color(0xFFF1F5F9),
         child: Column(
           children: [
-            const SizedBox(height: 6),
             Expanded(
               child: weightInfoTree.when(
                 data: (data) {
