@@ -11,9 +11,9 @@ abstract class EnumStrOption {
 
 // 通用转换函数
 enumsToOptions<T extends EnumOption>(List<T> enums, [bool isUnlimited = false]) {
-  List<OptionModel> options = enums.map((e) => e.toOptionModel()).whereNot((e) => e.value == unknownNum).toList();
+  List<OptionModel<int>> options = enums.map((e) => e.toOptionModel()).whereNot((e) => e.value == unknownNum).toList();
   if (isUnlimited) {
-    options.insert(0, OptionModel(check: false, label: '不限', value: unlimitedNum));
+    options.insert(0, OptionModel<int>(check: false, label: '不限', value: unlimitedNum));
   }
   return options;
 }
@@ -21,7 +21,7 @@ enumsToOptions<T extends EnumOption>(List<T> enums, [bool isUnlimited = false]) 
 enumsStrValToOptions<T extends EnumStrOption>(List<T> enums, [bool isUnlimited = false]) {
   List<OptionModel<String>> options = enums.map((e) => e.toOptionModel()).whereNot((e) => e.value == '').toList();
   if (isUnlimited) {
-    options.insert(0, OptionModel(check: false, label: '不限', value: ''));
+    options.insert(0, OptionModel<String>(check: false, label: '不限', value: ''));
   }
   return options;
 }

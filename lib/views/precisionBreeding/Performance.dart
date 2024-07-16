@@ -74,8 +74,6 @@ class PerformanceItem extends StatelessWidget {
   const PerformanceItem({super.key, required this.rowData});
 
   void _navigateToDetail(BuildContext context, String algorithmCode, String dataType) {
-    print('algorithmCode: ${algorithmCode}');
-    print('dataType: ${dataType}');
     context.push(
       RouteEnum.performanceDetail.path,
       extra: {'algorithmCode': algorithmCode, 'dataType': dataType},

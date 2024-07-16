@@ -5,3 +5,4 @@ const sm2PublicKey = '04298364ec840088475eae92a591e01284d1abefcda348b47eb324bb52
 
 
 const unlimitedNum = -999999999;
+const unknownNum = -444444444;
