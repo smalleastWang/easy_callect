@@ -1,5 +1,4 @@
 import 'package:easy_collect/models/PageVo.dart';
-import 'package:easy_collect/models/aibox/aibox.dart';
 import 'package:easy_collect/utils/http/request.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

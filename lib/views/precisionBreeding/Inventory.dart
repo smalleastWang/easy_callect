@@ -1,13 +1,13 @@
 import 'dart:convert';
 
 import 'package:easy_collect/api/precisionBreeding.dart';
+import 'package:easy_collect/enums/index.dart';
 import 'package:easy_collect/enums/register.dart';
 import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
 import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/utils/OverlayManager.dart';
 import 'package:easy_collect/views/precisionBreeding/data.dart';
 import 'package:easy_collect/widgets/Button/PrimaryActionButton.dart';
-import 'package:easy_collect/widgets/DropDownMenu/index.dart';
 import 'package:easy_collect/widgets/List/ListCard.dart';
 import 'package:easy_collect/widgets/List/ListCardTitleCell.dart';
 import 'package:easy_collect/widgets/List/ListItem.dart';
@@ -106,19 +106,13 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
   Widget _buildImageInventoryPage(AsyncValue<List<EnclosureModel>> weightInfoTree) {
     return ListWidget<ImageInventoryFamily>(
       key: imgWidgetKey,
-      // searchForm: Container(
-      //   padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-      //   child: SearchDateWidget(
-      //     hintText: '请选择盘点时间',
-      //     onChange: (String first, String last) {
-      //       imgWidgetKey.currentState!.getList({'first': first, 'last': last});
-      //     },
-      //   )
-      // ),
-      pasture: PastureModel(
-        field: 'orgId',
-        options: weightInfoTree.value ?? []
-      ),
+      filterList: [
+        DropDownMenuModel(name: '模型类型', 
+        list: enumsStrValToOptions(CountMediaEnum.values),
+    
+        layerLink: LayerLink(), fieldName: 'state'),
+        DropDownMenuModel(name: '选择盘点时间', layerLink: LayerLink(), fieldName: 'first,last', widget: WidgetType.dateRangePicker),
+      ],
       provider: imageInventoryProvider,
       builder: (data) {
           return  Column(
@@ -140,7 +134,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
               ListCardCell(label: '用户账号', value: data['account']),
               // ListCardCell(label: '客户唯一索引', value: data['source']),
               ListCardCell(label: '识别数量', value: '${jsonDecode(data['result'] ?? '{}')?['total'] ?? 0}只'),
-              ListCardCellTime(label: '盘点时间：', value: data['createTime'])
+              ListCardCellTime(label: '创建时间：', value: data['createTime'])
             ],
           );
         },
@@ -151,11 +145,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
     return ListWidget<RegInventoryInfoPageFamily>(
       key: regWidgetKey,
       filterList: [
-        DropDownMenuModel(name: '选择状态', list: [
-          Option(check: false, dictLabel: '不限', dictValue: ''),
-          Option(check: false, dictLabel: '盘点中', dictValue: '0'),
-          Option(check: false, dictLabel: '盘点结束', dictValue: '1'),
-        ], layerLink: LayerLink(), fieldName: 'state'),
+        DropDownMenuModel(name: '选择状态', list: enumsToOptions(InventoryStatus.values, true), layerLink: LayerLink(), fieldName: 'state'),
         DropDownMenuModel(name: '选择盘点时间', layerLink: LayerLink(), fieldName: 'first,last', widget: WidgetType.dateRangePicker),
       ],
       pasture: PastureModel(
@@ -170,6 +160,20 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
               state: ListCardTitleStateModal(text: InventoryStatus.getLabel(data['state'])),
               rowData: data,
               title: data['buildingName'],
+              detailLabelWidth: 120,
+              detailColumns: [
+                ListColumnModal(field: 'orgName', label: '牧场名称'),
+                ListColumnModal(field: 'buildingName', label: '圈舍名称'),
+                ListColumnModal(field: 'checkTime', label: '盘点时间'),
+                ListColumnModal(field: 'state', label: '盘点状态', render: (value, record, column) => Text(InventoryStatus.getLabel(value))),
+                ListColumnModal(field: 'actualNum', label: '实际数量'),
+                ListColumnModal(field: 'authNum', label: '授权牛数量'),
+                ListColumnModal(field: 'inventoryTotalNum', label: '盘点总数量'),
+                ListColumnModal(field: 'inventoryAuthNum', label: '盘点授权牛总数量'),
+                ListColumnModal(field: 'inventoryFailNum', label: '匹配失败数量'),
+                ListColumnModal(field: 'lastInventoryTotalNum', label: '昨天盘点总数'),
+                ListColumnModal(field: 'createUser', label: '盘点人'),
+              ],
             ),
             ListCardCell(label: '盘点人', value: data['createUser']),
             ListCardCell(label: '盘点总数', value: data['inventoryTotalNum']),
@@ -206,11 +210,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
     return ListWidget<CntInventoryInfoPageFamily>(
       key: cntWidgetKey,
       filterList: [
-        DropDownMenuModel(name: '选择状态', list: [
-          Option(check: false, dictLabel: '不限', dictValue: ''),
-          Option(check: false, dictLabel: '盘点中', dictValue: '0'),
-          Option(check: false, dictLabel: '盘点结束', dictValue: '1'),
-        ], layerLink: LayerLink(), fieldName: 'state'),
+        DropDownMenuModel(name: '选择状态', list: enumsToOptions(InventoryStatus.values, true), layerLink: LayerLink(), fieldName: 'state'),
         DropDownMenuModel(name: '选择盘点时间', layerLink: LayerLink(), fieldName: 'first,last', widget: WidgetType.dateRangePicker),
       ],
       pasture: PastureModel(

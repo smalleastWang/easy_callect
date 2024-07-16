@@ -5,8 +5,9 @@ typedef Render = Widget Function(dynamic value, Map<String, dynamic> record, Lis
 class ListColumnModal {
   String field;
   String label;
+  double? labelWidth;
   Render? render;
-  ListColumnModal({required this.field, required this.label, this.render});
+  ListColumnModal({required this.field, required this.label, this.render, this.labelWidth});
 }
 
 class ListItemWidget extends StatefulWidget {
