@@ -27,7 +27,6 @@ class _MilksidentifyPageState extends ConsumerState<MilksidentifyPage> {
         // padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Column(
           children: [
-            const SizedBox(height: 6),
             Expanded(
               child: weightInfoTree.when(
                 data: (data) => buildListWidget(data),

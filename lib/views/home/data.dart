@@ -77,10 +77,9 @@ final List<ModuleModel> moduleList = [
       ModuleItemModel(route: RouteEnum.camera, iconPath: 'assets/icon/common/optimized/3.svg'),
       ModuleItemModel(route: RouteEnum.animal, iconPath: 'assets/icon/common/optimized/4.svg'),
       ModuleItemModel(route: RouteEnum.email, iconPath: 'assets/icon/common/optimized/5.svg'),
-      ModuleItemModel(route: RouteEnum.email, iconPath: 'assets/icon/common/optimized/6.svg'),
+      ModuleItemModel(route: RouteEnum.registerRecord, iconPath: 'assets/icon/common/optimized/8.svg'),
+      ModuleItemModel(route: RouteEnum.distinguishRecord, iconPath: 'assets/icon/common/optimized/9.svg'),
       ModuleItemModel(route: RouteEnum.email, iconPath: 'assets/icon/common/optimized/7.svg'),
-      ModuleItemModel(route: RouteEnum.email, iconPath: 'assets/icon/common/optimized/8.svg'),
-      ModuleItemModel(route: RouteEnum.email, iconPath: 'assets/icon/common/optimized/9.svg'),
     ]
   ),
 ];

@@ -41,7 +41,7 @@ enum RouteEnum {
   health('health', '健康监测', '/precisionBreeding/health'),
   intelligencewarn('intelligencewarn', '智能预警', '/precisionBreeding/intelligencewarn'),
   position('position', '实时定位', '/precisionBreeding/position'),
-  security('security', '智能安防', '/precisionBreeding/security'),
+  security('security', '安防报警', '/precisionBreeding/security'),
   pen('pen', '圈舍管理', '/precisionBreeding/pen'),
   milksidentify('milksidentify', '在位识别', '/precisionBreeding/milksidentify'),
 
@@ -57,7 +57,10 @@ enum RouteEnum {
   building('building', '圈舍信息', '/common/building'),
   camera('camera', '摄像头管理', '/common/camera'),
   animal('animal', '牛只信息', '/common/animal'),
-  email('email', '邮箱管理', '/common/email');
+  email('email', '邮箱管理', '/common/email'),
+  registerRecord('registerRecord', '牛注册记录', '/common/registerRecord'),
+  distinguishRecord('distinguishRecord', '牛识别记录', '/common/distinguishRecord');
+  
 
   const RouteEnum(this.path, this.title, this.fullpath);
 
