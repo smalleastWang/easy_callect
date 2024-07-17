@@ -130,7 +130,8 @@ class DetectionModel{
       detDylib = DynamicLibrary.open('libdetection_plugin.so');
     }
     else if(Platform.isIOS || Platform.isMacOS){
-      detDylib = DynamicLibrary.open('detection_plugin.framework/detection_plugin');
+      // detDylib = DynamicLibrary.open('detection_plugin.framework/detection_plugin');
+      detDylib = DynamicLibrary.process();
     }
     else{
       return false;
