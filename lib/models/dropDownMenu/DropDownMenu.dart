@@ -1,5 +1,5 @@
 
-import 'package:easy_collect/widgets/DropDownMenu/index.dart';
+import 'package:easy_collect/models/common/Option.dart';
 import 'package:flutter/material.dart';
 
 enum WidgetType {
@@ -15,7 +15,7 @@ class DropDownMenuModel {
   String fieldName;
   WidgetType widget;
   String? selectText;
-  List<Option> list;
+  List<OptionModel> list;
 
   DropDownMenuModel({
     required this.layerLink,

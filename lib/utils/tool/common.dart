@@ -1,5 +1,4 @@
 
-
 import 'package:flutter/material.dart';
 
 List<T> listMapToModel<T>(List<dynamic> listMap, Function jsonF) {

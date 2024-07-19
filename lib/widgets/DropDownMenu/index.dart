@@ -1,13 +1,10 @@
-import 'package:easy_collect/models/dict/Dict.dart';
+// import 'package:easy_collect/models/dict/Dict.dart';
+import 'package:easy_collect/models/common/Option.dart';
 import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
 import 'package:easy_collect/utils/OverlayManager.dart';
+import 'package:easy_collect/utils/const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_picker/picker.dart';
-
-class Option extends DictModel {
-  bool check;
-  Option({required this.check, required super.dictLabel, required super.dictValue});
-}
 
 class DropDownMenu extends StatefulWidget {
   final List<DropDownMenuModel> filterList;
@@ -128,7 +125,7 @@ class _DropDownMenuState extends State<DropDownMenu> with SingleTickerProviderSt
       shrinkWrap: true,
       children: data.list.asMap().entries.map((e) {
         int itemIndex = e.key;
-        Option item = e.value;
+        OptionModel item = e.value;
         return _menuItem(cate: item, index: itemIndex, rootIndex: index);
       }).toList(),
     );
@@ -189,7 +186,6 @@ class _DropDownMenuState extends State<DropDownMenu> with SingleTickerProviderSt
                 adapter: DateTimePickerAdapter(type: PickerDateTimeType.kYMD, isNumberMonth: true),
                 onConfirm: (Picker picker, List value) {
                   dropDownMenuRangeDateOverlayEntryRemove();
-                  print((picker.adapter as DateTimePickerAdapter).value);
                   DateTime? date = (picker.adapter as DateTimePickerAdapter).value;
                   if (date == null) return;
                   state(() {
@@ -299,18 +295,18 @@ class _DropDownMenuState extends State<DropDownMenu> with SingleTickerProviderSt
     );
   }
 
-  Widget _menuItem({required int index, required int rootIndex, required Option cate}) {
+  Widget _menuItem({required int index, required int rootIndex, required OptionModel cate}) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
         DropDownMenuModel formItem = widget.filterList[rootIndex];
-        for (Option item in formItem.list) {
+        for (OptionModel item in formItem.list) {
           item.check = false;
         }
         formItem.list[index].check = true;
-        formItem.selectText = formItem.list[index].dictLabel;
+        formItem.selectText = formItem.list[index].label;
         changeOverlay(index: rootIndex, reset: true);
-        widget.onChange(formItem.fieldName, formItem.list[index].dictValue);
+        widget.onChange(formItem.fieldName, formItem.list[index].value == unlimitedNum ? '' : formItem.list[index].value);
         _isExpanded = false;
         _animationController.reverse();
         Future.delayed(const Duration(milliseconds: 300)).then((value) {
@@ -325,7 +321,7 @@ class _DropDownMenuState extends State<DropDownMenu> with SingleTickerProviderSt
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              cate.dictLabel,
+              cate.label,
               style: TextStyle(
                 decoration: TextDecoration.none,
                 fontSize: 14,

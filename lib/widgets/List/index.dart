@@ -118,7 +118,8 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
 
     // 保存当前的查询参数
     _saveCurrentParams();
-
+    // 去除空的map项
+    params.removeWhere((key, value) => value == null || value == 'null');
     // 请求数据
     final AsyncValue<PageVoModel> res = ref.refresh(widget.provider(params));
     if (res.hasError) {

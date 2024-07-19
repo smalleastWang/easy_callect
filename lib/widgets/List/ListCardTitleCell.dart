@@ -11,11 +11,12 @@ class ListCardTitleStateModal {
 
 class ListCardTitleCell extends StatelessWidget {
   final List<ListColumnModal>? detailColumns;
+  final double detailLabelWidth;
   final String? title;
   final Widget? titleWidget;
   final Map<String, dynamic> rowData;
   final ListCardTitleStateModal? state;
-  const ListCardTitleCell({super.key, this.detailColumns, required this.rowData, this.title, this.titleWidget, this.state});
+  const ListCardTitleCell({super.key, this.detailColumns, required this.rowData, this.title, this.titleWidget, this.state, this.detailLabelWidth = 100});
 
 
   Widget get _renderTitle {
@@ -51,16 +52,27 @@ class ListCardTitleCell extends StatelessWidget {
           context: context,
           title: '详情信息',
           contentBuilder: (BuildContext context) {
-            return Column(
-              children: detailColumns!.map((e) => Row(
-                children: [
-                  SizedBox(
-                    width: 100,
-                    child: Text(e.label, style: const TextStyle(color: Color(0xFF666666))),
-                  ),
-                  e.render == null ? Text(rowData[e.field] ?? '-') : e.render!(rowData[e.field], rowData, e)
-                ],
-              )).toList()
+            return Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: detailColumns!.map((e) => Container(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: e.labelWidth ?? detailLabelWidth,
+                          child: Text(e.label, style: const TextStyle(color: Color(0xFF666666))),
+                        ),
+                        Expanded(
+                          child: e.render == null ? Text(rowData[e.field] ?? '-') : e.render!(rowData[e.field], rowData, e)
+                        )
+                        
+                      ],
+                    ),
+                  )).toList()
+                ),
+              )
             );
           }
         );
