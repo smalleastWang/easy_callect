@@ -17,7 +17,7 @@ class SupervisionPage extends StatelessWidget {
           CellWidget(title: '养殖规模', onTap: () => context.push(RouteEnum.breedingScale.fullpath)),
           CellWidget(title: '抵押信息', onTap: () => context.push(RouteEnum.mortgageInfo.fullpath)),
           CellWidget(title: '投保信息', onTap: () => context.push(RouteEnum.insureInfo.fullpath)),
-          CellWidget(title: '健康检测',onTap: () => context.push(RouteEnum.healthCheck.fullpath))
+          CellWidget(title: '健康检测',onTap: () => context.push(RouteEnum.healthInfo.fullpath))
         ],
       ),
     );

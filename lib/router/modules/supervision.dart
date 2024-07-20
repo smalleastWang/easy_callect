@@ -1,7 +1,7 @@
 
 import 'package:easy_collect/enums/route.dart';
 import 'package:easy_collect/views/supervision/BreedingScale.dart';
-import 'package:easy_collect/views/supervision/HealthCheck.dart';
+import 'package:easy_collect/views/supervision/HealthInfo.dart';
 import 'package:easy_collect/views/supervision/InsureInfo.dart';
 import 'package:easy_collect/views/supervision/MortgageInfo.dart';
 import 'package:easy_collect/views/supervision/index.dart';
@@ -24,8 +24,8 @@ final supervisionRoutes = GoRoute(
       builder: (context, state) => const InsureInfoPage(),
     ),
     GoRoute(
-      path: RouteEnum.healthCheck.path,
-      builder: (context, state) => const HealthCheckPage(),
+      path: RouteEnum.healthInfo.path,
+      builder: (context, state) => const HealthInfoPage(),
     ),
   ]
 );

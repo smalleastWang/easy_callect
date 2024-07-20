@@ -63,7 +63,7 @@ final List<ModuleModel> moduleList = [
       ModuleItemModel(route: RouteEnum.mortgageInfo, iconPath: 'assets/icon/supervision/optimized/1.svg'),
       ModuleItemModel(route: RouteEnum.insureInfo, iconPath: 'assets/icon/supervision/optimized/2.svg'),
       ModuleItemModel(route: RouteEnum.breedingScale, iconPath: 'assets/icon/supervision/optimized/3.svg'),
-      ModuleItemModel(route: RouteEnum.healthCheck, iconPath: 'assets/icon/supervision/optimized/4.svg'),
+      ModuleItemModel(route: RouteEnum.healthInfo, iconPath: 'assets/icon/supervision/optimized/4.svg'),
     ]
 
   ),

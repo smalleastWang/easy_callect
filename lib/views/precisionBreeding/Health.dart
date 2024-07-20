@@ -25,7 +25,7 @@ class _HealthPageState extends ConsumerState<HealthPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(RouteEnum.healthCheck.title),
+        title: Text(RouteEnum.health.title),
       ),
       body: Container(
         color: const Color(0xFFF1F5F9),
