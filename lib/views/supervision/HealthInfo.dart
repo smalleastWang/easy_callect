@@ -15,11 +15,11 @@ class BreedingData {
 }
 
 final mortgageInfoProvider = FutureProvider<Monitoring?>((ref) async {
-  return await MonitoringApi.getInsureInfo({"id": null});
+  return await MonitoringApi.getHealthInfo({"id": null});
 });
 
-class InsureInfoPage extends ConsumerWidget {
-  const InsureInfoPage({super.key});
+class HealthInfoPage extends ConsumerWidget {
+  const HealthInfoPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -27,7 +27,7 @@ class InsureInfoPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(RouteEnum.insureInfo.title),
+        title: Text(RouteEnum.healthInfo.title),
       ),
       body: mortgageInfo.when(
         data: (mortgageInfo) {
@@ -37,16 +37,16 @@ class InsureInfoPage extends ConsumerWidget {
 
           final cowNum = mortgageInfo.cowNum ?? 0;
           final pastureNum = mortgageInfo.pastureNum ?? 0;
-          final policy = mortgageInfo.policy ?? 0;
-          final unPolicy = mortgageInfo.unPolicy ?? 0;
+          final health = mortgageInfo.health ?? 0;
+          final unHealth = mortgageInfo.unHealth ?? 0;
 
           String selectedCategory = '';
           int selectedValue = 0;
 
           List<charts.Series<BreedingData, String>> createDonutChartData() {
             final data = [
-              BreedingData('投保数量', policy, Colors.red),
-              BreedingData('未投保数量', unPolicy, Colors.orange),
+              BreedingData('健康数量', health, Colors.red),
+              BreedingData('不健康数量', unHealth, Colors.orange),
             ];
 
             final total = data.fold(0, (sum, item) => sum + item.value);
@@ -104,7 +104,7 @@ class InsureInfoPage extends ConsumerWidget {
                       children: [
                         const FaIcon(FontAwesomeIcons.lock, color: Colors.red),
                         const SizedBox(width: 16),
-                        Text('投保数量: $policy', style: const TextStyle(fontSize: 16)),
+                        Text('健康数量: $health', style: const TextStyle(fontSize: 16)),
                       ],
                     ),
                     const SizedBox(height: 12),
@@ -113,7 +113,7 @@ class InsureInfoPage extends ConsumerWidget {
                       children: [
                         const FaIcon(FontAwesomeIcons.unlock, color: Colors.blue),
                         const SizedBox(width: 16),
-                        Text('未投保数量: $unPolicy', style: const TextStyle(fontSize: 16)),
+                        Text('不健康数量: $unHealth', style: const TextStyle(fontSize: 16)),
                       ],
                     ),
                   ],
