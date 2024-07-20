@@ -36,7 +36,7 @@ class Intelligencewarn {
   // 耳标号
   String? no;
   
-  // 预警类型
+  // 预警类型  1 运动量减少  2 食量减少  3
   String? warnType;
   
   // 预警时间(预留)

@@ -38,3 +38,25 @@ enum InventoryType {
   
   static String getLabel(int value) => InventoryType.values.firstWhere((i) => i.value == value, orElse: () => InventoryType.unknown).label;
 }
+
+enum WarnType implements EnumOption {
+  reducedExercise(1, '运动量减少'),
+  reducedFoodIntake(2, '食量减少'),
+  reducedWeight(3, '体重减少'),
+  unknown(-1, '未知');
+
+  final int value;
+  final String label;
+  const WarnType(this.value, this.label);
+  
+  static WarnType getTypeByLabel(String title) => WarnType.values.firstWhere((i) => i.name == title, orElse: () => WarnType.unknown);
+  static WarnType getTypeByValue(int value) => WarnType.values.firstWhere((i) => i.value == value, orElse: () => WarnType.unknown);
+
+  static int getValue(String label) => WarnType.values.firstWhere((i) => i.label == label, orElse: () => WarnType.unknown).value;
+  static String getLabel(int value) => WarnType.values.firstWhere((i) => i.value == value, orElse: () => WarnType.unknown).label;
+
+   @override
+  OptionModel<int> toOptionModel() {
+    return OptionModel(value: value, label: label);
+  }
+}

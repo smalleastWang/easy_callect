@@ -48,12 +48,11 @@ final List<ModuleModel> moduleList = [
       ModuleItemModel(route: RouteEnum.behavior, iconPath: 'assets/icon/precisionBreeding/optimized/3.svg'),
       ModuleItemModel(route: RouteEnum.performance, iconPath: 'assets/icon/precisionBreeding/optimized/4.svg'),
       ModuleItemModel(route: RouteEnum.position, iconPath: 'assets/icon/precisionBreeding/optimized/5.svg'),
-      ModuleItemModel(route: RouteEnum.security, iconPath: 'assets/icon/precisionBreeding/optimized/6.svg'),
+      ModuleItemModel(route: RouteEnum.security, iconPath: 'assets/icon/precisionBreeding/optimized/11.svg'),
       ModuleItemModel(route: RouteEnum.milksidentify, iconPath: 'assets/icon/precisionBreeding/optimized/7.svg'),
+      ModuleItemModel(route: RouteEnum.health, iconPath: 'assets/icon/precisionBreeding/optimized/9.svg'),
+      ModuleItemModel(route: RouteEnum.intelligencewarn, iconPath: 'assets/icon/precisionBreeding/optimized/6.svg'),
       ModuleItemModel(route: RouteEnum.countRegister, iconPath: 'assets/icon/precisionBreeding/optimized/8.svg'),
-
-      // ModuleItemModel(route: RouteEnum.health, iconPath: 'assets/icon/precisionBreeding/1.png'),
-      // ModuleItemModel(route: RouteEnum.intelligencewarn, iconPath: 'assets/icon/precisionBreeding/1.png'),
     ]
 
   ),
