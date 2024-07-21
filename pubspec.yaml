@@ -73,6 +73,7 @@ dependencies:
   community_charts_flutter: ^1.0.4
   fl_chart: ^0.55.2
   font_awesome_flutter: ^10.1.0 
+  video_player: ^2.9.1
 
 dev_dependencies:
   flutter_test:
