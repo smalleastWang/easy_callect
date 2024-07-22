@@ -6,6 +6,7 @@ import 'package:easy_collect/api/monitoring.dart';
 import 'package:easy_collect/enums/route.dart';
 import 'package:easy_collect/models/monitoring/Monitoring.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart'; // 导入 EasyLoading
+import 'package:easy_collect/widgets/AreaSelector/AreaSelector.dart'; // 导入 AreaSelector
 
 class BreedingData {
   final String category;
@@ -15,27 +16,83 @@ class BreedingData {
   BreedingData(this.category, this.value, this.color);
 }
 
-final mortgageInfoProvider = FutureProvider<Monitoring?>((ref) async {
-  return await MonitoringApi.getHealthInfo({"id": null});
+final mortgageInfoProvider = StateNotifierProvider<MonitoringNotifier, AsyncValue<Monitoring?>>((ref) {
+  return MonitoringNotifier();
 });
 
-class HealthInfoPage extends ConsumerWidget {
+class MonitoringNotifier extends StateNotifier<AsyncValue<Monitoring?>> {
+  MonitoringNotifier() : super(const AsyncValue.loading());
+
+  Future<void> fetchMonitoringData({String? provinceId, String? cityId}) async {
+    try {
+      final id = cityId ?? provinceId;
+      final monitoringData = await MonitoringApi.getHealthInfo({
+        "id": id,
+      });
+      state = AsyncValue.data(monitoringData);
+    } catch (error) {
+      print('error: $error');
+    }
+  }
+}
+
+class HealthInfoPage extends ConsumerStatefulWidget {
   const HealthInfoPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  _HealthInfoPageState createState() => _HealthInfoPageState();
+}
+
+class _HealthInfoPageState extends ConsumerState<HealthInfoPage> {
+  String? selectedProvince;
+  String? selectedCity;
+
+  @override
+  void initState() {
+    super.initState();
+    ref.read(mortgageInfoProvider.notifier).fetchMonitoringData();
+  }
+
+  void _onAreaSelected(String? province, String? city) {
+    setState(() {
+      selectedProvince = province;
+      selectedCity = city;
+    });
+
+    ref.read(mortgageInfoProvider.notifier).fetchMonitoringData(
+      provinceId: province,
+      cityId: city,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final AsyncValue<Monitoring?> mortgageInfo = ref.watch(mortgageInfoProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(RouteEnum.healthInfo.title),
       ),
-      body: mortgageInfo.when(
-        data: (data) => data == null
-            ? _buildNoDataWidget()
-            : _buildDataWidget(context, data),
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(child: Text('Error: $error')),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          children: [
+            AreaSelector(
+              enableCitySelection: true,
+              onAreaSelected: _onAreaSelected,
+            ),
+            const SizedBox(height: 16.0),
+            Expanded(
+              child: mortgageInfo.when(
+                data: (data) => data == null
+                    ? _buildNoDataWidget()
+                    : _buildDataWidget(context, data),
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (error, stack) => Center(child: Text('Error: $error')),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -55,19 +112,21 @@ class HealthInfoPage extends ConsumerWidget {
         return Column(
           children: [
             _buildInfoGrid(data),
-            _buildPieChart(context, breedingData, setState, (index) {
-              if (lastTouchedIndex != index) {
-                lastTouchedIndex = index;
-                final item = breedingData[index];
-                EasyLoading.showToast(
-                  '${item.category} ${item.value}',
-                  duration: const Duration(seconds: 2),
-                  toastPosition: EasyLoadingToastPosition.bottom,
-                );
-              }
-              touchedIndex = index;
-            }),
-            _buildLegend(breedingData),
+             if (data.cowNum != null && data.cowNum! > 0) ...[
+              _buildPieChart(context, breedingData, setState, (index) {
+                if (lastTouchedIndex != index) {
+                  lastTouchedIndex = index;
+                  final item = breedingData[index];
+                  EasyLoading.showToast(
+                    '${item.category} ${item.value}',
+                    duration: const Duration(seconds: 2),
+                    toastPosition: EasyLoadingToastPosition.bottom,
+                  );
+                }
+                touchedIndex = index;
+              }),
+              _buildLegend(breedingData),
+            ]
           ],
         );
       },
@@ -86,7 +145,7 @@ class HealthInfoPage extends ConsumerWidget {
 
   Widget _buildInfoGrid(Monitoring data) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+      padding: const EdgeInsets.symmetric(horizontal: 0),
       child: GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
@@ -230,7 +289,7 @@ class HealthInfoPage extends ConsumerWidget {
                   shape: BoxShape.rectangle,
                 ),
               ),
-              const SizedBox(width: 4),
+              const SizedBox(width: 8),
               Text(item.category),
             ],
           );
@@ -241,53 +300,47 @@ class HealthInfoPage extends ConsumerWidget {
 
   Widget _buildInfoCard(
     String title,
-    String count,
-    String iconPath, {
+    String value,
+    String icon, {
     Color bgColor = Colors.green,
     Color iconColor = Colors.white,
   }) {
     return Card(
-      color: const Color(0xFFF6F7FD),
+      color: bgColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        padding: const EdgeInsets.all(12.0),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              decoration: BoxDecoration(
-                color: bgColor,
-                borderRadius: BorderRadius.circular(6),
-              ),
-              padding: const EdgeInsets.all(8.0),
-              child: iconPath.endsWith('.svg')
-                  ? SvgPicture.asset(iconPath, fit: BoxFit.fill)
-                  : Image.asset(iconPath, fit: BoxFit.fill),
+            SvgPicture.asset(
+              icon,
+              width: 24,
+              height: 24,
+              color: iconColor,
             ),
-            const SizedBox(width: 10.0),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    count,
-                    style: const TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF000000),
-                    ),
+            const SizedBox(width: 10),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.white.withOpacity(0.8),
                   ),
-                  const SizedBox(height: 2.0),
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 12.0,
-                      color: Color(0xFF666666),
-                    ),
+                ),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ],
         ),

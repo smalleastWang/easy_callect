@@ -2,10 +2,11 @@ import 'package:community_charts_flutter/community_charts_flutter.dart' as chart
 import 'package:easy_collect/api/monitoring.dart';
 import 'package:easy_collect/enums/route.dart';
 import 'package:easy_collect/models/monitoring/Monitoring.dart';
+import 'package:easy_collect/widgets/AreaSelector/AreaSelector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 class BreedingData {
   final String category;
@@ -15,27 +16,83 @@ class BreedingData {
   BreedingData(this.category, this.value, this.color);
 }
 
-final mortgageInfoProvider = FutureProvider<Monitoring?>((ref) async {
-  return await MonitoringApi.getMortgageInfo({"id": null});
+final mortgageInfoProvider = StateNotifierProvider<MonitoringNotifier, AsyncValue<Monitoring?>>((ref) {
+  return MonitoringNotifier();
 });
 
-class MortgageInfoPage extends ConsumerWidget {
+class MonitoringNotifier extends StateNotifier<AsyncValue<Monitoring?>> {
+  MonitoringNotifier() : super(const AsyncValue.loading());
+
+  Future<void> fetchMortgageData({String? provinceId, String? cityId}) async {
+    try {
+      final id = cityId ?? provinceId;
+      final monitoringData = await MonitoringApi.getMortgageInfo({
+        "id": id,
+      });
+      state = AsyncValue.data(monitoringData);
+    } catch (error) {
+      print('error: $error');
+    }
+  }
+}
+
+class MortgageInfoPage extends ConsumerStatefulWidget {
   const MortgageInfoPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  _MortgageInfoPageState createState() => _MortgageInfoPageState();
+}
+
+class _MortgageInfoPageState extends ConsumerState<MortgageInfoPage> {
+  String? selectedProvince;
+  String? selectedCity;
+
+  @override
+  void initState() {
+    super.initState();
+    ref.read(mortgageInfoProvider.notifier).fetchMortgageData();
+  }
+
+  void _onAreaSelected(String? province, String? city) {
+    setState(() {
+      selectedProvince = province;
+      selectedCity = city;
+    });
+
+    ref.read(mortgageInfoProvider.notifier).fetchMortgageData(
+      provinceId: province,
+      cityId: city,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final AsyncValue<Monitoring?> mortgageInfo = ref.watch(mortgageInfoProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(RouteEnum.mortgageInfo.title),
       ),
-      body: mortgageInfo.when(
-        data: (data) => data == null
-            ? _buildNoDataWidget()
-            : _buildDataWidget(context, data),
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(child: Text('Error: $error')),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          children: [
+            AreaSelector(
+              enableCitySelection: true,
+              onAreaSelected: _onAreaSelected,
+            ),
+            const SizedBox(height: 16.0),
+            Expanded(
+              child: mortgageInfo.when(
+                data: (data) => data == null
+                    ? _buildNoDataWidget()
+                    : _buildDataWidget(context, data),
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (error, stack) => Center(child: Text('Error: $error')),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -49,25 +106,26 @@ class MortgageInfoPage extends ConsumerWidget {
 
     return StatefulBuilder(
       builder: (context, setState) {
-        int touchedIndex = -1;
-        int lastTouchedIndex = -1; // 用于存储上一次触摸的索引
 
         return Column(
           children: [
             _buildInfoGrid(data),
-            _buildPieChart(context, breedingData, setState, (index) {
-              if (lastTouchedIndex != index) {
-                lastTouchedIndex = index;
-                final item = breedingData[index];
-                EasyLoading.showToast(
-                  '${item.category} ${item.value}',
-                  duration: const Duration(seconds: 2),
-                  toastPosition: EasyLoadingToastPosition.bottom,
-                );
-              }
-              touchedIndex = index;
-            }),
-            _buildLegend(breedingData),
+            if (data.cowNum != null && data.cowNum! > 0) ...[
+              _buildPieChart(
+                context,
+                breedingData,
+                (selectedDatum) {
+                  setState(() {
+                    EasyLoading.showToast(
+                      '${selectedDatum.category}: ${selectedDatum.value}',
+                      duration: const Duration(seconds: 2),
+                      toastPosition: EasyLoadingToastPosition.bottom,
+                    );
+                  });
+                }
+              ),
+              _buildLegend(breedingData),
+            ],
           ],
         );
       },
@@ -86,7 +144,7 @@ class MortgageInfoPage extends ConsumerWidget {
 
   Widget _buildInfoGrid(Monitoring data) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+      padding: const EdgeInsets.symmetric(horizontal: 0),
       child: GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
@@ -153,8 +211,7 @@ class MortgageInfoPage extends ConsumerWidget {
   Widget _buildPieChart(
     BuildContext context,
     List<BreedingData> breedingData,
-    StateSetter setState,
-    Function(int) onTouch
+    Function(BreedingData) onSelect
   ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12.0),
@@ -184,11 +241,7 @@ class MortgageInfoPage extends ConsumerWidget {
                     final selectedDatum = model.selectedDatum;
                     if (selectedDatum.isNotEmpty) {
                       final BreedingData selectedData = selectedDatum.first.datum;
-                      EasyLoading.showToast(
-                        '${selectedData.category} ${selectedData.value}',
-                        duration: const Duration(seconds: 2),
-                        toastPosition: EasyLoadingToastPosition.bottom,
-                      );
+                      onSelect(selectedData);
                     }
                   },
                 ),

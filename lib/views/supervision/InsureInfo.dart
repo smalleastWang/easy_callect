@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:easy_collect/widgets/AreaSelector/AreaSelector.dart';
 
 class BreedingData {
   final String category;
@@ -15,27 +16,83 @@ class BreedingData {
   BreedingData(this.category, this.value, this.color);
 }
 
-final mortgageInfoProvider = FutureProvider<Monitoring?>((ref) async {
-  return await MonitoringApi.getInsureInfo({"id": null});
+final mortgageInfoProvider = StateNotifierProvider<MonitoringNotifier, AsyncValue<Monitoring?>>((ref) {
+  return MonitoringNotifier();
 });
 
-class InsureInfoPage extends ConsumerWidget {
+class MonitoringNotifier extends StateNotifier<AsyncValue<Monitoring?>> {
+  MonitoringNotifier() : super(const AsyncValue.loading());
+
+  Future<void> fetchMonitoringData({String? provinceId, String? cityId}) async {
+    try {
+      final id = cityId ?? provinceId;
+      final monitoringData = await MonitoringApi.getInsureInfo({
+        "id": id,
+      });
+      state = AsyncValue.data(monitoringData);
+    } catch (error) {
+      print('error: $error');
+    }
+  }
+}
+
+class InsureInfoPage extends ConsumerStatefulWidget {
   const InsureInfoPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  _InsureInfoPageState createState() => _InsureInfoPageState();
+}
+
+class _InsureInfoPageState extends ConsumerState<InsureInfoPage> {
+  String? selectedProvince;
+  String? selectedCity;
+
+  @override
+  void initState() {
+    super.initState();
+    ref.read(mortgageInfoProvider.notifier).fetchMonitoringData();
+  }
+
+  void _onAreaSelected(String? province, String? city) {
+    setState(() {
+      selectedProvince = province;
+      selectedCity = city;
+    });
+
+    ref.read(mortgageInfoProvider.notifier).fetchMonitoringData(
+      provinceId: province,
+      cityId: city,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final AsyncValue<Monitoring?> mortgageInfo = ref.watch(mortgageInfoProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(RouteEnum.insureInfo.title),
       ),
-      body: mortgageInfo.when(
-        data: (data) => data == null
-            ? _buildNoDataWidget()
-            : _buildDataWidget(context, data),
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(child: Text('Error: $error')),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          children: [
+            AreaSelector(
+              enableCitySelection: true,
+              onAreaSelected: _onAreaSelected,
+            ),
+            const SizedBox(height: 16.0),
+            Expanded(
+              child: mortgageInfo.when(
+                data: (data) => data == null
+                    ? _buildNoDataWidget()
+                    : _buildDataWidget(context, data),
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (error, stack) => Center(child: Text('Error: $error')),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -55,22 +112,24 @@ class InsureInfoPage extends ConsumerWidget {
         return Column(
           children: [
             _buildInfoGrid(data),
-            _buildPieChart(
-              context,
-              breedingData,
-              (selectedDatum) {
-                setState(() {
-                  selectedCategory = selectedDatum.category;
-                  selectedValue = selectedDatum.value;
-                  EasyLoading.showToast(
-                    '$selectedCategory: $selectedValue',
-                    duration: const Duration(seconds: 2),
-                    toastPosition: EasyLoadingToastPosition.bottom,
-                  );
-                });
-              }
-            ),
-            _buildLegend(breedingData),
+            if (data.cowNum != null && data.cowNum! > 0) ...[
+              _buildPieChart(
+                context,
+                breedingData,
+                (selectedDatum) {
+                  setState(() {
+                    selectedCategory = selectedDatum.category;
+                    selectedValue = selectedDatum.value;
+                    EasyLoading.showToast(
+                      '$selectedCategory: $selectedValue',
+                      duration: const Duration(seconds: 2),
+                      toastPosition: EasyLoadingToastPosition.bottom,
+                    );
+                  });
+                }
+              ),
+              _buildLegend(breedingData),
+            ],
           ],
         );
       },
@@ -89,7 +148,7 @@ class InsureInfoPage extends ConsumerWidget {
 
   Widget _buildInfoGrid(Monitoring data) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+      padding: const EdgeInsets.symmetric(horizontal: 0),
       child: GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
