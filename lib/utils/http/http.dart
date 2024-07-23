@@ -6,7 +6,7 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:go_router/go_router.dart';
 
-//辅助配置
+// 辅助配置
 import 'options.dart';
 import 'interceptor.dart';
 
@@ -22,7 +22,7 @@ enum HttpMethod {
 }
 
 class HttpRequest {
-  // 单例模式使用Http类，
+  // 单例模式使用Http类
   static final HttpRequest _instance = HttpRequest._internal();
 
   factory HttpRequest() => _instance;
@@ -53,15 +53,15 @@ class HttpRequest {
 
   /// 封装request方法
   Future<T> request<T>({
-    required String path, //接口地址
-    required HttpMethod method, //请求方式
-    dynamic data, //数据
+    required String path, // 接口地址
+    required HttpMethod method, // 请求方式
+    dynamic data, // 数据
     Map<String, dynamic>? queryParameters,
-    bool showLoading = true, //加载过程
-    bool showErrorMessage = true, //是否弹出借口报错
-    bool isformData = false
+    bool showLoading = true, // 加载过程
+    bool showErrorMessage = true, // 是否弹出借口报错
+    bool isformData = false,
   }) async {
-    //动态添加header头
+    // 动态添加header头
     Map<String, dynamic> headers = <String, dynamic>{};
     headers["version"] = "1.0.0";
 
@@ -81,7 +81,8 @@ class HttpRequest {
         queryParameters: queryParameters,
         options: options,
       );
-      if (response.data['code'] == 200) {
+      if (path.contains("doLogout")) {
+        EasyLoading.showToast('退出登录成功');
         return response.data?['data'];
       }
       if (response.data['code'] == 401) {
@@ -91,7 +92,8 @@ class HttpRequest {
       }
       EasyLoading.showToast(response.data['msg']);
       throw Exception(response.data['msg']);
-    } on DioException catch (error) {
+    } on
+DioException catch (error) {
       if (showErrorMessage && error.message != null) {
         EasyLoading.showToast(error.message!);
       }
