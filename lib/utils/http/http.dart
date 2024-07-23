@@ -83,6 +83,8 @@ class HttpRequest {
       );
       if (path.contains("doLogout")) {
         EasyLoading.showToast('退出登录成功');
+      }
+      if (response.data['code'] == 200) {
         return response.data?['data'];
       }
       if (response.data['code'] == 401) {
