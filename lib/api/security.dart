@@ -25,3 +25,8 @@ Future<List<Map<String, dynamic>>> getCameraListApi(String pastureId) async {
   }
   return res.cast<Map<String, dynamic>>();
 }
+// 获取直播地址
+Future<Map<String, dynamic>> getCameraLiveUrlApi(String deviceId) async {
+  Map<String, dynamic> res = await HttpUtils.post('/biz/camera/videoGetUrl', query: {'limit': 1, 'start': 0, 'deviceId': deviceId});
+  return res;
+}
