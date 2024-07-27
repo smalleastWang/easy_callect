@@ -90,6 +90,10 @@ Future<PageVoModel> insuranceApplicantList(InsuranceApplicantListRef ref, Map<St
 }
 
 // 新增投保人
-Future<void> addInsuranceApplicant(InsuranceApplicant params) async {
-  await HttpUtils.post('/biz/insuranceapplicant/add', params: params.toJson());
+Future<void> editInsuranceApplicant(Map<String, dynamic> params) async {
+  if(params['id'] != null) {
+      await HttpUtils.post('/biz/insuranceapplicant/edit', params: params);
+      return;
+  }
+  await HttpUtils.post('/biz/insuranceapplicant/add', params: params);
 }

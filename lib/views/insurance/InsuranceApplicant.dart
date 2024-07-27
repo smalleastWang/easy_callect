@@ -4,6 +4,7 @@ import 'package:easy_collect/widgets/List/ListCard.dart';
 import 'package:easy_collect/widgets/List/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class InsuranceApplicantPage extends ConsumerStatefulWidget {
   const InsuranceApplicantPage({super.key});
@@ -13,13 +14,35 @@ class InsuranceApplicantPage extends ConsumerStatefulWidget {
 }
 
 class _InsuranceApplicantPageState extends ConsumerState<InsuranceApplicantPage> {
+  final GlobalKey<ListWidgetState> listWidgetKey = GlobalKey<ListWidgetState>();
+
+  void _navigateTo(String path) async {
+    bool? result = await context.push(path);
+    // 如果返回结果为true，则刷新列表
+    if (result == true) {
+      listWidgetKey.currentState?.refreshWithPreviousParams();
+    }
+  }
+
+  void _addInsuranceApplicant() {
+    _navigateTo(RouteEnum.editInsuranceApplicant.path);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(RouteEnum.insuranceApplicant.title),
+        backgroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: _addInsuranceApplicant,
+          ),
+        ],
       ),
       body: ListWidget<InsuranceApplicantListFamily>(
+        key: listWidgetKey,
         provider: insuranceApplicantListProvider,
         builder: (data) {
           return Column(

@@ -20,6 +20,7 @@ enum RouteEnum {
   surveyCompared('surveyCompared', '查勘对比', '/insurance/surveyCompared'),
   orderList('orderList', '保单信息', '/insurance/orderList'),
   insuranceApplicant('insuranceApplicant', '投保人信息', '/insurance/insuranceApplicant'),
+  editInsuranceApplicant('/editInsuranceApplicant', '添加投保人', '/editInsuranceApplicant'),
   countRegister('countRegister', '计数盘点', '/insurance/countRegister'),
 
   // 养殖金融
