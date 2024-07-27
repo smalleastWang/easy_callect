@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:easy_collect/models/buildings/building.dart';
 import 'package:easy_collect/models/common/Area.dart';
 import 'package:easy_collect/models/dict/Dict.dart';
 import 'package:easy_collect/models/register/Upload.dart';
@@ -30,6 +31,26 @@ Future<List<AreaModel>> area(AreaRef ref) async {
   List<AreaModel> list = [];
   for (var item in data) {
     list.add(AreaModel.fromJson(item));
+  }
+  return list;
+}
+
+@riverpod
+Future<List<AreaModel>> orgTree(AreaRef ref) async {
+  List<dynamic> data = await HttpUtils.get('/biz/buildings/orgTreeSelector');
+  List<AreaModel> list = [];
+  for (var item in data) {
+    list.add(AreaModel.fromJson(item));
+  }
+  return list;
+}
+
+@riverpod
+Future<List<Building>> building(BuildingRef ref, String orgId) async {
+  List<dynamic> data = await HttpUtils.get('/biz/buildings/buildingsSelector?orgId=$orgId');
+  List<Building> list = [];
+  for (var item in data) {
+    list.add(Building.fromJson(item));
   }
   return list;
 }

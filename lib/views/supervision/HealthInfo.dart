@@ -1,10 +1,12 @@
-import 'package:community_charts_flutter/community_charts_flutter.dart' as charts;
+import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_collect/api/monitoring.dart';
 import 'package:easy_collect/enums/route.dart';
 import 'package:easy_collect/models/monitoring/Monitoring.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart'; // 导入 EasyLoading
+import 'package:easy_collect/widgets/AreaSelector/AreaSelector.dart'; // 导入 AreaSelector
 
 class BreedingData {
   final String category;
@@ -14,156 +16,334 @@ class BreedingData {
   BreedingData(this.category, this.value, this.color);
 }
 
-final mortgageInfoProvider = FutureProvider<Monitoring?>((ref) async {
-  return await MonitoringApi.getHealthInfo({"id": null});
+final mortgageInfoProvider = StateNotifierProvider<MonitoringNotifier, AsyncValue<Monitoring?>>((ref) {
+  return MonitoringNotifier();
 });
 
-class HealthInfoPage extends ConsumerWidget {
+class MonitoringNotifier extends StateNotifier<AsyncValue<Monitoring?>> {
+  MonitoringNotifier() : super(const AsyncValue.loading());
+
+  Future<void> fetchMonitoringData({String? provinceId, String? cityId}) async {
+    try {
+      final id = cityId ?? provinceId;
+      final monitoringData = await MonitoringApi.getHealthInfo({
+        "id": id,
+      });
+      state = AsyncValue.data(monitoringData);
+    } catch (error) {
+      print('error: $error');
+    }
+  }
+}
+
+class HealthInfoPage extends ConsumerStatefulWidget {
   const HealthInfoPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  _HealthInfoPageState createState() => _HealthInfoPageState();
+}
+
+class _HealthInfoPageState extends ConsumerState<HealthInfoPage> {
+  String? selectedProvince;
+  String? selectedCity;
+
+  @override
+  void initState() {
+    super.initState();
+    ref.read(mortgageInfoProvider.notifier).fetchMonitoringData();
+  }
+
+  void _onAreaSelected(String? province, String? city) {
+    setState(() {
+      selectedProvince = province;
+      selectedCity = city;
+    });
+
+    ref.read(mortgageInfoProvider.notifier).fetchMonitoringData(
+      provinceId: province,
+      cityId: city,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final AsyncValue<Monitoring?> mortgageInfo = ref.watch(mortgageInfoProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(RouteEnum.healthInfo.title),
       ),
-      body: mortgageInfo.when(
-        data: (mortgageInfo) {
-          if (mortgageInfo == null) {
-            return const Center(child: Text('未获取到抵押信息'));
-          }
-
-          final cowNum = mortgageInfo.cowNum ?? 0;
-          final pastureNum = mortgageInfo.pastureNum ?? 0;
-          final health = mortgageInfo.health ?? 0;
-          final unHealth = mortgageInfo.unHealth ?? 0;
-
-          String selectedCategory = '';
-          int selectedValue = 0;
-
-          List<charts.Series<BreedingData, String>> createDonutChartData() {
-            final data = [
-              BreedingData('健康数量', health, Colors.red),
-              BreedingData('不健康数量', unHealth, Colors.orange),
-            ];
-
-            final total = data.fold(0, (sum, item) => sum + item.value);
-
-            return [
-              charts.Series<BreedingData, String>(
-                id: 'Breeding Data',
-                colorFn: (BreedingData data, _) => charts.ColorUtil.fromDartColor(data.color),
-                domainFn: (BreedingData data, _) => data.category,
-                measureFn: (BreedingData data, _) => data.value,
-                data: data,
-                labelAccessorFn: (BreedingData row, _) {
-                  final percentage = (row.value / total * 100).toStringAsFixed(1);
-                  return '$percentage%';
-                },
-              )
-            ];
-          }
-
-          void onSelectionChanged(charts.SelectionModel model) {
-            final selectedDatum = model.selectedDatum;
-            if (selectedDatum.isNotEmpty) {
-              final BreedingData selectedData = selectedDatum.first.datum;
-              selectedCategory = selectedData.category;
-              selectedValue = selectedData.value;
-            }
-          }
-
-          return Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const FaIcon(FontAwesomeIcons.cow, color: Colors.brown),
-                        const SizedBox(width: 8),
-                        Text('总牛只数: $cowNum', style: const TextStyle(fontSize: 16)),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const FaIcon(FontAwesomeIcons.seedling, color: Colors.green),
-                        const SizedBox(width: 16),
-                        Text('牧场数量: $pastureNum', style: const TextStyle(fontSize: 16)),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const FaIcon(FontAwesomeIcons.lock, color: Colors.red),
-                        const SizedBox(width: 16),
-                        Text('健康数量: $health', style: const TextStyle(fontSize: 16)),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const FaIcon(FontAwesomeIcons.unlock, color: Colors.blue),
-                        const SizedBox(width: 16),
-                        Text('不健康数量: $unHealth', style: const TextStyle(fontSize: 16)),
-                      ],
-                    ),
-                  ],
-                ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          children: [
+            AreaSelector(
+              enableCitySelection: true,
+              onAreaSelected: _onAreaSelected,
+            ),
+            const SizedBox(height: 16.0),
+            Expanded(
+              child: mortgageInfo.when(
+                data: (data) => data == null
+                    ? _buildNoDataWidget()
+                    : _buildDataWidget(context, data),
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (error, stack) => Center(child: Text('Error: $error')),
               ),
-              const SizedBox(height: 20),
-              Expanded(
-                child: Tooltip(
-                  message: selectedCategory.isNotEmpty
-                      ? '$selectedCategory: $selectedValue'
-                      : '点击图表查看详情',
-                  child: charts.PieChart<String>(
-                    createDonutChartData(),
-                    animate: true,
-                    defaultRenderer: charts.ArcRendererConfig<String>(
-                      arcWidth: 60,
-                      startAngle: 4 / 5 * 3.14,
-                      strokeWidthPx: 0.0,
-                      arcRendererDecorators: [
-                        charts.ArcLabelDecorator<String>(
-                          labelPosition: charts.ArcLabelPosition.inside,
-                        ),
-                      ],
-                    ),
-                    behaviors: [
-                      charts.DatumLegend<String>(
-                        outsideJustification: charts.OutsideJustification.endDrawArea,
-                        horizontalFirst: false,
-                        desiredMaxColumns: 1,
-                        cellPadding: const EdgeInsets.only(right: 0, bottom: 0),
-                        entryTextStyle: const charts.TextStyleSpec(
-                          color: charts.MaterialPalette.black,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                    selectionModels: [
-                      charts.SelectionModelConfig(
-                        type: charts.SelectionModelType.info,
-                        changedListener: onSelectionChanged,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNoDataWidget() {
+    return const Center(child: Text('未获取到健康信息'));
+  }
+
+  Widget _buildDataWidget(BuildContext context, Monitoring data) {
+    final breedingData = _getBreedingData(data);
+
+    return StatefulBuilder(
+      builder: (context, setState) {
+        int touchedIndex = -1;
+        int lastTouchedIndex = -1; // 用于存储上一次触摸的索引
+
+        return Column(
+          children: [
+            _buildInfoGrid(data),
+             if (data.cowNum != null && data.cowNum! > 0) ...[
+              _buildPieChart(context, breedingData, setState, (index) {
+                if (lastTouchedIndex != index) {
+                  lastTouchedIndex = index;
+                  final item = breedingData[index];
+                  EasyLoading.showToast(
+                    '${item.category} ${item.value}',
+                    duration: const Duration(seconds: 2),
+                    toastPosition: EasyLoadingToastPosition.bottom,
+                  );
+                }
+                touchedIndex = index;
+              }),
+              _buildLegend(breedingData),
+            ]
+          ],
+        );
+      },
+    );
+  }
+
+  List<BreedingData> _getBreedingData(Monitoring data) {
+    final health = data.health ?? 0;
+    final unHealth = data.unHealth ?? 0;
+
+    return [
+      BreedingData('健康数量', health, const Color(0xFF00BC7A)),
+      BreedingData('不健康数量', unHealth, const Color(0xFFFFC960)),
+    ];
+  }
+
+  Widget _buildInfoGrid(Monitoring data) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 0),
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 2,
+          crossAxisSpacing: 4.0,
+          mainAxisSpacing: 4.0,
+        ),
+        itemCount: 4,
+        itemBuilder: (context, index) {
+          return _buildInfoCard(
+            _getInfoCardTitle(index),
+            _getInfoCardValue(index, data),
+            _getInfoCardIcon(index),
+            bgColor: _getInfoCardBgColor(index),
+            iconColor: Colors.white,
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(child: Text('Error: $error')),
+      ),
+    );
+  }
+
+  String _getInfoCardTitle(int index) {
+    switch (index) {
+      case 0: return '总牛只数';
+      case 1: return '牧场数量';
+      case 2: return '健康数量';
+      case 3: return '不健康数量';
+      default: return '';
+    }
+  }
+
+  String _getInfoCardValue(int index, Monitoring data) {
+    switch (index) {
+      case 0: return data.cowNum?.toString() ?? '0';
+      case 1: return data.pastureNum?.toString() ?? '0';
+      case 2: return data.health?.toString() ?? '0';
+      case 3: return data.unHealth?.toString() ?? '0';
+      default: return '0';
+    }
+  }
+
+  String _getInfoCardIcon(int index) {
+    switch (index) {
+      case 0: return 'assets/icon/svg/optimized/niu.svg';
+      case 1: return 'assets/icon/svg/optimized/muchang.svg';
+      case 2:
+      case 3: return 'assets/icon/svg/optimized/love.svg';
+      default: return '';
+    }
+  }
+
+  Color _getInfoCardBgColor(int index) {
+    switch (index) {
+      case 0: return const Color(0xFFFC8731);
+      case 1: return const Color(0xFF00BC7A);
+      case 2: return const Color(0xFF00BC7A);
+      case 3: return const Color(0xFFFFC960);
+      default: return Colors.green;
+    }
+  }
+
+  Widget _buildPieChart(
+    BuildContext context,
+    List<BreedingData> breedingData,
+    StateSetter setState,
+    Function(int) onTouch
+  ) {
+    final pieChartData = _createPieChartData(breedingData);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+      child: Tooltip(
+        message: '点击图表查看详情',
+        child: Transform.translate(
+          offset: const Offset(0, -30),
+          child: SizedBox(
+            height: 400,
+            child: PieChart(
+              PieChartData(
+                sections: pieChartData,
+                centerSpaceRadius: 100,
+                sectionsSpace: 0,
+                borderData: FlBorderData(show: false),
+                pieTouchData: PieTouchData(
+                  touchCallback: (FlTouchEvent event, pieTouchResponse) {
+                    if (!event.isInterestedForInteractions ||
+                        pieTouchResponse == null ||
+                        pieTouchResponse.touchedSection == null) {
+                      return;
+                    }
+                    final index = pieTouchResponse.touchedSection!.touchedSectionIndex;
+                    setState(() => onTouch(index));
+                  },
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  List<PieChartSectionData> _createPieChartData(List<BreedingData> data) {
+    final total = data.fold(0, (sum, item) => sum + item.value);
+
+    return data.map((item) {
+      final percentage = (item.value / total * 100).toStringAsFixed(1);
+
+      return PieChartSectionData(
+        color: item.color,
+        value: item.value.toDouble(),
+        title: '$percentage%',
+        radius: 50,
+        titleStyle: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      );
+    }).toList();
+  }
+
+  Widget _buildLegend(List<BreedingData> data) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+      child: Wrap(
+        spacing: 10,
+        runSpacing: 10,
+        alignment: WrapAlignment.center,
+        children: data.map((item) {
+          return Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 16,
+                height: 16,
+                decoration: BoxDecoration(
+                  color: item.color,
+                  shape: BoxShape.rectangle,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(item.category),
+            ],
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildInfoCard(
+    String title,
+    String value,
+    String icon, {
+    Color bgColor = Colors.green,
+    Color iconColor = Colors.white,
+  }) {
+    return Card(
+      color: bgColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Row(
+          children: [
+            SvgPicture.asset(
+              icon,
+              width: 24,
+              height: 24,
+              color: iconColor,
+            ),
+            const SizedBox(width: 10),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.white.withOpacity(0.8),
+                  ),
+                ),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-DIRECTORIES=("common" "finance" "insurance" "precisionBreeding" "supervision")
+DIRECTORIES=("common" "finance" "insurance" "precisionBreeding" "supervision" "svg")
 
 for DIR in "${DIRECTORIES[@]}"; do
   mkdir -p "assets/icon/$DIR/optimized"

@@ -21,7 +21,14 @@ class MyApi {
   static Future<String> fetchLoginApi(Map<String, String> params) async {
     // params.addAll({'device': 'mobile app'});
     params.addAll({'validCode': '', 'validCodeReqNo': ''});
-    String data = await HttpUtils.post('/auth/b/doLogin', params: params);
+    // 发起请求
+    String? data = await HttpUtils.post('/auth/b/doLogin', params: params);
+    // 检查返回值是否为 null
+    if (data == null) {
+      // 处理 null 情况，例如抛出异常或返回默认值
+      throw Exception('网络异常，请求失败，请稍后重试～');
+    }
+    
     return data;
   }
   // 获取用户信息
