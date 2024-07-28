@@ -1,9 +1,11 @@
 import 'package:easy_collect/api/insurance.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 class EditPolicyPage extends StatefulWidget {
-  const EditPolicyPage({super.key});
+  final GoRouterState? state;
+  const EditPolicyPage({super.key, this.state});
 
   @override
   State<EditPolicyPage> createState() => _EditPolicyPageState();
@@ -41,10 +43,52 @@ extension PolicyStateExtension on PolicyState {
         return -1;
     }
   }
+
+  static PolicyState fromValue(int value) {
+    switch (value) {
+      case 0:
+        return PolicyState.pending;
+      case 1:
+        return PolicyState.active;
+      case 2:
+        return PolicyState.suspended;
+      case 3:
+        return PolicyState.terminated;
+      default:
+        return PolicyState.pending;
+    }
+  }
 }
 
 class _EditPolicyPageState extends State<EditPolicyPage> {
-  // final TextEditingController _orgIdController = TextEditingController();
+  late GoRouterState state;
+  late final Map<String, dynamic>? policy;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.state != null && widget.state!.extra != null) {
+      policy = widget.state!.extra as Map<String, dynamic>;
+
+      setState(() {
+        _policyNoController.text = policy!['policyNo'] ?? '';
+        _premiumController.text = policy!['premium']?.toString() ?? '';
+        _personController.text = policy!['person'] ?? '';
+        _phoneController.text = policy!['phone'] ?? '';
+        _selectedPolicyContent = policy!['policyContent'] ?? '牛只';
+        _selectedState = PolicyStateExtension.fromValue(policy!['state'] ?? 0);
+
+        if (policy!['effectiveTime'] != null) {
+          _effectiveTime = DateTime.parse(policy!['effectiveTime']);
+        }
+
+        if (policy!['expiryTime'] != null) {
+          _expiryTime = DateTime.parse(policy!['expiryTime']);
+        }
+      });
+    }
+  }
+
   final TextEditingController _policyNoController = TextEditingController();
   final TextEditingController _premiumController = TextEditingController();
   final TextEditingController _personController = TextEditingController();
@@ -63,11 +107,6 @@ class _EditPolicyPageState extends State<EditPolicyPage> {
   }
 
   void _savePolicy() async {
-    // 检查必填字段是否为空
-    // if (_orgIdController.text.isEmpty) {
-    //   _showError('请填写所属机构');
-    //   return;
-    // }
     if (_policyNoController.text.isEmpty) {
       _showError('请填写保险合同号');
       return;
@@ -99,8 +138,9 @@ class _EditPolicyPageState extends State<EditPolicyPage> {
     if (_phoneController.text.isNotEmpty) {
       String phonePattern = r'^[1][3-9]\d{9}$';
       RegExp regExp = RegExp(phonePattern);
-      if(!regExp.hasMatch(_phoneController.text)) {
-          _showError('请输入有效的手机号');
+      if (!regExp.hasMatch(_phoneController.text)) {
+        _showError('请输入有效的手机号');
+        return;
       }
     }
 
@@ -133,7 +173,6 @@ class _EditPolicyPageState extends State<EditPolicyPage> {
 
     // 清空表单
     setState(() {
-      // _orgIdController.clear();
       _policyNoController.clear();
       _premiumController.clear();
       _personController.clear();
@@ -315,7 +354,7 @@ class _EditPolicyPageState extends State<EditPolicyPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('添加保单'),
+        title: const Text('编辑保单'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -327,7 +366,6 @@ class _EditPolicyPageState extends State<EditPolicyPage> {
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Column(
           children: [
-            // _buildTextField('所属机构', _orgIdController),
             _buildTextField('保险合同号', _policyNoController),
             _buildDropdownField('保险项目', _policyContentOptions, _selectedPolicyContent, (newValue) {
               setState(() {
@@ -374,7 +412,7 @@ class _EditPolicyPageState extends State<EditPolicyPage> {
                 child: const Text('保存'),
               ),
             ),
-            const SizedBox(height: 30), // 添加额外的间距
+            const SizedBox(height: 30),
           ],
         ),
       ),

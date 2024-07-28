@@ -97,7 +97,10 @@ final List<GoRoute> routes = [
   ),
   GoRoute(
     path: RouteEnum.editPolicy.path,
-    builder: (context, state) => const EditPolicyPage(),
+    // builder: (context, state) => const EditPolicyPage(),
+    builder: (context, state) {
+      return EditPolicyPage(state: state);
+    },
   ),
   GoRoute(
     path: RouteEnum.performanceDetail.path,

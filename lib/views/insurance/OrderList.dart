@@ -1,6 +1,7 @@
 import 'package:easy_collect/api/insurance.dart';
 import 'package:easy_collect/enums/Route.dart';
 import 'package:easy_collect/enums/register.dart';
+import 'package:easy_collect/widgets/Button/PrimaryActionButton.dart';
 import 'package:easy_collect/widgets/List/ListCard.dart';
 import 'package:easy_collect/widgets/List/index.dart';
 import 'package:flutter/material.dart';
@@ -86,8 +87,20 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
               ListCardCell(label: '联系电话', value: data['phone']),
               ListCardCell(label: '合同生效日期', value: data['effectiveTime']),
               ListCardCell(label: '合同期满日期', value: data['expiryTime']),
-              const SizedBox(height: 8),
-              ListCardCellTime(label: '创建时间', value: data['createTime'])
+              ListCardCell(label: '创建时间', value: data['createTime']),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  PrimaryActionButton(text: '修改', onPressed: () => context.push(RouteEnum.editPolicy.fullpath, extra: data)),
+                  const SizedBox(width: 10),
+                  OutlineActionButton(text: '绑定', onPressed: () => context.push(RouteEnum.inventorySetUploadTime.fullpath)),
+                  const SizedBox(width: 10),
+                  OutlineActionButton(text: '详情', onPressed: () {
+                    context.push(RouteEnum.inventoryHistoryData.fullpath, extra: { 'id': data['id'] as String });
+                  })
+                ],
+              )
             ],
           );
         },
