@@ -43,6 +43,12 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+
+        manifestPlaceholders = [
+            JPUSH_PKGNAME : "com.easycollect.easy_collect",
+            JPUSH_APPKEY : "8b15ec1ee4c0c28acfa9c6d8", // NOTE: JPush 上注册的包名对应的 Appkey.
+            JPUSH_CHANNEL : "developer-default", //暂时填写默认值即可.
+        ]
     }
 
     buildTypes {
