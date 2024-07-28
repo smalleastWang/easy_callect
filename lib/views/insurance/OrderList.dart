@@ -5,6 +5,7 @@ import 'package:easy_collect/widgets/List/ListCard.dart';
 import 'package:easy_collect/widgets/List/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class ModuleListModel {
   RouteEnum route;
@@ -20,6 +21,20 @@ class OrderListPage extends ConsumerStatefulWidget {
 }
 
 class _OrderListPageState extends ConsumerState<OrderListPage> {
+  final GlobalKey<ListWidgetState> listWidgetKey = GlobalKey<ListWidgetState>();
+
+  void _navigateTo(String path) async {
+    bool? result = await context.push(path);
+    // 如果返回结果为true，则刷新列表
+    if (result == true) {
+      listWidgetKey.currentState?.refreshWithPreviousParams();
+    }
+  }
+
+  void _addPolicy() {
+    _navigateTo(RouteEnum.editPolicy.path);
+  }
+
   final List moduleList = [
     ModuleListModel(route: RouteEnum.inventory, background: Colors.black),
     ModuleListModel(route: RouteEnum.performance, background: Colors.black),
@@ -34,8 +49,16 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(RouteEnum.orderList.title),
+        backgroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: _addPolicy,
+          ),
+        ],
       ),
       body: ListWidget<OrderListFamily>(
+        key: listWidgetKey,
         provider: orderListProvider,
         builder: (data) {
           return Column(
