@@ -1,3 +1,4 @@
+import 'package:easy_collect/views/message/New.dart';
 import 'package:flutter/material.dart';
 
 class MessageWidget extends StatefulWidget {
@@ -9,7 +10,7 @@ class MessageWidget extends StatefulWidget {
 
 class _MessageWidgetState extends State<MessageWidget> with SingleTickerProviderStateMixin {
 
-  List tabs = ["最新公告", "系统信息", "账户信息"];
+  List tabs = ["最新公告", "系统信息"];
   late TabController _tabController;
 
   @override
@@ -26,6 +27,13 @@ class _MessageWidgetState extends State<MessageWidget> with SingleTickerProvider
           controller: _tabController,
           tabs: tabs.map((e) => Tab(text: e)).toList()
         ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: const [
+          NewMessageWidget(),
+          Center(child: Text('系统消息')),
+        ],
       ),
     );
   }

@@ -38,7 +38,8 @@ class ListWidget<T> extends ConsumerStatefulWidget {
   final PastureModel? pasture;
   final Map<String, dynamic>? params;
   final Widget? searchForm;
-  const ListWidget({super.key, required this.builder, required this.provider, this.params, this.filterList, this.pasture, this.searchForm});
+  final bool isCustomCard;
+  const ListWidget({super.key, required this.builder, required this.provider, this.params, this.filterList, this.pasture, this.searchForm, this.isCustomCard = false});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => ListWidgetState<T>();
@@ -274,6 +275,7 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
                         shrinkWrap: true,
                         itemCount: value.records.length,
                         itemBuilder: (BuildContext context, int index) {
+                          if (widget.isCustomCard) return widget.builder(value.records[index]);
                           return Container(
                             margin: const EdgeInsets.only(top: 6),
                             padding: const EdgeInsets.only(top: 14, left: 12, right: 12, bottom: 10),

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:device_info/device_info.dart';
 import 'package:easy_collect/api/message.dart';
 import 'package:easy_collect/api/my.dart';
-import 'package:easy_collect/models/message/registration.dart';
+import 'package:easy_collect/models/message/JPushRegistration.dart';
 import 'package:easy_collect/models/user/UserInfo.dart';
 import 'package:easy_collect/router/index.dart';
 import 'package:easy_collect/utils/colors.dart';
@@ -41,7 +41,7 @@ void main() async {
   if (Platform.isIOS) {
     
     IosDeviceInfo deviceInfo = await infoPlugin.iosInfo;
-    await addRegistration(deviceInfo.toString());
+    await addRegistration(deviceInfo.identifierForVendor);
     jpush.setup(
       // /biz/dev/add
       appKey: "8b15ec1ee4c0c28acfa9c6d8",
@@ -51,7 +51,7 @@ void main() async {
     );
   } else if (Platform.isAndroid) {
     AndroidDeviceInfo deviceInfo = await infoPlugin.androidInfo;
-    await addRegistration(deviceInfo.id);
+    await addRegistration(deviceInfo.androidId);
     jpush.applyPushAuthority(const NotificationSettingsIOS(
       sound: true,
       alert: true,

@@ -55,7 +55,15 @@ android {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
+            manifestPlaceholders = [applicationName: "android.app.Application"]
             signingConfig signingConfigs.debug
+        }
+        debug {
+            manifestPlaceholders = [applicationName: "android.app.Application"]
+        }
+ 
+        build {
+            manifestPlaceholders = [applicationName: "android.app.Application"]
         }
     }
     repositories {

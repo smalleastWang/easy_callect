@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'Registration.g.dart';
+part 'JPushRegistration.g.dart';
 
 @JsonSerializable()
 class RegistrationModel {
