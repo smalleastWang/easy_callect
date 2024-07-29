@@ -138,7 +138,7 @@ class _HealthInfoPageState extends ConsumerState<HealthInfoPage> {
     final unHealth = data.unHealth ?? 0;
 
     return [
-      BreedingData('健康数量', health, const Color(0xFF00BC7A)),
+      BreedingData('健康数量', health, const Color(0xFFFA3D01)),
       BreedingData('不健康数量', unHealth, const Color(0xFFFFC960)),
     ];
   }
@@ -203,7 +203,7 @@ class _HealthInfoPageState extends ConsumerState<HealthInfoPage> {
     switch (index) {
       case 0: return const Color(0xFFFC8731);
       case 1: return const Color(0xFF00BC7A);
-      case 2: return const Color(0xFF00BC7A);
+      case 2: return const Color(0xFFFA3D01);
       case 3: return const Color(0xFFFFC960);
       default: return Colors.green;
     }

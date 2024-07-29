@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:easy_collect/api/building.dart';
+import 'package:easy_collect/widgets/OrgTreeSelector/OrgTreeSelector.dart';
+import 'package:easy_collect/widgets/BuildingSelector/BuildingSelector.dart';
 
 class EditBuildingPage extends StatefulWidget {
   const EditBuildingPage({super.key});
@@ -10,21 +12,39 @@ class EditBuildingPage extends StatefulWidget {
 
 class _EditBuildingPageState extends State<EditBuildingPage> {
   final TextEditingController _orgController = TextEditingController();
-  final TextEditingController _buildingNameController = TextEditingController();
+  final TextEditingController _buildingController = TextEditingController();
   final TextEditingController _currentNumController = TextEditingController();
   final TextEditingController _initialNumController = TextEditingController();
   final TextEditingController _blockController = TextEditingController();
   final TextEditingController _remarkController = TextEditingController();
+  final GlobalKey<OrgTreeSelectorState> _orgTreeSelectorKey = GlobalKey<OrgTreeSelectorState>();
+  final GlobalKey<BuildingSelectorState> _buildingSelectorKey = GlobalKey<BuildingSelectorState>();
+
   String _selectedBuildingType = '正式圈舍';
   String _selectedMonitorCnt = '1';
   String _selectedAlgorithmCnt = '1';
+  String? orgId;
+  String? buildingId;
+
+  @override
+  void dispose() {
+    _orgController.dispose();
+    _buildingController.dispose();
+    _currentNumController.dispose();
+    _initialNumController.dispose();
+    _blockController.dispose();
+    _remarkController.dispose();
+    super.dispose();
+  }
 
   void _saveBuilding() async {
     // 检查必填字段是否为空
-    if (_orgController.text.isEmpty || _buildingNameController.text.isEmpty || _currentNumController.text.isEmpty) {
+    if (_orgController.text.isEmpty ||
+        _buildingController.text.isEmpty ||
+        _currentNumController.text.isEmpty) {
       String missingFields = '';
       if (_orgController.text.isEmpty) missingFields += '组织, ';
-      if (_buildingNameController.text.isEmpty) missingFields += '圈舍名称, ';
+      if (_buildingController.text.isEmpty) missingFields += '圈舍名称, ';
       if (_currentNumController.text.isEmpty) missingFields += '当前数量, ';
       missingFields = missingFields.substring(0, missingFields.length - 2); // 去掉最后一个逗号和空格
 
@@ -36,8 +56,8 @@ class _EditBuildingPageState extends State<EditBuildingPage> {
 
     // 构建保存数据
     Map<String, dynamic> params = {
-      'orgId': _orgController.text,
-      'buildingName': _buildingNameController.text,
+      'orgId': orgId,
+      'buildingName': _buildingController.text,
       'currentNum': _currentNumController.text,
       'initialNum': _initialNumController.text,
       'blockNum': _blockController.text,
@@ -58,57 +78,82 @@ class _EditBuildingPageState extends State<EditBuildingPage> {
     Navigator.of(context).pop(true);
 
     // 清空表单
-    setState(() {
-      _orgController.clear();
-      _buildingNameController.clear();
-      _currentNumController.clear();
-      _initialNumController.clear();
-      _blockController.clear();
-      _remarkController.clear();
-      _selectedBuildingType = '正式圈舍';
-      _selectedMonitorCnt = '1';
-      _selectedAlgorithmCnt = '1';
-    });
+    _clearForm();
   }
 
-  Widget _buildTextField(String label, TextEditingController controller, {bool readOnly = false, Widget? suffixIcon, bool isRequired = false}) {
+  void _clearForm() {
+    _orgController.clear();
+    _buildingController.clear();
+    _currentNumController.clear();
+    _initialNumController.clear();
+    _blockController.clear();
+    _remarkController.clear();
+    _selectedBuildingType = '正式圈舍';
+    _selectedMonitorCnt = '1';
+    _selectedAlgorithmCnt = '1';
+    orgId = null;
+    buildingId = null;
+  }
+
+  void _selectOrg() {
+    _orgTreeSelectorKey.currentState?.show();
+  }
+
+  void _selectBuilding() {
+    if (orgId != null) {
+      _buildingSelectorKey.currentState?.show();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('请先选择牧场')),
+      );
+    }
+  }
+
+  Widget _buildTextField(String label, TextEditingController controller,
+      {bool readOnly = false, Widget? suffixIcon, bool isRequired = false, VoidCallback? onTap}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Container(
         decoration: BoxDecoration(
           border: Border(bottom: BorderSide(color: Colors.grey.shade300)),
         ),
-        child: Row(
-          children: [
-            Expanded(
-              flex: 2,
-              child: Row(
-                children: [
-                  if (isRequired)
-                    const Text(
-                      '*',
-                      style: TextStyle(color: Colors.red, fontSize: 16),
+        child: GestureDetector(
+          onTap: onTap,
+          child: AbsorbPointer(
+            absorbing: readOnly,
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Row(
+                    children: [
+                      if (isRequired)
+                        const Text(
+                          '*',
+                          style: TextStyle(color: Colors.red, fontSize: 16),
+                        ),
+                      Text(
+                        label,
+                        style: const TextStyle(color: Colors.black, fontSize: 16),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  flex: 5,
+                  child: TextField(
+                    controller: controller,
+                    readOnly: readOnly,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      suffixIcon: suffixIcon,
                     ),
-                  Text(
-                    label,
                     style: const TextStyle(color: Colors.black, fontSize: 16),
                   ),
-                ],
-              ),
-            ),
-            Expanded(
-              flex: 5,
-              child: TextField(
-                controller: controller,
-                readOnly: readOnly,
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  suffixIcon: suffixIcon,
                 ),
-                style: const TextStyle(color: Colors.black, fontSize: 16),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -167,8 +212,22 @@ class _EditBuildingPageState extends State<EditBuildingPage> {
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Column(
           children: [
-            _buildTextField('选择组织', _orgController, isRequired: true),
-            _buildTextField('圈舍名称', _buildingNameController, isRequired: true),
+            _buildTextField(
+              '牧场',
+              _orgController,
+              isRequired: true,
+              suffixIcon: const Icon(Icons.arrow_forward_ios, size: 16,),
+              readOnly: true,
+              onTap: _selectOrg,
+            ),
+            _buildTextField(
+              '圈舍',
+              _buildingController,
+              isRequired: true,
+              suffixIcon: const Icon(Icons.arrow_forward_ios, size: 16,),
+              readOnly: true,
+              onTap: _selectBuilding,
+            ),
             _buildTextField('当前数量', _currentNumController, isRequired: true),
             _buildTextField('初期数量', _initialNumController),
             _buildTextField('栋别', _blockController),
@@ -206,6 +265,32 @@ class _EditBuildingPageState extends State<EditBuildingPage> {
                 child: const Text('保存'),
               ),
             ),
+            OrgTreeSelector(
+              key: _orgTreeSelectorKey,
+              enableCitySelection: true,
+              enableOrgSelection: true,
+              requireFinalSelection: true,
+              onAreaSelected: (provinceId, cityId, orgId, provinceName, cityName, orgName) {
+                setState(() {
+                  this.orgId = orgId;
+                  _orgController.text = orgName!;
+                  // 清空已选择的圈舍
+                  buildingId = null;
+                  _buildingController.clear();
+                });
+              },
+            ),
+            if (orgId != null)
+              BuildingSelector(
+                key: _buildingSelectorKey,
+                orgId: orgId!,
+                onBuildingSelected: (building) {
+                  setState(() {
+                    buildingId = building?.id;
+                    _buildingController.text = building?.buildingName ?? '';
+                  });
+                },
+              ),
           ],
         ),
       ),

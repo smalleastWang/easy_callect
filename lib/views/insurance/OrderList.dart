@@ -1,10 +1,12 @@
 import 'package:easy_collect/api/insurance.dart';
 import 'package:easy_collect/enums/Route.dart';
 import 'package:easy_collect/enums/register.dart';
+import 'package:easy_collect/widgets/Button/PrimaryActionButton.dart';
 import 'package:easy_collect/widgets/List/ListCard.dart';
 import 'package:easy_collect/widgets/List/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class ModuleListModel {
   RouteEnum route;
@@ -20,6 +22,20 @@ class OrderListPage extends ConsumerStatefulWidget {
 }
 
 class _OrderListPageState extends ConsumerState<OrderListPage> {
+  final GlobalKey<ListWidgetState> listWidgetKey = GlobalKey<ListWidgetState>();
+
+  void _navigateTo(String path) async {
+    bool? result = await context.push(path);
+    // 如果返回结果为true，则刷新列表
+    if (result == true) {
+      listWidgetKey.currentState?.refreshWithPreviousParams();
+    }
+  }
+
+  void _addPolicy() {
+    _navigateTo(RouteEnum.editPolicy.path);
+  }
+
   final List moduleList = [
     ModuleListModel(route: RouteEnum.inventory, background: Colors.black),
     ModuleListModel(route: RouteEnum.performance, background: Colors.black),
@@ -34,8 +50,16 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(RouteEnum.orderList.title),
+        backgroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: _addPolicy,
+          ),
+        ],
       ),
       body: ListWidget<OrderListFamily>(
+        key: listWidgetKey,
         provider: orderListProvider,
         builder: (data) {
           return Column(
@@ -63,8 +87,20 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
               ListCardCell(label: '联系电话', value: data['phone']),
               ListCardCell(label: '合同生效日期', value: data['effectiveTime']),
               ListCardCell(label: '合同期满日期', value: data['expiryTime']),
-              const SizedBox(height: 8),
-              ListCardCellTime(label: '创建时间', value: data['createTime'])
+              ListCardCell(label: '创建时间', value: data['createTime']),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  PrimaryActionButton(text: '修改', onPressed: () => context.push(RouteEnum.editPolicy.fullpath, extra: data)),
+                  const SizedBox(width: 10),
+                  OutlineActionButton(text: '绑定', onPressed: () => context.push(RouteEnum.inventorySetUploadTime.fullpath)),
+                  const SizedBox(width: 10),
+                  OutlineActionButton(text: '详情', onPressed: () {
+                    context.push(RouteEnum.inventoryHistoryData.fullpath, extra: { 'id': data['id'] as String });
+                  })
+                ],
+              )
             ],
           );
         },

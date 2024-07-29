@@ -52,6 +52,7 @@ class _AIBoxPageState extends ConsumerState<AIBoxPage> {
               child: weightInfoTree.when(
                 data: (data) {
                   return ListWidget<AiboxPageFamily>(
+                    key: listWidgetKey,
                     pasture: PastureModel(
                       field: 'orgId',
                       options: data,

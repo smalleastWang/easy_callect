@@ -78,6 +78,15 @@ Future<PageVoModel> orderList(OrderListRef ref, Map<String, dynamic> params) asy
   return data;
 }
 
+// 新增/编辑保单信息
+Future<void> editPolicy(Map<String, dynamic> params) async {
+  if(params['id'] != null) {
+      await HttpUtils.post('/biz/policy/edit', params: params);
+      return;
+  }
+  await HttpUtils.post('/biz/policy/add', params: params);
+}
+
 /// 投保人列表
 @riverpod
 Future<PageVoModel> insuranceApplicantList(InsuranceApplicantListRef ref, Map<String, dynamic> params) async {
@@ -89,7 +98,11 @@ Future<PageVoModel> insuranceApplicantList(InsuranceApplicantListRef ref, Map<St
   return data;
 }
 
-// 新增投保人
-Future<void> addInsuranceApplicant(InsuranceApplicant params) async {
-  await HttpUtils.post('/biz/insuranceapplicant/add', params: params.toJson());
+// 新增/编辑投保人
+Future<void> editInsuranceApplicant(Map<String, dynamic> params) async {
+  if(params['id'] != null) {
+      await HttpUtils.post('/biz/insuranceapplicant/edit', params: params);
+      return;
+  }
+  await HttpUtils.post('/biz/insuranceapplicant/add', params: params);
 }
