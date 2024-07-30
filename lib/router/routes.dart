@@ -14,6 +14,7 @@ import 'package:easy_collect/views/common/EditAiBox.dart';
 import 'package:easy_collect/views/home/index.dart';
 import 'package:easy_collect/views/insurance/EditInsuranceApplicant.dart';
 import 'package:easy_collect/views/insurance/EditPolicy.dart';
+import 'package:easy_collect/views/insurance/InsuranceDetail.dart';
 import 'package:easy_collect/views/my/Login.dart';
 import 'package:easy_collect/views/my/ComboList.dart';
 import 'package:easy_collect/views/my/ComboDetail.dart';
@@ -100,6 +101,15 @@ final List<GoRoute> routes = [
     // builder: (context, state) => const EditPolicyPage(),
     builder: (context, state) {
       return EditPolicyPage(state: state);
+    },
+  ),
+  GoRoute(
+    path: RouteEnum.insuranceDetail.path,
+    builder: (context, state) {
+      final extra = state.extra as Map<String, String>;
+      return InsuranceDetailPage(
+        id: extra['id']!,
+      );
     },
   ),
   GoRoute(
