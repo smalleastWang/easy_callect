@@ -1,5 +1,6 @@
 
 import 'package:easy_collect/enums/route.dart';
+import 'package:easy_collect/views/common/PigAnimal.dart';
 import 'package:easy_collect/views/common/index.dart';
 import 'package:easy_collect/views/common/Building.dart';
 import 'package:easy_collect/views/common/AIBox.dart';
@@ -29,6 +30,10 @@ final commonRoutes = GoRoute(
     GoRoute(
       path: RouteEnum.animal.path,
       builder: (context, state) => const AnimalPage(),
+    ),
+    GoRoute(
+      path: RouteEnum.pigAnimal.path,
+      builder: (context, state) => const PigAnimalPage(),
     ),
     GoRoute(
       path: RouteEnum.email.path,
