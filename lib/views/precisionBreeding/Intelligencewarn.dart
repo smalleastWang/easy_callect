@@ -39,7 +39,7 @@ class _IntelligencewarnPageState extends ConsumerState<IntelligencewarnPage> {
                     ),
                     provider: intelligencewarnPageProvider,
                     filterList: [
-                      DropDownMenuModel(name: '输入牛耳标', layerLink: LayerLink(), fieldName: 'state', widget: WidgetType.input),
+                      DropDownMenuModel(name: '牛耳标', layerLink: LayerLink(), fieldName: 'state', widget: WidgetType.input),
                       DropDownMenuModel(name: '预警类型', list: enumsToOptions(WarnType.values, true), layerLink: LayerLink(), fieldName: 'warnType'),
                       DropDownMenuModel(name: '预警时间', layerLink: LayerLink(), fieldName: 'first,last', widget: WidgetType.dateRangePicker),
                     ],
