@@ -55,8 +55,31 @@ enum WarnType implements EnumOption {
   static int getValue(String label) => WarnType.values.firstWhere((i) => i.label == label, orElse: () => WarnType.unknown).value;
   static String getLabel(int value) => WarnType.values.firstWhere((i) => i.value == value, orElse: () => WarnType.unknown).label;
 
-   @override
+  @override
   OptionModel<int> toOptionModel() {
+    return OptionModel(value: value, label: label);
+  }
+}
+
+// 健康监测类型
+enum PostureType implements EnumStrOption {
+  healthy('healthy', '健康'),
+  dead('dead', '死亡'),
+  sick('sick', '疾病'),
+  unknown('unknown', '未知');
+
+  final String value;
+  final String label;
+  const PostureType(this.value, this.label);
+  
+  static PostureType getTypeByLabel(String title) => PostureType.values.firstWhere((i) => i.name == title, orElse: () => PostureType.unknown);
+  static PostureType getTypeByValue(String value) => PostureType.values.firstWhere((i) => i.value == value, orElse: () => PostureType.unknown);
+
+  static String getValue(String label) => PostureType.values.firstWhere((i) => i.label == label, orElse: () => PostureType.unknown).value;
+  static String getLabel(String value) => PostureType.values.firstWhere((i) => i.value == value, orElse: () => PostureType.unknown).label;
+
+  @override
+  OptionModel<String> toOptionModel() {
     return OptionModel(value: value, label: label);
   }
 }

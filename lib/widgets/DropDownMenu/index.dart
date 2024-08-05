@@ -401,6 +401,18 @@ class _DropDownMenuState extends State<DropDownMenu> with SingleTickerProviderSt
                   height: 40, // 按钮高度
                   child: TextButton(
                     onPressed: () {
+                      if (firstDate == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('请选择开始时间')),
+                        );
+                        return;
+                      }
+                      if (lastDate == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('请选择结束时间')),
+                        );
+                        return;
+                      }
                       _isExpanded = false;
                       overlayEntryAllRemove();
                       widget.onChange(data.fieldName, '$firstDate,$lastDate');
@@ -444,7 +456,7 @@ class _DropDownMenuState extends State<DropDownMenu> with SingleTickerProviderSt
         });
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         height: 40,
         alignment: Alignment.topLeft,
         child: Row(
