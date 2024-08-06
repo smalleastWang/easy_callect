@@ -148,9 +148,8 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
               key: listWidgetKey,
               provider: orderListProvider,
               filterList: [
-                DropDownMenuModel(name: '牛耳标', layerLink: LayerLink(), fieldName: 'state', widget: WidgetType.input),
-                DropDownMenuModel(name: '健康检测类型', list:  enumsStrValToOptions(PostureType.values, true), layerLink: LayerLink(), fieldName: 'posture'),
-                DropDownMenuModel(name: '保单创建时间', layerLink: LayerLink(), fieldName: 'startDate,endDate', widget: WidgetType.dateRangePicker),
+                DropDownMenuModel(name: '保险状态', list:  enumsStrValToOptions(PostureType.values, true), layerLink: LayerLink(), fieldName: 'posture'),
+                DropDownMenuModel(name: '保单创建时间', layerLink: LayerLink(), fieldName: 'createTime,', widget: WidgetType.dateRangePicker),
               ],
               builder: (data) {
                 return Column(
