@@ -18,6 +18,14 @@ dropDownMenuRangeDateOverlayEntryRemove() {
   }
 }
 
+OverlayEntry? dropDownMenuSingleDateOverlayEntry;
+
+dropDownMenuSingleDateOverlayEntryRemove() {
+  if (dropDownMenuSingleDateOverlayEntry != null) {
+    dropDownMenuSingleDateOverlayEntry!.remove();
+    dropDownMenuSingleDateOverlayEntry = null;
+  }
+}
 
 overlayEntryAllRemove() {
   if (dropDownMenuOverlayEntry != null) {
@@ -27,5 +35,9 @@ overlayEntryAllRemove() {
   if (dropDownMenuRangeDateOverlayEntry != null) {
     dropDownMenuRangeDateOverlayEntry!.remove();
     dropDownMenuRangeDateOverlayEntry = null;
+  }
+  if (dropDownMenuSingleDateOverlayEntry != null) {
+    dropDownMenuSingleDateOverlayEntry!.remove();
+    dropDownMenuSingleDateOverlayEntry = null;
   }
 }

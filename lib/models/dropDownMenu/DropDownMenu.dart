@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 enum WidgetType {
   select,
   input,
-  datePacker,
+  datePicker,
   dateRangePicker
 }
 
