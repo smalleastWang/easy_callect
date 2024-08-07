@@ -148,8 +148,8 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
               key: listWidgetKey,
               provider: orderListProvider,
               filterList: [
-                DropDownMenuModel(name: '保险状态', list:  enumsStrValToOptions(PostureType.values, true), layerLink: LayerLink(), fieldName: 'posture'),
-                DropDownMenuModel(name: '保单创建时间', layerLink: LayerLink(), fieldName: 'createTime,', widget: WidgetType.dateRangePicker),
+                DropDownMenuModel(name: '保险状态', list: enumsStrValToOptions(PolicyStatus.values, false), layerLink: LayerLink(), fieldName: 'state'),
+                DropDownMenuModel(name: '保单创建时间', layerLink: LayerLink(), fieldName: 'createTime', widget: WidgetType.datePicker),
               ],
               builder: (data) {
                 return Column(
@@ -165,7 +165,7 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
                               color: data['state'] == 1 ? const Color(0xFF5D8FFD) : const Color(0xFFCCCCCC),
                               borderRadius: BorderRadius.circular(3),
                             ),
-                            child: Text(OrderStatus.getLabel(data['state']), style: const TextStyle(color: Colors.white)),
+                            child: Text(PolicyStatus.getLabel(data['state'].toString()), style: const TextStyle(color: Colors.white)),
                           ),
                           Text(data['policyContent'], style: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold)),
                         ],

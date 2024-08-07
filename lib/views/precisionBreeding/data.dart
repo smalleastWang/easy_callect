@@ -83,3 +83,28 @@ enum PostureType implements EnumStrOption {
     return OptionModel(value: value, label: label);
   }
 }
+
+// 保险状态类型
+enum PolicyStatus implements EnumStrOption {
+  pending('0', '待承保'),
+  active('1', '有效'),
+  suspended('2', '中止'),
+  terminated('3', '终止'),
+  unknown('-1', '未知');
+
+  final String value;
+  final String label;
+  const PolicyStatus(this.value, this.label);
+  
+  static PolicyStatus getTypeByLabel(String title) => PolicyStatus.values.firstWhere((i) => i.name == title, orElse: () => PolicyStatus.unknown);
+  static PolicyStatus getTypeByValue(String value) => PolicyStatus.values.firstWhere((i) => i.value == value, orElse: () => PolicyStatus.unknown);
+
+  static String getValue(String label) => PolicyStatus.values.firstWhere((i) => i.label == label, orElse: () => PolicyStatus.unknown).value;
+  static String getLabel(String value) => PolicyStatus.values.firstWhere((i) => i.value == value, orElse: () => PolicyStatus.unknown).label;
+
+  @override
+  OptionModel<String> toOptionModel() {
+    return OptionModel(value: value, label: label);
+  }
+
+}
