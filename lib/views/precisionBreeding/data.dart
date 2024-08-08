@@ -40,9 +40,13 @@ enum InventoryType {
 }
 
 enum WarnType implements EnumOption {
+  increaseExercise(0, '运动量增加'),
   reducedExercise(1, '运动量减少'),
-  reducedFoodIntake(2, '食量减少'),
-  reducedWeight(3, '体重减少'),
+  reducedFoodIntake(2, '食量异常'),
+  crawlOver(3, '爬跨行为'),
+  abnormalLyingTime(4, '躺卧时间异常'),
+  deathWarning(5, '死亡预警'),
+  outOfCircleWarning(6, '离圈预警'),
   unknown(-1, '未知');
 
   final int value;
@@ -106,5 +110,51 @@ enum PolicyStatus implements EnumStrOption {
   OptionModel<String> toOptionModel() {
     return OptionModel(value: value, label: label);
   }
+}
 
+// 行为类型
+enum BehaviorType implements EnumStrOption {
+  standing('standing', '站立'),
+  lying('lying', '趴卧'),
+  feeding('feeding', '采食'),
+  crawlover('crawl over', '爬跨'),
+  drinking('drinking', '饮水'),
+  unknown('-1', '未知');
+
+  final String value;
+  final String label;
+  const BehaviorType(this.value, this.label);
+  
+  static BehaviorType getTypeByLabel(String title) => BehaviorType.values.firstWhere((i) => i.name == title, orElse: () => BehaviorType.unknown);
+  static BehaviorType getTypeByValue(String value) => BehaviorType.values.firstWhere((i) => i.value == value, orElse: () => BehaviorType.unknown);
+
+  static String getValue(String label) => BehaviorType.values.firstWhere((i) => i.label == label, orElse: () => BehaviorType.unknown).value;
+  static String getLabel(String value) => BehaviorType.values.firstWhere((i) => i.value == value, orElse: () => BehaviorType.unknown).label;
+
+  @override
+  OptionModel<String> toOptionModel() {
+    return OptionModel(value: value, label: label);
+  }
+}
+
+// 是否启用
+enum EnableStatus implements EnumStrOption {
+  enable('ENABLE', '是'),
+  disenable('DISABLED', '否'),
+  unknown('-1', '未知');
+
+  final String value;
+  final String label;
+  const EnableStatus(this.value, this.label);
+  
+  static EnableStatus getTypeByLabel(String title) => EnableStatus.values.firstWhere((i) => i.name == title, orElse: () => EnableStatus.unknown);
+  static EnableStatus getTypeByValue(String value) => EnableStatus.values.firstWhere((i) => i.value == value, orElse: () => EnableStatus.unknown);
+
+  static String getValue(String label) => EnableStatus.values.firstWhere((i) => i.label == label, orElse: () => EnableStatus.unknown).value;
+  static String getLabel(String value) => EnableStatus.values.firstWhere((i) => i.value == value, orElse: () => EnableStatus.unknown).label;
+
+  @override
+  OptionModel<String> toOptionModel() {
+    return OptionModel(value: value, label: label);
+  }
 }

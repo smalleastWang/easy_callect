@@ -1,5 +1,8 @@
+import 'package:easy_collect/enums/index.dart';
 import 'package:easy_collect/enums/route.dart';
 import 'package:easy_collect/models/buildings/building.dart';
+import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
+import 'package:easy_collect/views/precisionBreeding/data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_collect/models/register/index.dart';
@@ -69,6 +72,10 @@ class _BuildingPageState extends ConsumerState<BuildingPage> {
                       options: data,
                     ),
                     provider: buildingPageProvider,
+                    filterList: [
+                      DropDownMenuModel(name: '圈舍名称', layerLink: LayerLink(), fieldName: 'buildingName', widget: WidgetType.input),
+                      DropDownMenuModel(name: '是否启用', list:  enumsStrValToOptions(EnableStatus.values, true), layerLink: LayerLink(), fieldName: 'state'),
+                    ],
                     builder: (rowData) {
                       return BuildingItem(
                         rowData: rowData,

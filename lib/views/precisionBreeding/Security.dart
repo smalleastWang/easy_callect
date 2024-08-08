@@ -1,4 +1,5 @@
 
+import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
 import 'package:easy_collect/views/precisionBreeding/widgets/PastureVideo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -45,6 +46,10 @@ class _SecurityPageState extends ConsumerState<SecurityPage> with SingleTickerPr
                     options: data,
                   ),
                   provider: securityPageProvider,
+                  filterList: [
+                    DropDownMenuModel(name: '牛耳标', layerLink: LayerLink(), fieldName: 'no', widget: WidgetType.input),
+                    DropDownMenuModel(name: '预警日期', layerLink: LayerLink(), fieldName: 'startDate,endDate', widget: WidgetType.dateRangePicker),
+                  ],
                   builder: (rowData) {
                     return SecurityItem(rowData: rowData);
                   },

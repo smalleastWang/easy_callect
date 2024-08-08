@@ -1,6 +1,9 @@
 import 'package:easy_collect/api/precisionBreeding.dart';
 import 'package:easy_collect/api/weight.dart';
+import 'package:easy_collect/enums/index.dart';
+import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
 import 'package:easy_collect/models/register/index.dart';
+import 'package:easy_collect/views/precisionBreeding/data.dart';
 import 'package:easy_collect/widgets/List/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -35,6 +38,10 @@ class _WeightPageState extends ConsumerState<WeightPage> {
                       options: data,
                     ),
                     provider: weightPageProvider,
+                    filterList: [
+                      DropDownMenuModel(name: '牛耳标', layerLink: LayerLink(), fieldName: 'no', widget: WidgetType.input),
+                      DropDownMenuModel(name: '测定日期', layerLink: LayerLink(), fieldName: 'startDate,endDate', widget: WidgetType.dateRangePicker),
+                    ],
                     builder: (rowData) {
                       return WeightItem(rowData: rowData);
                     },

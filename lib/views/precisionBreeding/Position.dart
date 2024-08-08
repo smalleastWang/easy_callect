@@ -1,4 +1,5 @@
 import 'package:easy_collect/api/precisionBreeding.dart';
+import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_collect/models/register/index.dart';
@@ -47,6 +48,10 @@ class _PositionPageState extends ConsumerState<PositionPage> {
         options: data,
       ),
       provider: positionPageProvider,
+      filterList: [
+        DropDownMenuModel(name: '牛耳标', layerLink: LayerLink(), fieldName: 'no', widget: WidgetType.input),
+        DropDownMenuModel(name: '测定日期', layerLink: LayerLink(), fieldName: 'first,last', widget: WidgetType.dateRangePicker),
+      ],
       builder: (positionData) {
         return PositionItem(rowData: positionData);
       },

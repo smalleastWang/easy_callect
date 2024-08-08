@@ -1,3 +1,6 @@
+import 'package:easy_collect/enums/index.dart';
+import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
+import 'package:easy_collect/views/precisionBreeding/data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_collect/models/register/index.dart';
@@ -34,6 +37,11 @@ class _BehaviorPageState extends ConsumerState<BehaviorPage> {
                       options: data,
                     ),
                     provider: behaviorPageProvider,
+                    filterList: [
+                      DropDownMenuModel(name: '牛耳标', layerLink: LayerLink(), fieldName: 'no', widget: WidgetType.input),
+                      DropDownMenuModel(name: '行为类型', list:  enumsStrValToOptions(BehaviorType.values, true), layerLink: LayerLink(), fieldName: 'posture'),
+                      DropDownMenuModel(name: '测定日期', layerLink: LayerLink(), fieldName: 'startDate,endDate', widget: WidgetType.dateRangePicker),
+                    ],
                     builder: (behaviorData) {
                       return BehaviorItem(rowData: behaviorData);
                     },

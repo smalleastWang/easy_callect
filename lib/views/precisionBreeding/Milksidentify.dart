@@ -1,4 +1,5 @@
 import 'package:easy_collect/api/precisionBreeding.dart';
+import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_collect/models/register/index.dart';
@@ -47,6 +48,11 @@ class _MilksidentifyPageState extends ConsumerState<MilksidentifyPage> {
         options: data,
       ),
       provider: milksidentifyPageProvider,
+      filterList: [
+        DropDownMenuModel(name: '牛耳标', layerLink: LayerLink(), fieldName: 'no', widget: WidgetType.input),
+        DropDownMenuModel(name: '奶位号', layerLink: LayerLink(), fieldName: 'milkPos', widget: WidgetType.input),
+        DropDownMenuModel(name: '预警日期', layerLink: LayerLink(), fieldName: 'startDate,endDate', widget: WidgetType.dateRangePicker),
+      ],
       builder: (milksidentifyData) {
         return MilksidentifyItem(rowData: milksidentifyData);
       },
