@@ -1,4 +1,7 @@
+import 'package:easy_collect/enums/index.dart';
 import 'package:easy_collect/enums/route.dart';
+import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
+import 'package:easy_collect/views/precisionBreeding/data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_collect/models/register/index.dart';
@@ -58,6 +61,10 @@ class _AIBoxPageState extends ConsumerState<AIBoxPage> {
                       options: data,
                     ),
                     provider: aiboxPageProvider,
+                    filterList: [
+                      DropDownMenuModel(name: '设备编号', layerLink: LayerLink(), fieldName: 'boxNo', widget: WidgetType.input),
+                      DropDownMenuModel(name: '在线状态', list:  enumsStrValToOptions(OnlineStatusEnum.values, true), layerLink: LayerLink(), fieldName: 'online'),
+                    ],
                     builder: (rowData) {
                       return AIBoxItem(rowData: rowData);
                     },

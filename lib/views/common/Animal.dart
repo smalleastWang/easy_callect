@@ -1,3 +1,6 @@
+import 'package:easy_collect/enums/index.dart';
+import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
+import 'package:easy_collect/views/precisionBreeding/data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_collect/models/register/index.dart';
@@ -141,6 +144,11 @@ class _AnimalPageState extends ConsumerState<AnimalPage> {
                       options: data,
                     ),
                     provider: animalPageProvider,
+                    filterList: [
+                      DropDownMenuModel(name: '牛耳标', layerLink: LayerLink(), fieldName: 'no', widget: WidgetType.input),
+                      DropDownMenuModel(name: '授权状态', list:  enumsStrValToOptions(AuthStatusEnum.values, true), layerLink: LayerLink(), fieldName: 'pastureAuth'),
+                      DropDownMenuModel(name: '抵押状态', list:  enumsStrValToOptions(MortgageStatusEnum.values, true), layerLink: LayerLink(), fieldName: 'mortgage'),
+                    ],
                     builder: (rowData) {
                       return AnimalItem(
                         rowData: rowData,

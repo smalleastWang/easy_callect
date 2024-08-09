@@ -1,3 +1,6 @@
+import 'package:easy_collect/enums/index.dart';
+import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
+import 'package:easy_collect/views/precisionBreeding/data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_collect/models/register/index.dart';
@@ -34,6 +37,11 @@ class _CameraPageState extends ConsumerState<CameraPage> {
                       options: data,
                     ),
                     provider: cameraPageProvider,
+                    filterList: [
+                      DropDownMenuModel(name: '圈舍名称', layerLink: LayerLink(), fieldName: 'buildingName', widget: WidgetType.input),
+                      DropDownMenuModel(name: '设备编号', layerLink: LayerLink(), fieldName: 'easyCvrId', widget: WidgetType.input),
+                      DropDownMenuModel(name: '在线状态', list:  enumsStrValToOptions(OnlineStatusEnum.values, true), layerLink: LayerLink(), fieldName: 'online'),
+                    ],
                     builder: (rowData) {
                       return CameraItem(rowData: rowData);
                     },

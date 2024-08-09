@@ -158,3 +158,72 @@ enum EnableStatus implements EnumStrOption {
     return OptionModel(value: value, label: label);
   }
 }
+
+// 牛只授权状态
+enum AuthStatusEnum implements EnumStrOption {
+  unauthorized('0', '未授权'),
+  authorized('1', '已授权'),
+  expired('2', '过期'),
+  revoked('3', '取消授权'),
+  unknown('unknown', '未知');
+
+  final String value;
+  final String label;
+
+  const AuthStatusEnum(this.value, this.label);
+
+  static AuthStatusEnum getTypeByLabel(String title) => AuthStatusEnum.values.firstWhere((i) => i.label == title, orElse: () => AuthStatusEnum.unknown);
+  static AuthStatusEnum getTypeByValue(String value) => AuthStatusEnum.values.firstWhere((i) => i.value == value, orElse: () => AuthStatusEnum.unknown);
+
+  static String getValue(String label) => AuthStatusEnum.values.firstWhere((i) => i.label == label, orElse: () => AuthStatusEnum.unknown).value;
+  static String getLabel(String value) => AuthStatusEnum.values.firstWhere((i) => i.value == value, orElse: () => AuthStatusEnum.unknown).label;
+
+  @override
+  OptionModel<String> toOptionModel() {
+    return OptionModel(value: value, label: label);
+  }
+}
+
+// 是否抵押
+enum MortgageStatusEnum implements EnumStrOption {
+  enable('1', '已抵押'),
+  disenable('0', '未抵押'),
+  unknown('-1', '未知');
+
+  final String value;
+  final String label;
+  const MortgageStatusEnum(this.value, this.label);
+  
+  static MortgageStatusEnum getTypeByLabel(String title) => MortgageStatusEnum.values.firstWhere((i) => i.name == title, orElse: () => MortgageStatusEnum.unknown);
+  static MortgageStatusEnum getTypeByValue(String value) => MortgageStatusEnum.values.firstWhere((i) => i.value == value, orElse: () => MortgageStatusEnum.unknown);
+
+  static String getValue(String label) => MortgageStatusEnum.values.firstWhere((i) => i.label == label, orElse: () => MortgageStatusEnum.unknown).value;
+  static String getLabel(String value) => MortgageStatusEnum.values.firstWhere((i) => i.value == value, orElse: () => MortgageStatusEnum.unknown).label;
+
+  @override
+  OptionModel<String> toOptionModel() {
+    return OptionModel(value: value, label: label);
+  }
+}
+
+// 设备在线状态
+enum OnlineStatusEnum implements EnumStrOption {
+  enable('1', '在线'),
+  disenable('0', '离线'),
+  unknown('-1', '未知');
+
+  final String value;
+  final String label;
+  const OnlineStatusEnum(this.value, this.label);
+  
+  static OnlineStatusEnum getTypeByLabel(String title) => OnlineStatusEnum.values.firstWhere((i) => i.name == title, orElse: () => OnlineStatusEnum.unknown);
+  static OnlineStatusEnum getTypeByValue(String value) => OnlineStatusEnum.values.firstWhere((i) => i.value == value, orElse: () => OnlineStatusEnum.unknown);
+
+  static String getValue(String label) => OnlineStatusEnum.values.firstWhere((i) => i.label == label, orElse: () => OnlineStatusEnum.unknown).value;
+  static String getLabel(String value) => OnlineStatusEnum.values.firstWhere((i) => i.value == value, orElse: () => OnlineStatusEnum.unknown).label;
+
+  @override
+  OptionModel<String> toOptionModel() {
+    return OptionModel(value: value, label: label);
+  }
+}
