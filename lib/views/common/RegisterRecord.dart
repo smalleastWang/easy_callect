@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:easy_collect/enums/index.dart';
 import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
 import 'package:easy_collect/views/precisionBreeding/data.dart';
@@ -20,7 +18,7 @@ class RegisterRecordPage extends ConsumerStatefulWidget {
 class _RegisterRecordPageState extends ConsumerState<RegisterRecordPage> {
   final GlobalKey<ListWidgetState> _listWidgetKey = GlobalKey<ListWidgetState>();
   final TextEditingController _searchController = TextEditingController();
-  Timer? _debounce;
+  final FocusNode _focusSearchInputNode = FocusNode();
 
   Map<String, dynamic> _createRequestParams() {
     return {
@@ -29,29 +27,20 @@ class _RegisterRecordPageState extends ConsumerState<RegisterRecordPage> {
   }
 
   void _onSearch() {
+    _focusSearchInputNode.unfocus();
     if (_listWidgetKey.currentState != null) {
       _listWidgetKey.currentState!.getList(_createRequestParams());
     }
   }
 
-  void _onTextChanged() {
-    if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce = Timer(const Duration(milliseconds: 500), () {
-      _onSearch();
-    });
-  }
-
   @override
   void initState() {
     super.initState();
-    _searchController.addListener(_onTextChanged);
   }
 
   @override
   void dispose() {
-    _searchController.removeListener(_onTextChanged);
     _searchController.dispose();
-    _debounce?.cancel();
     super.dispose();
   }
 
@@ -62,70 +51,86 @@ class _RegisterRecordPageState extends ConsumerState<RegisterRecordPage> {
         backgroundColor: Colors.white,
         title: const Text('牛注册记录'),
       ),
-      body: Container(
-        color: const Color(0xFFF1F5F9),
-        child: Column(
-          children: [
-            Container(
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 0),
-                child: StatefulBuilder(
-                  builder: (BuildContext context, StateSetter setState) {
-                    return TextField(
-                      controller: _searchController,
-                      decoration: InputDecoration(
-                        hintText: '请输入操作人',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(6.0),
-                          borderSide: const BorderSide(color: Color(0xFFF5F7F9)),
+      body: GestureDetector(
+        onTap: () {
+          _focusSearchInputNode.unfocus();
+        },
+        child: Container(
+          color: const Color(0xFFF1F5F9),
+          child: Column(
+            children: [
+              Container(
+                color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 0),
+                  child: StatefulBuilder(
+                    builder: (BuildContext context, StateSetter setState) {
+                      return TextField(
+                        controller: _searchController,
+                        focusNode: _focusSearchInputNode,
+                        decoration: InputDecoration(
+                          hintText: '请输入操作人',
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          fillColor: const Color(0xFFF5F7F9),
+                          filled: true,
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                          suffixIcon: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (_searchController.text.isNotEmpty)
+                                IconButton(
+                                  icon: const Icon(Icons.clear, color: Color(0xFF666666), size: 24.0),
+                                  onPressed: () {
+                                    _searchController.clear();
+                                    setState(() {}); // Update the state to refresh the suffixIcon
+                                    _onSearch();
+                                  },
+                                ),
+                              TextButton(
+                                onPressed: () => _onSearch(),
+                                style: TextButton.styleFrom(
+                                  backgroundColor: const Color(0xFF5D8FFD),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12.0),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                                  minimumSize: const Size(50.0, 40.0),
+                                ),
+                                child: const Text(
+                                  '搜索',
+                                  style: TextStyle(color: Colors.white, fontSize: 16.0),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(6.0),
-                          borderSide: const BorderSide(color: Color(0xFFF5F7F9)),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(6.0),
-                          borderSide: const BorderSide(color: Color(0xFF5D8FFD)),
-                        ),
-                        fillColor: const Color(0xFFF5F7F9),
-                        filled: true,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-                        suffixIcon: _searchController.text.isNotEmpty
-                            ? IconButton(
-                                icon: const Icon(Icons.clear, color: Colors.red, size: 24.0),
-                                onPressed: () {
-                                  _searchController.clear();
-                                  setState(() {}); // Update the state to refresh the suffixIcon
-                                  _onSearch();
-                                },
-                              )
-                            : null,
-                      ),
-                      onChanged: (_) {
-                        setState(() {}); // Update the state to refresh the suffixIcon
-                      },
-                      onSubmitted: (_) => _onSearch(),
-                    );
+                        onChanged: (_) {
+                          setState(() {}); // Update the state to refresh the suffixIcon
+                        },
+                        onSubmitted: (_) => _onSearch(),
+                      );
+                    },
+                  ),
+                ),
+              ),
+              Expanded(
+                child: ListWidget<RegisterRecordPageFamily>(
+                  key: _listWidgetKey,
+                  params: _createRequestParams(),
+                  provider: registerRecordPageProvider,
+                  filterList: [
+                    DropDownMenuModel(name: '注册状态', list: enumsStrValToOptions(RegistStatusEnum.values, true, false), layerLink: LayerLink(), fieldName: 'state'),
+                    DropDownMenuModel(name: '注册时间', layerLink: LayerLink(), fieldName: 'createTime', widget: WidgetType.datePicker),
+                  ],
+                  builder: (rowData) {
+                    return RegisterRecordItem(rowData: rowData);
                   },
                 ),
               ),
-            ),
-            Expanded(
-              child: ListWidget<RegisterRecordPageFamily>(
-                key: _listWidgetKey,
-                params: _createRequestParams(),
-                provider: registerRecordPageProvider,
-                filterList: [
-                  DropDownMenuModel(name: '注册状态', list: enumsStrValToOptions(RegistStatusEnum.values, true, false), layerLink: LayerLink(), fieldName: 'state'),
-                  DropDownMenuModel(name: '注册时间', layerLink: LayerLink(), fieldName: 'createTime', widget: WidgetType.datePicker),
-                ],
-                builder: (rowData) {
-                  return RegisterRecordItem(rowData: rowData);
-                },
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

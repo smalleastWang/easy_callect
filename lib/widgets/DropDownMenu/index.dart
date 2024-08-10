@@ -55,9 +55,6 @@ class _DropDownMenuState extends State<DropDownMenu> with SingleTickerProviderSt
       overlayEntryAllRemove();
     }
 
-    // 取消输入框的焦点
-    FocusScope.of(context).unfocus();
-
     RenderBox? renderBox;
     if (_buttonRowKey.currentContext != null) {
       renderBox = _buttonRowKey.currentContext?.findRenderObject() as RenderBox;
@@ -460,7 +457,7 @@ class _DropDownMenuState extends State<DropDownMenu> with SingleTickerProviderSt
                   DateTime? date = (picker.adapter as DateTimePickerAdapter).value;
                   if (date == null) return;
                   state(() {
-                    selectedDate = '${date.year}/${date.month}/${date.day}';
+                    selectedDate = '${date.year}-${date.month}-${date.day}';
                   });
                 },
               );
