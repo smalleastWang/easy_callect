@@ -1,5 +1,6 @@
 import 'package:easy_collect/enums/index.dart';
 import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
+import 'package:easy_collect/utils/OverlayManager.dart';
 import 'package:easy_collect/views/precisionBreeding/data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -40,6 +41,7 @@ class _RegisterRecordPageState extends ConsumerState<RegisterRecordPage> {
 
   @override
   void dispose() {
+    overlayEntryAllRemove();
     _searchController.dispose();
     super.dispose();
   }
