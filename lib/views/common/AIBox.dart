@@ -63,7 +63,7 @@ class _AIBoxPageState extends ConsumerState<AIBoxPage> {
                     provider: aiboxPageProvider,
                     filterList: [
                       DropDownMenuModel(name: '设备编号', layerLink: LayerLink(), fieldName: 'boxNo', widget: WidgetType.input),
-                      DropDownMenuModel(name: '在线状态', list:  enumsStrValToOptions(OnlineStatusEnum.values, true), layerLink: LayerLink(), fieldName: 'online'),
+                      DropDownMenuModel(name: '在线状态', list:  enumsStrValToOptions(OnlineStatusEnum.values, true, false), layerLink: LayerLink(), fieldName: 'online'),
                     ],
                     builder: (rowData) {
                       return AIBoxItem(rowData: rowData);

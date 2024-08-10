@@ -39,7 +39,7 @@ class _BehaviorPageState extends ConsumerState<BehaviorPage> {
                     provider: behaviorPageProvider,
                     filterList: [
                       DropDownMenuModel(name: '牛耳标', layerLink: LayerLink(), fieldName: 'no', widget: WidgetType.input),
-                      DropDownMenuModel(name: '行为类型', list:  enumsStrValToOptions(BehaviorType.values, true), layerLink: LayerLink(), fieldName: 'posture'),
+                      DropDownMenuModel(name: '行为类型', list:  enumsStrValToOptions(BehaviorType.values, true, false), layerLink: LayerLink(), fieldName: 'posture'),
                       DropDownMenuModel(name: '测定日期', layerLink: LayerLink(), fieldName: 'startDate,endDate', widget: WidgetType.dateRangePicker),
                     ],
                     builder: (behaviorData) {

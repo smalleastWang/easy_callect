@@ -70,7 +70,7 @@ enum PostureType implements EnumStrOption {
   healthy('healthy', '健康'),
   dead('dead', '死亡'),
   sick('sick', '疾病'),
-  unknown('unknown', '未知');
+  unknown('-1', '未知');
 
   final String value;
   final String label;
@@ -165,7 +165,7 @@ enum AuthStatusEnum implements EnumStrOption {
   authorized('1', '已授权'),
   expired('2', '过期'),
   revoked('3', '取消授权'),
-  unknown('unknown', '未知');
+  unknown('-1', '未知');
 
   final String value;
   final String label;
@@ -221,6 +221,50 @@ enum OnlineStatusEnum implements EnumStrOption {
 
   static String getValue(String label) => OnlineStatusEnum.values.firstWhere((i) => i.label == label, orElse: () => OnlineStatusEnum.unknown).value;
   static String getLabel(String value) => OnlineStatusEnum.values.firstWhere((i) => i.value == value, orElse: () => OnlineStatusEnum.unknown).label;
+
+  @override
+  OptionModel<String> toOptionModel() {
+    return OptionModel(value: value, label: label);
+  }
+}
+
+// 注册状态
+enum RegistStatusEnum implements EnumStrOption {
+  success('0', '注册成功'),
+  fail('1', '注册失败'),
+  unknown('-1', '未知');
+
+  final String value;
+  final String label;
+  const RegistStatusEnum(this.value, this.label);
+  
+  static RegistStatusEnum getTypeByLabel(String title) => RegistStatusEnum.values.firstWhere((i) => i.name == title, orElse: () => RegistStatusEnum.unknown);
+  static RegistStatusEnum getTypeByValue(String value) => RegistStatusEnum.values.firstWhere((i) => i.value == value, orElse: () => RegistStatusEnum.unknown);
+
+  static String getValue(String label) => RegistStatusEnum.values.firstWhere((i) => i.label == label, orElse: () => RegistStatusEnum.unknown).value;
+  static String getLabel(String value) => RegistStatusEnum.values.firstWhere((i) => i.value == value, orElse: () => RegistStatusEnum.unknown).label;
+
+  @override
+  OptionModel<String> toOptionModel() {
+    return OptionModel(value: value, label: label);
+  }
+}
+
+// 识别状态
+enum DistinguishStatusEnum implements EnumStrOption {
+  success('0', '识别成功'),
+  fail('1', '识别失败'),
+  unknown('-1', '未知');
+
+  final String value;
+  final String label;
+  const DistinguishStatusEnum(this.value, this.label);
+  
+  static DistinguishStatusEnum getTypeByLabel(String title) => DistinguishStatusEnum.values.firstWhere((i) => i.name == title, orElse: () => DistinguishStatusEnum.unknown);
+  static DistinguishStatusEnum getTypeByValue(String value) => DistinguishStatusEnum.values.firstWhere((i) => i.value == value, orElse: () => DistinguishStatusEnum.unknown);
+
+  static String getValue(String label) => DistinguishStatusEnum.values.firstWhere((i) => i.label == label, orElse: () => DistinguishStatusEnum.unknown).value;
+  static String getLabel(String value) => DistinguishStatusEnum.values.firstWhere((i) => i.value == value, orElse: () => DistinguishStatusEnum.unknown).label;
 
   @override
   OptionModel<String> toOptionModel() {

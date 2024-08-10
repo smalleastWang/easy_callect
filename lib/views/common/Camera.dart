@@ -40,7 +40,7 @@ class _CameraPageState extends ConsumerState<CameraPage> {
                     filterList: [
                       DropDownMenuModel(name: '圈舍名称', layerLink: LayerLink(), fieldName: 'buildingName', widget: WidgetType.input),
                       DropDownMenuModel(name: '设备编号', layerLink: LayerLink(), fieldName: 'easyCvrId', widget: WidgetType.input),
-                      DropDownMenuModel(name: '在线状态', list:  enumsStrValToOptions(OnlineStatusEnum.values, true), layerLink: LayerLink(), fieldName: 'online'),
+                      DropDownMenuModel(name: '在线状态', list:  enumsStrValToOptions(OnlineStatusEnum.values, true, false), layerLink: LayerLink(), fieldName: 'online'),
                     ],
                     builder: (rowData) {
                       return CameraItem(rowData: rowData);

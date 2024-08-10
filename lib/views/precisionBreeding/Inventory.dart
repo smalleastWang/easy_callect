@@ -108,7 +108,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
       key: imgWidgetKey,
       filterList: [
         DropDownMenuModel(name: '模型类型', 
-        list: enumsStrValToOptions(CountMediaEnum.values, true),
+        list: enumsStrValToOptions(CountMediaEnum.values, true, false),
     
         layerLink: LayerLink(), fieldName: 'state'),
         DropDownMenuModel(name: '选择盘点时间', layerLink: LayerLink(), fieldName: 'first,last', widget: WidgetType.dateRangePicker),

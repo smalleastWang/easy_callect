@@ -74,7 +74,7 @@ class _BuildingPageState extends ConsumerState<BuildingPage> {
                     provider: buildingPageProvider,
                     filterList: [
                       DropDownMenuModel(name: '圈舍名称', layerLink: LayerLink(), fieldName: 'buildingName', widget: WidgetType.input),
-                      DropDownMenuModel(name: '是否启用', list:  enumsStrValToOptions(EnableStatus.values, true), layerLink: LayerLink(), fieldName: 'state'),
+                      DropDownMenuModel(name: '是否启用', list:  enumsStrValToOptions(EnableStatus.values, true, false), layerLink: LayerLink(), fieldName: 'state'),
                     ],
                     builder: (rowData) {
                       return BuildingItem(

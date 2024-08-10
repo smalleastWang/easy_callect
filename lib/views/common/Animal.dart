@@ -146,8 +146,8 @@ class _AnimalPageState extends ConsumerState<AnimalPage> {
                     provider: animalPageProvider,
                     filterList: [
                       DropDownMenuModel(name: '牛耳标', layerLink: LayerLink(), fieldName: 'no', widget: WidgetType.input),
-                      DropDownMenuModel(name: '授权状态', list:  enumsStrValToOptions(AuthStatusEnum.values, true), layerLink: LayerLink(), fieldName: 'pastureAuth'),
-                      DropDownMenuModel(name: '抵押状态', list:  enumsStrValToOptions(MortgageStatusEnum.values, true), layerLink: LayerLink(), fieldName: 'mortgage'),
+                      DropDownMenuModel(name: '授权状态', list:  enumsStrValToOptions(AuthStatusEnum.values, true, false), layerLink: LayerLink(), fieldName: 'pastureAuth'),
+                      DropDownMenuModel(name: '抵押状态', list:  enumsStrValToOptions(MortgageStatusEnum.values, true, false), layerLink: LayerLink(), fieldName: 'mortgage'),
                     ],
                     builder: (rowData) {
                       return AnimalItem(
