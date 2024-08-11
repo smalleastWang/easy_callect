@@ -644,8 +644,6 @@ class _DropDownMenuState extends State<DropDownMenu> with SingleTickerProviderSt
         formItem.list[index].check = true;
         formItem.selectText = formItem.list[index].label;
         changeOverlay(index: rootIndex, reset: true);
-        print('unlimitedNum: $unlimitedNum');
-        print("value: ${formItem.list[index].value}");
         widget.onChange(formItem.fieldName, formItem.list[index].value == unlimitedNum ? '' : formItem.list[index].value);
         _isExpanded = false;
         _animationController.reverse();
@@ -694,6 +692,9 @@ class _DropDownMenuState extends State<DropDownMenu> with SingleTickerProviderSt
                 link: widget.filterList[index].layerLink,
                 child: GestureDetector(
                   onTap: () {
+                    if (widget.filterList[index].onTap != null) {
+                      widget.filterList[index].onTap!();
+                    }
                     if (_curFilterIndex == index || dropDownMenuOverlayEntry == null) {
                       setState(() {
                         _isExpanded = !_isExpanded;
