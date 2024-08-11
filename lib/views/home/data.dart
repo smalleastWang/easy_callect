@@ -52,7 +52,6 @@ final List<ModuleModel> moduleList = [
       ModuleItemModel(route: RouteEnum.milksidentify, iconPath: 'assets/icon/precisionBreeding/optimized/7.svg'),
       ModuleItemModel(route: RouteEnum.health, iconPath: 'assets/icon/precisionBreeding/optimized/9.svg'),
       ModuleItemModel(route: RouteEnum.intelligencewarn, iconPath: 'assets/icon/precisionBreeding/optimized/6.svg'),
-      ModuleItemModel(route: RouteEnum.countRegister, iconPath: 'assets/icon/precisionBreeding/optimized/8.svg'),
     ]
 
   ),
