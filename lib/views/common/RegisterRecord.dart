@@ -123,8 +123,8 @@ class _RegisterRecordPageState extends ConsumerState<RegisterRecordPage> {
                   params: _createRequestParams(),
                   provider: registerRecordPageProvider,
                   filterList: [
-                    DropDownMenuModel(name: '注册状态', list: enumsStrValToOptions(RegistStatusEnum.values, true, false), layerLink: LayerLink(), fieldName: 'state'),
-                    DropDownMenuModel(name: '注册时间', layerLink: LayerLink(), fieldName: 'createTime', widget: WidgetType.datePicker),
+                    DropDownMenuModel(name: '注册状态', list: enumsStrValToOptions(RegistStatusEnum.values, true, false), layerLink: LayerLink(), fieldName: 'state', onTap: () => _focusSearchInputNode.unfocus()),
+                    DropDownMenuModel(name: '注册时间', layerLink: LayerLink(), fieldName: 'createTime', widget: WidgetType.datePicker, onTap: () => _focusSearchInputNode.unfocus()),
                   ],
                   builder: (rowData) {
                     return RegisterRecordItem(rowData: rowData);

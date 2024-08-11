@@ -128,8 +128,8 @@ class _DistinguishRecordPageState extends ConsumerState<DistinguishRecordPage> {
                   params: _createRequestParams(),
                   provider: distinguishRecordPageProvider,
                   filterList: [
-                    DropDownMenuModel(name: '识别状态', list: enumsStrValToOptions(DistinguishStatusEnum.values, true, false), layerLink: LayerLink(), fieldName: 'state'),
-                    DropDownMenuModel(name: '识别时间', layerLink: LayerLink(), fieldName: 'createTime', widget: WidgetType.datePicker),
+                    DropDownMenuModel(name: '识别状态', list: enumsStrValToOptions(DistinguishStatusEnum.values, true, false), layerLink: LayerLink(), fieldName: 'state', onTap: () => _focusSearchInputNode.unfocus()),
+                    DropDownMenuModel(name: '识别时间', layerLink: LayerLink(), fieldName: 'createTime', widget: WidgetType.datePicker, onTap: () => _focusSearchInputNode.unfocus()),
                   ],
                   builder: (rowData) {
                     return DistinguishRecordItem(rowData: rowData);
