@@ -4,6 +4,7 @@ import 'package:easy_collect/enums/Route.dart';
 import 'package:easy_collect/enums/index.dart';
 import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
 import 'package:easy_collect/models/register/index.dart';
+import 'package:easy_collect/utils/OverlayManager.dart';
 import 'package:easy_collect/views/precisionBreeding/data.dart';
 import 'package:easy_collect/widgets/List/index.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,11 @@ class HealthPage extends ConsumerStatefulWidget {
 }
 
 class _HealthPageState extends ConsumerState<HealthPage> {
+  @override
+  void dispose() {
+    overlayEntryAllRemove();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     final AsyncValue<List<EnclosureModel>> weightInfoTree =

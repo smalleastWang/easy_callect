@@ -1,4 +1,5 @@
 import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
+import 'package:easy_collect/utils/OverlayManager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_collect/api/precisionBreeding.dart';
@@ -29,6 +30,12 @@ class _PerformancePageState extends ConsumerState<PerformancePage> {
     ModuleListModel(route: RouteEnum.security, background: Colors.black),
     ModuleListModel(route: RouteEnum.pen, background: Colors.black),
   ];
+
+  @override
+  void dispose() {
+    overlayEntryAllRemove();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

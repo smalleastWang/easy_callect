@@ -1,6 +1,7 @@
 import 'package:easy_collect/enums/index.dart';
 import 'package:easy_collect/enums/route.dart';
 import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
+import 'package:easy_collect/utils/OverlayManager.dart';
 import 'package:easy_collect/views/precisionBreeding/data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,6 +31,12 @@ class _AIBoxPageState extends ConsumerState<AIBoxPage> {
 
   void _addAiBox() {
     _navigateTo(RouteEnum.editAiBox.path);
+  }
+
+   @override
+  void dispose() {
+    overlayEntryAllRemove();
+    super.dispose();
   }
 
   @override

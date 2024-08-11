@@ -1,5 +1,6 @@
 import 'package:easy_collect/api/precisionBreeding.dart';
 import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
+import 'package:easy_collect/utils/OverlayManager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_collect/models/register/index.dart';
@@ -14,6 +15,11 @@ class MilksidentifyPage extends ConsumerStatefulWidget {
 }
 
 class _MilksidentifyPageState extends ConsumerState<MilksidentifyPage> {
+  @override
+  void dispose() {
+    overlayEntryAllRemove();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     final AsyncValue<List<EnclosureModel>> weightInfoTree =

@@ -57,6 +57,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
 
   @override
   void dispose() {
+    overlayEntryAllRemove();
     _tabController.dispose();
     _startTimeController.dispose();
     _endTimeController.dispose();

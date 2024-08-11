@@ -1,5 +1,6 @@
 import 'package:easy_collect/enums/index.dart';
 import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
+import 'package:easy_collect/utils/OverlayManager.dart';
 import 'package:easy_collect/views/precisionBreeding/data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -122,6 +123,12 @@ class AnimalPage extends ConsumerStatefulWidget {
 class _AnimalPageState extends ConsumerState<AnimalPage> {
   final GlobalKey<ListWidgetState> listWidgetKey = GlobalKey<ListWidgetState>();
 
+ @override
+  void dispose() {
+    overlayEntryAllRemove();
+    super.dispose();
+  }
+  
   @override
   Widget build(BuildContext context) {
     final AsyncValue<List<EnclosureModel>> weightInfoTree = ref.watch(weightInfoTreeProvider);

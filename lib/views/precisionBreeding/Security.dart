@@ -1,5 +1,6 @@
 
 import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
+import 'package:easy_collect/utils/OverlayManager.dart';
 import 'package:easy_collect/views/precisionBreeding/widgets/PastureVideo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,6 +27,7 @@ class _SecurityPageState extends ConsumerState<SecurityPage> with SingleTickerPr
 
   @override
   void dispose() {
+    overlayEntryAllRemove();
     _tabController.dispose();
     super.dispose();
   }

@@ -1,5 +1,6 @@
 import 'package:easy_collect/api/precisionBreeding.dart';
 import 'package:easy_collect/enums/index.dart';
+import 'package:easy_collect/utils/OverlayManager.dart';
 import 'package:easy_collect/views/precisionBreeding/data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,6 +18,11 @@ class IntelligencewarnPage extends ConsumerStatefulWidget {
 }
 
 class _IntelligencewarnPageState extends ConsumerState<IntelligencewarnPage> {
+  @override
+  void dispose() {
+    overlayEntryAllRemove();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     final AsyncValue<List<EnclosureModel>> weightInfoTree = ref.watch(weightInfoTreeProvider);

@@ -2,6 +2,7 @@ import 'package:easy_collect/enums/index.dart';
 import 'package:easy_collect/enums/route.dart';
 import 'package:easy_collect/models/buildings/building.dart';
 import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
+import 'package:easy_collect/utils/OverlayManager.dart';
 import 'package:easy_collect/views/precisionBreeding/data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -36,6 +37,12 @@ class _BuildingPageState extends ConsumerState<BuildingPage> {
 
   void _addNewBuilding() {
     _navigateTo(RouteEnum.editBuilding.path);
+  }
+
+  @override
+  void dispose() {
+    overlayEntryAllRemove();
+    super.dispose();
   }
 
   @override
