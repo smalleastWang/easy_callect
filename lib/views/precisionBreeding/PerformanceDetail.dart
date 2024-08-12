@@ -1,4 +1,5 @@
 import 'package:easy_collect/api/performanceDetail.dart';
+import 'package:easy_collect/widgets/List/ListCard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_collect/widgets/List/index.dart';
@@ -159,22 +160,11 @@ class PerformanceDetailItem extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 12),
-        _buildInfoRow('牛耳标号', rowData['animalNo']),
-        _buildInfoRow('唯一识别码', rowData['algorithmCode']),
-        _buildInfoRow('测定值', rowData['dataValue']),
-        _buildInfoRow('采集时间', rowData['date']),
+        ListCardCell(label: '牛耳标号', value: rowData['animalNo'], marginTop: 0),
+        ListCardCell(label: '唯一识别码', value: rowData['algorithmCode']),
+        ListCardCell(label: '测定值', value: rowData['dataValue']),
+        ListCardCellTime(label: '采集时间', value: rowData['date']),
       ],
-    );
-  }
-
-  Widget _buildInfoRow(String label, String? value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Text(
-        '$label     ${value ?? '未知'}',
-        style: const TextStyle(color: Color(0xFF666666)),
-      ),
     );
   }
 }

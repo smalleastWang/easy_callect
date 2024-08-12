@@ -135,7 +135,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
               ListCardCell(label: '用户账号', value: data['account']),
               // ListCardCell(label: '客户唯一索引', value: data['source']),
               ListCardCell(label: '识别数量', value: '${jsonDecode(data['result'] ?? '{}')?['total'] ?? 0}只'),
-              ListCardCellTime(label: '创建时间：', value: data['createTime'])
+              ListCardCellTime(label: '创建时间', value: data['createTime'])
             ],
           );
         },
@@ -179,7 +179,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
             ListCardCell(label: '盘点人', value: data['createUser']),
             ListCardCell(label: '盘点总数', value: data['inventoryTotalNum']),
             ListCardCell(label: '昨天盘点总数', value: data['lastInventoryTotalNum']),
-            ListCardCell(label: '盘点时间：', value: data['checkTime']),
+            ListCardCell(label: '盘点时间', value: data['checkTime']),
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -243,7 +243,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
             ListCardCell(label: '上次盘点数量', value: data['lastNum']),
             ListCardCell(label: '盘点人', value: data['createUser']),
             ListCardCell(label: '上次盘点时间', value: data['lastTime']),
-            ListCardCellTime(label: '盘点时间：', value: data['checkTime'])
+            ListCardCellTime(label: '盘点时间', value: data['checkTime'])
           ],
         );
       },
