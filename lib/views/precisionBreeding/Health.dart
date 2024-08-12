@@ -6,6 +6,7 @@ import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
 import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/utils/OverlayManager.dart';
 import 'package:easy_collect/views/precisionBreeding/data.dart';
+import 'package:easy_collect/widgets/List/ListCard.dart';
 import 'package:easy_collect/widgets/List/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -80,8 +81,7 @@ class HealthItem extends StatelessWidget {
         Row(
           children: [
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
                 color: const Color(0xFF5D8FFD),
                 borderRadius: BorderRadius.circular(5),
@@ -101,13 +101,14 @@ class HealthItem extends StatelessWidget {
             // const Icon(Icons.chevron_right),
           ],
         ),
-        const SizedBox(height: 12),
-        Text('牧场名称     ${rowData["orgName"]}', style: const TextStyle(color: Color(0xFF666666))),
-        const SizedBox(height: 12),
-        const Divider(height: 0.5, color: Color(0xFFE2E2E2)),
-        const SizedBox(height: 12),
-        Text('检测时间: ${rowData["createTime"]}',
-            style: const TextStyle(color: Color(0xFF999999))),
+        ListCardCell(
+          label: '牧场名称',
+          value: rowData["orgName"],
+        ),
+        ListCardCellTime(
+          label: '检测时间',
+          value: rowData["createTime"],
+        ),
       ],
     );
   }

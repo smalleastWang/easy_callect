@@ -1,6 +1,7 @@
 import 'package:easy_collect/api/precisionBreeding.dart';
 import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
 import 'package:easy_collect/utils/OverlayManager.dart';
+import 'package:easy_collect/widgets/List/ListCard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_collect/models/register/index.dart';
@@ -75,26 +76,18 @@ class PositionItem extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          '圈舍名称     ${rowData["buildingName"]}',
-          style: const TextStyle(color: Color(0xFF666666)),
+        ListCardCell(
+          label: '圈舍名称',
+          value: rowData["buildingName"],
+          marginTop: 0,
         ),
-        const SizedBox(height: 12),
-        Text(
-          '牛耳标     ${rowData["animalNo"]}',
-          style: const TextStyle(color: Color(0xFF666666)),
+        ListCardCell(
+          label: '牛耳标',
+          value: rowData["animalNo"],
         ),
-        // const SizedBox(height: 12),
-        // Text(
-        //   '唯一标识码: ${rowData["algorithmCode"]}',
-        //   style: const TextStyle(color: Color(0xFF666666)),
-        // ),
-        const SizedBox(height: 12),
-        const Divider(height: 0.5, color: Color(0xFFE2E2E2)),
-        const SizedBox(height: 12),
-        Text(
-          '采集日期: ${rowData["inventoryDate"]}',
-          style: const TextStyle(color: Color(0xFF999999)),
+        ListCardCellTime(
+          label: '采集日期',
+          value: rowData["inventoryDate"],
         ),
       ],
     );
