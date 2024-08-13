@@ -4,26 +4,25 @@
 import 'package:easy_collect/enums/index.dart';
 import 'package:easy_collect/models/common/Option.dart';
 
-enum InventoryStatus implements EnumOption {
-  inProgress(0, '盘点中'),
-  over(1, '盘点结束'),
-  unknown(-1, '-');
+enum InventoryStatus implements EnumStrOption {
+  inProgress('0', '盘点中'),
+  over('1', '盘点结束'),
+  unknown('-1', '未知');
 
-  final int value;
+  final String value;
   final String label;
   const InventoryStatus(this.value, this.label);
   
   static InventoryStatus getTypeByLabel(String title) => InventoryStatus.values.firstWhere((i) => i.name == title, orElse: () => InventoryStatus.unknown);
-  static InventoryStatus getTypeByValue(int value) => InventoryStatus.values.firstWhere((i) => i.value == value, orElse: () => InventoryStatus.unknown);
+  static InventoryStatus getTypeByValue(String value) => InventoryStatus.values.firstWhere((i) => i.value == value, orElse: () => InventoryStatus.unknown);
 
-  static int getValue(String label) => InventoryStatus.values.firstWhere((i) => i.label == label, orElse: () => InventoryStatus.unknown).value;
-  static String getLabel(int value) => InventoryStatus.values.firstWhere((i) => i.value == value, orElse: () => InventoryStatus.unknown).label;
+  static String getValue(String label) => InventoryStatus.values.firstWhere((i) => i.label == label, orElse: () => InventoryStatus.unknown).value;
+  static String getLabel(String value) => InventoryStatus.values.firstWhere((i) => i.value == value, orElse: () => InventoryStatus.unknown).label;
 
   @override
-  OptionModel<int> toOptionModel() {
+  OptionModel<String> toOptionModel() {
     return OptionModel(value: value, label: label);
   }
-
 }
 
 

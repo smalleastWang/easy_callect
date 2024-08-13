@@ -145,7 +145,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
     return ListWidget<RegInventoryInfoPageFamily>(
       key: regWidgetKey,
       filterList: [
-        DropDownMenuModel(name: '选择状态', list: enumsToOptions(InventoryStatus.values, true), layerLink: LayerLink(), fieldName: 'state'),
+        DropDownMenuModel(name: '选择状态', list: enumsStrValToOptions(InventoryStatus.values, true, false), layerLink: LayerLink(), fieldName: 'state'),
         DropDownMenuModel(name: '选择盘点时间', layerLink: LayerLink(), fieldName: 'first,last', widget: WidgetType.dateRangePicker),
       ],
       pasture: PastureModel(
@@ -157,7 +157,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
         return Column(
           children: [
             ListCardTitleCell(
-              state: ListCardTitleStateModal(text: InventoryStatus.getLabel(data['state'])),
+              state: ListCardTitleStateModal(text: InventoryStatus.getLabel(data['state'].toString())),
               rowData: data,
               title: data['buildingName'],
               detailLabelWidth: 120,
@@ -210,7 +210,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
     return ListWidget<CntInventoryInfoPageFamily>(
       key: cntWidgetKey,
       filterList: [
-        DropDownMenuModel(name: '选择状态', list: enumsToOptions(InventoryStatus.values, true), layerLink: LayerLink(), fieldName: 'state'),
+        DropDownMenuModel(name: '选择状态', list: enumsStrValToOptions(InventoryStatus.values, true, false), layerLink: LayerLink(), fieldName: 'state'),
         DropDownMenuModel(name: '选择盘点时间', layerLink: LayerLink(), fieldName: 'first,last', widget: WidgetType.dateRangePicker),
       ],
       pasture: PastureModel(
@@ -231,7 +231,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
                       color: const Color(0xFFCCD2E1),
                       borderRadius: BorderRadius.circular(3)
                     ),
-                    child: Text(InventoryStatus.getLabel(data['state']), style: const TextStyle(color: Colors.white)),
+                    child: Text(InventoryStatus.getLabel(data['state'].toString()), style: const TextStyle(color: Colors.white)),
                   ),
                   Text(data['buildingName'], style: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.w500)),
                 ],
