@@ -1,3 +1,4 @@
+import 'package:easy_collect/widgets/List/ListCard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -153,29 +154,27 @@ class RegisterPigRecordItem extends StatelessWidget {
             const Spacer(),
           ],
         ),
-        const SizedBox(height: 12),
-        _buildInfoRow('所属圈舍', rowData['buildingName']),
-        _buildInfoRow('操作人', rowData['userName']),
-        _buildInfoRow('数据来源', _getRegisterTypeText(rowData['registerType'])),
-        _buildInfoRow('唯一码', rowData['algorithmCode']),
-        // _buildInfoRow('猪耳标', rowData['no']),
-        // _buildInfoRow('注册状态', _getStateText(rowData['state'])),
-        const SizedBox(height: 12),
-        const Divider(height: 0.5, color: Color(0xFFE2E2E2)),
-        const SizedBox(height: 12),
-        Text('注册时间: ${rowData["createTime"]}',
-            style: const TextStyle(color: Color(0xFF999999))),
+        ListCardCell(
+          label: '所属圈舍',
+          value: rowData['buildingName'],
+        ),
+        ListCardCell(
+          label: '操作人',
+          value: rowData['userName'],
+        ),
+        ListCardCell(
+          label: '数据来源',
+          value: _getRegisterTypeText(rowData['registerType']),
+        ),
+        ListCardCell(
+          label: '唯一码',
+          value: rowData['algorithmCode'],
+        ),
+        ListCardCellTime(
+          label: '注册时间',
+          value: rowData["createTime"],
+        ),
       ],
-    );
-  }
-
-  Widget _buildInfoRow(String label, String? value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Text(
-        '$label     ${value ?? '未知'}',
-        style: const TextStyle(color: Color(0xFF666666)),
-      ),
     );
   }
 

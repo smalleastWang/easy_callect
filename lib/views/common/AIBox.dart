@@ -3,6 +3,7 @@ import 'package:easy_collect/enums/route.dart';
 import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
 import 'package:easy_collect/utils/OverlayManager.dart';
 import 'package:easy_collect/views/precisionBreeding/data.dart';
+import 'package:easy_collect/widgets/List/ListCard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_collect/models/register/index.dart';
@@ -124,26 +125,23 @@ class AIBoxItem extends StatelessWidget {
             const Spacer(),
           ],
         ),
-        const SizedBox(height: 12),
-        _buildInfoRow('设备编号', rowData["boxNo"]),
-        _buildInfoRow('牧场', rowData["orgName"]),
-        _buildInfoRow('圈舍', rowData["buildingName"]),
-        const SizedBox(height: 12),
-        const Divider(height: 0.5, color: Color(0xFFE2E2E2)),
-        const SizedBox(height: 12),
-        Text('创建时间: ${rowData["createTime"]}',
-            style: const TextStyle(color: Color(0xFF999999))),
+        ListCardCell(
+          label: '设备编号',
+          value: rowData["boxNo"],
+        ),
+        ListCardCell(
+          label: '牧场',
+          value: rowData["orgName"],
+        ),
+        ListCardCell(
+          label: '圈舍',
+          value: rowData["buildingName"],
+        ),
+        ListCardCellTime(
+          label: '创建时间',
+          value: rowData["createTime"],
+        ),
       ],
-    );
-  }
-
-  Widget _buildInfoRow(String label, String? value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Text(
-        '$label     ${value == null || value.isEmpty ? '未知' : value}',
-        style: const TextStyle(color: Color(0xFF666666)),
-      ),
     );
   }
 }

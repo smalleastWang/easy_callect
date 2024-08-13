@@ -1,3 +1,4 @@
+import 'package:easy_collect/widgets/List/ListCard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -153,28 +154,23 @@ class DistinguishPigRecordItem extends StatelessWidget {
             const Spacer(),
           ],
         ),
-        const SizedBox(height: 12),
-        _buildInfoRow('牧场名称', rowData['orgName']),
-        _buildInfoRow('操作人', rowData['userName']),
-        _buildInfoRow('唯一识别码', rowData['algorithmCode']),
-        // _buildInfoRow('猪耳标', rowData['no']),
-        // _buildInfoRow('识别时间', rowData['createTime']),
-        // _buildInfoRow('识别状态', _getStateText(rowData['state'])),
-        const Divider(height: 0.5, color: Color(0xFFE2E2E2)),
-        const SizedBox(height: 12),
-        Text('识别时间: ${rowData["createTime"]}',
-            style: const TextStyle(color: Color(0xFF999999))),
+        ListCardCell(
+          label: '牧场名称',
+          value: rowData['orgName'],
+        ),
+        ListCardCell(
+          label: '操作人',
+          value: rowData['userName'],
+        ),
+        ListCardCell(
+          label: '唯一识别码',
+          value: rowData['algorithmCode'],
+        ),
+         ListCardCellTime(
+          label: '识别时间',
+          value: rowData["createTime"],
+        ),
       ],
-    );
-  }
-
-  Widget _buildInfoRow(String label, String? value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Text(
-        '$label     ${value ?? '未知'}',
-        style: const TextStyle(color: Color(0xFF666666)),
-      ),
     );
   }
 
