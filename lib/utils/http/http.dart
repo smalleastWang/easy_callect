@@ -94,8 +94,7 @@ class HttpRequest {
       }
       EasyLoading.showToast(response.data['msg']);
       throw Exception(response.data['msg']);
-    } on
-DioException catch (error) {
+    } on DioException catch (error) {
       if (showErrorMessage && error.message != null) {
         EasyLoading.showToast(error.message!);
       }
