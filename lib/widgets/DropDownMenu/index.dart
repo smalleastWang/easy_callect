@@ -30,6 +30,7 @@ class _DropDownMenuState extends State<DropDownMenu> with SingleTickerProviderSt
 
   String? firstDate;
   String? lastDate;
+  String? selectedDate;
 
   @override
   void initState() {
@@ -118,7 +119,11 @@ class _DropDownMenuState extends State<DropDownMenu> with SingleTickerProviderSt
   Widget _renderContent(DropDownMenuModel data, int index) {
     if (data.widget == WidgetType.dateRangePicker) {
       return _renderDateRangePicker(data, index);
-    } else if (data.widget == WidgetType.input) {
+    }
+    if (data.widget == WidgetType.datePicker) {
+      return _renderDatePicker(data, index);
+    } 
+    if (data.widget == WidgetType.input) {
       return _renderInput(data, index);
     }
     return ListView(
@@ -134,41 +139,97 @@ class _DropDownMenuState extends State<DropDownMenu> with SingleTickerProviderSt
   Widget _renderInput(DropDownMenuModel data, int index) {
     TextEditingController inputController = TextEditingController();
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8,horizontal: 10),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFF5F7F9).withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           TextFormField(
             autofocus: true,
             controller: inputController,
+            style: const TextStyle(fontSize: 14), // 设置输入框字体大小为14px
             decoration: InputDecoration(
-              hintText: data.name,
+              contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              hintText: "请输入${data.name}",
+              hintStyle: const TextStyle(color: Color(0xFF282828), fontSize: 14), // 设置提示文本字体大小为14px
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(6.0),
+                borderSide: const BorderSide(color: Color(0xFFE4E4E4)),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(6.0),
+                borderSide: const BorderSide(color: Color(0xFFE4E4E4)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(6.0),
+                borderSide: const BorderSide(color: Color(0xFFE4E4E4)),
+              ),
+              filled: true,
+              fillColor: Colors.white,
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              TextButton(
-                onPressed: () {
-                  _isExpanded = false;
-                  overlayEntryAllRemove();
-                  inputController.text = '';
-                  widget.onChange(data.fieldName, null);
-                  data.selectText = null;
-                },
-                child: const Text('清除'),
+              Expanded(
+                child: SizedBox(
+                  height: 40,
+                  child: TextButton(
+                    onPressed: () {
+                      _isExpanded = false;
+                      overlayEntryAllRemove();
+                      inputController.text = '';
+                      widget.onChange(data.fieldName, null);
+                      data.selectText = null;
+                    },
+                    style: TextButton.styleFrom(
+                      backgroundColor: const Color(0xFFCCD2E1), // 重置按钮背景颜色
+                      foregroundColor: Colors.black, // 重置按钮字体颜色
+                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text('重置', style: TextStyle(fontSize: 14)), // 设置重置按钮字体大小为14px
+                  ),
+                ),
               ),
-              TextButton(
-                onPressed: () {
-                  _isExpanded = false;
-                  overlayEntryAllRemove();
-                  widget.onChange(data.fieldName, inputController.text);
-                  data.selectText = inputController.text.isNotEmpty ? inputController.text : null;
-                },
-                child: const Text('确定'),
+              const SizedBox(width: 12), // 按钮之间的间距
+              Expanded(
+                child: SizedBox(
+                  height: 40, // 增大按钮高度
+                  child: TextButton(
+                    onPressed: () {
+                      _isExpanded = false;
+                      overlayEntryAllRemove();
+                      widget.onChange(data.fieldName, inputController.text);
+                      data.selectText = inputController.text.isNotEmpty ? inputController.text : null;
+                    },
+                    style: TextButton.styleFrom(
+                      backgroundColor: const Color(0xFF5D8FFD), // 确定按钮背景颜色
+                      foregroundColor: Colors.white, // 确定按钮字体颜色
+                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text('确定', style: TextStyle(fontSize: 14)), // 设置确定按钮字体大小为14px
+                  ),
+                ),
               ),
             ],
-          )
+          ),
         ],
       ),
     );
@@ -195,62 +256,109 @@ class _DropDownMenuState extends State<DropDownMenu> with SingleTickerProviderSt
                       lastDate = '${date.year}/${date.month}/${date.day}';
                     }
                   });
-                  
                 },
               );
               dropDownMenuRangeDateOverlayEntry = OverlayEntry(builder: (context) {
-                return  Stack(
+                return Stack(
                   children: [
-                    Positioned(  
-                      bottom: 0,  
+                    Positioned(
+                      bottom: 0,
                       left: 0,
                       right: 0,
                       child: Column(
                         children: [
                           Container(
                             decoration: const BoxDecoration(
-                              color: Colors.white
+                              color: Colors.white,
+                              borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
                             ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            child: Column(
                               children: [
-                                TextButton(onPressed: () {
-                                  dropDownMenuRangeDateOverlayEntryRemove();
-                                }, child: const Text('取消')),
-                                Text(title),
-                                TextButton(onPressed: () {
-                                  ps.onConfirm?.call(ps, ps.selecteds);
-                                }, child: const Text('确认'))
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    TextButton(
+                                      onPressed: () {
+                                        dropDownMenuRangeDateOverlayEntryRemove();
+                                      },
+                                      style: TextButton.styleFrom(
+                                        foregroundColor: Colors.red[400], // 取消按钮字体颜色
+                                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                      ),
+                                      child: const Text('取消'),
+                                    ),
+                                    Text(
+                                      title,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        ps.onConfirm?.call(ps, ps.selecteds);
+                                      },
+                                      style: TextButton.styleFrom(
+                                        foregroundColor: const Color(0xFF5D8FFD), // 确认按钮字体颜色
+                                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                      ),
+                                      child: const Text('确认'),
+                                    ),
+                                  ],
+                                ),
+                                ps.makePicker(),
                               ],
                             ),
                           ),
-                          ps.makePicker()
                         ],
                       ),
-                    )
+                    ),
                   ],
                 );
               });
-              
+
               Overlay.of(context).insert(dropDownMenuRangeDateOverlayEntry!);
             },
             child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.black12)
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.black12),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFFF5F7F9).withOpacity(0.2),
+                    spreadRadius: 1,
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
-              child: Expanded(
-                child: Text((title == '开始时间' ? firstDate : lastDate) ?? title),
+              child: Text(
+                (title == '开始时间' ? firstDate : lastDate) ?? title,
+                style: const TextStyle(fontSize: 14, color: Color(0xFF333333)),
               ),
-            )
+            ),
           ),
         );
       });
-      
     }
+
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8,horizontal: 10),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFF5F7F9).withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Column(
         children: [
           Row(
@@ -258,38 +366,268 @@ class _DropDownMenuState extends State<DropDownMenu> with SingleTickerProviderSt
             children: [
               datePicker('开始时间'),
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: 6),
-                child: const Text('-', style: TextStyle(fontSize: 16)),
+                margin: const EdgeInsets.symmetric(horizontal: 8),
+                child: const Text('-', style: TextStyle(fontSize: 14, color: Color(0xFF999999))),
               ),
               datePicker('结束时间'),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              TextButton(
-                onPressed: () {
-                  _isExpanded = false;
-                  overlayEntryAllRemove();
-                  firstDate = null;
-                  lastDate = null;
-                  widget.onChange(data.fieldName, '$firstDate,$lastDate');
-                  data.selectText = null;
-                },
-                child: const Text('清除'),
+              Expanded(
+                child: SizedBox(
+                  height: 40, // 按钮高度
+                  child: TextButton(
+                    onPressed: () {
+                      _isExpanded = false;
+                      overlayEntryAllRemove();
+                      firstDate = null;
+                      lastDate = null;
+                      widget.onChange(data.fieldName, '$firstDate,$lastDate');
+                      data.selectText = null;
+                    },
+                    style: TextButton.styleFrom(
+                      backgroundColor: const Color(0xFFCCD2E1), // 重置按钮背景颜色
+                      foregroundColor: Colors.black, // 重置按钮字体颜色
+                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text('重置'),
+                  ),
+                ),
               ),
-              TextButton(
-                onPressed: () {
-                  _isExpanded = false;
-                  overlayEntryAllRemove();
-                  widget.onChange(data.fieldName, '$firstDate,$lastDate');
-                  data.selectText = '$firstDate-$lastDate';
-                },
-                child: const Text('确定'),
+              const SizedBox(width: 12), // 按钮之间的间距
+              Expanded(
+                child: SizedBox(
+                  height: 40, // 按钮高度
+                  child: TextButton(
+                    onPressed: () {
+                      if (firstDate == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('请选择开始时间')),
+                        );
+                        return;
+                      }
+                      if (lastDate == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('请选择结束时间')),
+                        );
+                        return;
+                      }
+                      _isExpanded = false;
+                      overlayEntryAllRemove();
+                      widget.onChange(data.fieldName, '$firstDate,$lastDate');
+                      data.selectText = '$firstDate-$lastDate';
+                    },
+                    style: TextButton.styleFrom(
+                      backgroundColor: const Color(0xFF5D8FFD), // 确定按钮背景颜色
+                      foregroundColor: Colors.white, // 确定按钮字体颜色
+                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text('确定'),
+                  ),
+                ),
               ),
             ],
-          )
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 单个时间选择器渲染
+  Widget _renderDatePicker(DropDownMenuModel data, int index) {
+    datePicker(String title) {
+      return StatefulBuilder(builder: (context, state) {
+        return Expanded(
+          child: GestureDetector(
+            onTap: () {
+              Picker ps = Picker(
+                hideHeader: true,
+                adapter: DateTimePickerAdapter(type: PickerDateTimeType.kYMD, isNumberMonth: true),
+                onConfirm: (Picker picker, List value) {
+                  dropDownMenuSingleDateOverlayEntryRemove();
+                  DateTime? date = (picker.adapter as DateTimePickerAdapter).value;
+                  if (date == null) return;
+                  state(() {
+                    selectedDate = '${date.year}-${date.month}-${date.day}';
+                  });
+                },
+              );
+              dropDownMenuSingleDateOverlayEntry = OverlayEntry(builder: (context) {
+                return Stack(
+                  children: [
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Column(
+                        children: [
+                          Container(
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                            ),
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    TextButton(
+                                      onPressed: () {
+                                        dropDownMenuSingleDateOverlayEntryRemove();
+                                      },
+                                      style: TextButton.styleFrom(
+                                        foregroundColor: Colors.red[400], // 取消按钮字体颜色
+                                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                      ),
+                                      child: const Text('取消'),
+                                    ),
+                                    Text(
+                                      title,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        ps.onConfirm?.call(ps, ps.selecteds);
+                                      },
+                                      style: TextButton.styleFrom(
+                                        foregroundColor: const Color(0xFF5D8FFD), // 确认按钮字体颜色
+                                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                      ),
+                                      child: const Text('确认'),
+                                    ),
+                                  ],
+                                ),
+                                ps.makePicker(),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              });
+
+              Overlay.of(context).insert(dropDownMenuSingleDateOverlayEntry!);
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.black12),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFFF5F7F9).withOpacity(0.2),
+                    spreadRadius: 1,
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Text(
+                selectedDate ?? title,
+                style: const TextStyle(fontSize: 14, color: Color(0xFF333333)),
+              ),
+            ),
+          ),
+        );
+      });
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFF5F7F9).withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              datePicker('请选择日期'),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: SizedBox(
+                  height: 40, // 按钮高度
+                  child: TextButton(
+                    onPressed: () {
+                      _isExpanded = false;
+                      overlayEntryAllRemove();
+                      selectedDate = null;
+                      widget.onChange(data.fieldName, '$selectedDate');
+                      data.selectText = null;
+                    },
+                    style: TextButton.styleFrom(
+                      backgroundColor: const Color(0xFFCCD2E1), // 重置按钮背景颜色
+                      foregroundColor: Colors.black, // 重置按钮字体颜色
+                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text('重置'),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12), // 按钮之间的间距
+              Expanded(
+                child: SizedBox(
+                  height: 40, // 按钮高度
+                  child: TextButton(
+                    onPressed: () {
+                      if (selectedDate == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('请选择日期')),
+                        );
+                        return;
+                      }
+                      _isExpanded = false;
+                      overlayEntryAllRemove();
+                      widget.onChange(data.fieldName, '$selectedDate');
+                      data.selectText = selectedDate;
+                    },
+                    style: TextButton.styleFrom(
+                      backgroundColor: const Color(0xFF5D8FFD), // 确定按钮背景颜色
+                      foregroundColor: Colors.white, // 确定按钮字体颜色
+                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text('确定'),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -314,7 +652,7 @@ class _DropDownMenuState extends State<DropDownMenu> with SingleTickerProviderSt
         });
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         height: 40,
         alignment: Alignment.topLeft,
         child: Row(
@@ -354,6 +692,9 @@ class _DropDownMenuState extends State<DropDownMenu> with SingleTickerProviderSt
                 link: widget.filterList[index].layerLink,
                 child: GestureDetector(
                   onTap: () {
+                    if (widget.filterList[index].onTap != null) {
+                      widget.filterList[index].onTap!();
+                    }
                     if (_curFilterIndex == index || dropDownMenuOverlayEntry == null) {
                       setState(() {
                         _isExpanded = !_isExpanded;

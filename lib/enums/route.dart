@@ -20,6 +20,7 @@ enum RouteEnum {
   surveyCompared('surveyCompared', '查勘对比', '/insurance/surveyCompared'),
   orderList('orderList', '保单信息', '/insurance/orderList'),
   editPolicy('/editPolicy', '添加保单', '/editPolicy'),
+  insuranceDetail('/insuranceDetail', '保单详情', '/insuranceDetail'),
   insuranceApplicant('insuranceApplicant', '投保人信息', '/insurance/insuranceApplicant'),
   editInsuranceApplicant('/editInsuranceApplicant', '添加投保人', '/editInsuranceApplicant'),
   countRegister('countRegister', '计数盘点', '/insurance/countRegister'),
@@ -59,10 +60,13 @@ enum RouteEnum {
   building('building', '圈舍信息', '/common/building'),
   camera('camera', '摄像头管理', '/common/camera'),
   animal('animal', '牛只信息', '/common/animal'),
+  pigAnimal('pigAnimal', '猪信息', '/common/pigAnimal'),
   email('email', '邮箱管理', '/common/email'),
   registerRecord('registerRecord', '牛注册记录', '/common/registerRecord'),
-  distinguishRecord('distinguishRecord', '牛识别记录', '/common/distinguishRecord');
-  
+  distinguishRecord('distinguishRecord', '牛识别记录', '/common/distinguishRecord'),
+  registerPigRecord('registerPigRecord', '猪注册记录', '/common/registerPigRecord'),
+  distinguishPigRecord('distinguishPigRecord', '猪识别记录', '/common/distinguishPigRecord');
+
 
   const RouteEnum(this.path, this.title, this.fullpath);
 

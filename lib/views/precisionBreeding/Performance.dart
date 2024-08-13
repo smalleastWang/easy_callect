@@ -1,3 +1,5 @@
+import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
+import 'package:easy_collect/utils/OverlayManager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_collect/api/precisionBreeding.dart';
@@ -30,6 +32,12 @@ class _PerformancePageState extends ConsumerState<PerformancePage> {
   ];
 
   @override
+  void dispose() {
+    overlayEntryAllRemove();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final AsyncValue<List<EnclosureModel>> weightInfoTree = ref.watch(weightInfoTreeProvider);
 
@@ -51,6 +59,10 @@ class _PerformancePageState extends ConsumerState<PerformancePage> {
                       options: data,
                     ),
                     provider: weightInfoPageProvider,
+                    filterList: [
+                      DropDownMenuModel(name: '牛耳标', layerLink: LayerLink(), fieldName: 'no', widget: WidgetType.input),
+                      DropDownMenuModel(name: '测定日期', layerLink: LayerLink(), fieldName: 'startDate,endDate', widget: WidgetType.dateRangePicker),
+                    ],
                     builder: (data) {
                       return PerformanceItem(rowData: data);
                     },

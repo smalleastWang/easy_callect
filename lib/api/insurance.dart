@@ -86,6 +86,17 @@ Future<void> editPolicy(Map<String, dynamic> params) async {
   await HttpUtils.post('/biz/policy/add', params: params);
 }
 
+/// 保单详情
+@riverpod
+Future<PageVoModel> insuranceDetail(InsuranceDetailRef ref, Map<String, dynamic> params) async {
+  Map<String, dynamic> res = await HttpUtils.get('/biz/insurancedetail/page', params: params);
+  PageVoModel data = PageVoModel.fromJson(res);
+  if (params['current'] != 1 && ref.state.hasValue) {
+    data.records.insertAll(0, ref.state.value!.records);
+  }
+  return data;
+}
+
 /// 投保人列表
 @riverpod
 Future<PageVoModel> insuranceApplicantList(InsuranceApplicantListRef ref, Map<String, dynamic> params) async {

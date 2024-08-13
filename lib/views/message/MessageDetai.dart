@@ -11,18 +11,30 @@ class MessageDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('消息详情'),
+        title: Text(subject),
       ),
       body: Column(
         children: [
-          Container(
-            alignment: Alignment.center,
-            margin: const EdgeInsets.only(bottom: 16),
-            child: Text(subject),
-          ),
+          // Container(
+          //   alignment: Alignment.center,
+          //   margin: const EdgeInsets.only(bottom: 16),
+          //   child: Text(subject),
+          // ),
           Expanded(
             child: SingleChildScrollView(
-              child: Text(content, style: const TextStyle(fontSize: 14)),
+              child: Text.rich(
+                TextSpan(
+                  children: [
+                    const WidgetSpan(
+                      child: SizedBox(width: 28), // 设置首行缩进的宽度
+                    ),
+                    TextSpan(
+                      text: content,
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  ],
+                ),
+              ),
             )
           ),
         ],

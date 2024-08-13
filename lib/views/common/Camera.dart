@@ -1,3 +1,8 @@
+import 'package:easy_collect/enums/index.dart';
+import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
+import 'package:easy_collect/utils/OverlayManager.dart';
+import 'package:easy_collect/views/precisionBreeding/data.dart';
+import 'package:easy_collect/widgets/List/ListCard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_collect/models/register/index.dart';
@@ -13,6 +18,12 @@ class CameraPage extends ConsumerStatefulWidget {
 }
 
 class _CameraPageState extends ConsumerState<CameraPage> {
+  @override
+  void dispose() {
+    overlayEntryAllRemove();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final AsyncValue<List<EnclosureModel>> weightInfoTree = ref.watch(weightInfoTreeProvider);
@@ -34,6 +45,11 @@ class _CameraPageState extends ConsumerState<CameraPage> {
                       options: data,
                     ),
                     provider: cameraPageProvider,
+                    filterList: [
+                      DropDownMenuModel(name: '圈舍名称', layerLink: LayerLink(), fieldName: 'buildingName', widget: WidgetType.input),
+                      DropDownMenuModel(name: '设备编号', layerLink: LayerLink(), fieldName: 'easyCvrId', widget: WidgetType.input),
+                      DropDownMenuModel(name: '在线状态', list:  enumsStrValToOptions(OnlineStatusEnum.values, true, false), layerLink: LayerLink(), fieldName: 'online'),
+                    ],
                     builder: (rowData) {
                       return CameraItem(rowData: rowData);
                     },
@@ -86,20 +102,22 @@ class CameraItem extends StatelessWidget {
             const Spacer(),
           ],
         ),
-        const SizedBox(height: 12),
-        Text('设备编号     ${rowData["boxNo"] == null || rowData["boxNo"] == "" ? '未知' : rowData["boxNo"]}',
-            style: const TextStyle(color: Color(0xFF666666))),
-        const SizedBox(height: 12),
-        Text('牧场     ${rowData["orgName"] == null || rowData["orgName"] == "" ? '未知' : rowData["orgName"]}',
-            style: const TextStyle(color: Color(0xFF666666))),
-        const SizedBox(height: 12),
-        Text('圈舍     ${rowData["buildingName"] == null || rowData["buildingName"] == "" ? '未知' : rowData["buildingName"]}',
-            style: const TextStyle(color: Color(0xFF666666))),
-        const SizedBox(height: 12),
-        const Divider(height: 0.5, color: Color(0xFFE2E2E2)),
-        const SizedBox(height: 12),
-        Text('创建时间: ${rowData["createTime"]}',
-            style: const TextStyle(color: Color(0xFF999999))),
+        ListCardCell(
+          label: '设备编号',
+          value: rowData["boxNo"],
+        ),
+        ListCardCell(
+          label: '牧场',
+          value: rowData["orgName"],
+        ),
+        ListCardCell(
+          label: '圈舍',
+          value: rowData["buildingName"],
+        ),
+        ListCardCellTime(
+          label: '创建时间',
+          value: rowData["createTime"],
+        ),
       ],
     );
   }

@@ -27,19 +27,21 @@ class ListCardCell extends StatelessWidget {
   final String label;
   final String? value;
   final double? labelWidth;
-  const ListCardCell({super.key, required this.label, this.value, this.labelWidth});
+  final double? marginTop;
+  const ListCardCell({super.key, required this.label, this.value, this.labelWidth, this.marginTop});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(top: 12),
+      margin: EdgeInsets.only(top: marginTop ?? 12),
       child: Row(
         children: [
-          SizedBox(
-            width: labelWidth ?? 100,
-            child: Text(label, style: const TextStyle(fontSize: 14, color: Color(0xFF666666))),
+          Text(label, style: const TextStyle(fontSize: 14, color: Color(0xFF666666))),
+          const SizedBox(width: 20),
+          Text(
+            value == null || value!.isEmpty ? '未知' : value!, 
+            style: const TextStyle(fontSize: 14, color: Color(0xFF666666)),
           ),
-          Text(value ?? '-', style: const TextStyle(fontSize: 14, color: Color(0xFF666666))),
         ],
       ),
     );
@@ -55,11 +57,14 @@ class ListCardCellTime extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Divider(),
+        const Divider(thickness: 0.5, color: Color(0xFFE2E2E2)),
         Row(
           children: [
-            Text('$label：', style: const TextStyle(color: Color(0xFF999999))),
-            Text(value ?? '-', style: const TextStyle(color: Color(0xFF999999))),
+            Text('$label： ', style: const TextStyle(color: Color(0xFF999999))),
+            Text(
+              value == null || value!.isEmpty ? '未知' : value!, 
+              style: const TextStyle(color: Color(0xFF999999)),
+            ),
           ],
         ),
       ],

@@ -328,16 +328,16 @@ class PackageDetails extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                PackageDetailRow(label: '套餐名称', value: costName),
-                PackageDetailRow(label: '套餐类型', value: comboType),
+                // PackageDetailRow(label: '套餐名称', value: costName),
+                // PackageDetailRow(label: '套餐类型', value: comboType),
                 // PackageDetailRow(label: '收费类型', value: chargeType),
                 // PackageDetailRow(label: '授权方式', value: costType),
-                const SizedBox(height: 8.0),
-                const Divider(
-                  height: 0.5,
-                  color: Color(0xFFE9E8E8),
-                ),
-                const SizedBox(height: 8.0),
+                // const SizedBox(height: 8.0),
+                // const Divider(
+                //   height: 0.5,
+                //   color: Color(0xFFE9E8E8),
+                // ),
+                // const SizedBox(height: 8.0),
                 const Text(
                   '可使用功能',
                   style: TextStyle(

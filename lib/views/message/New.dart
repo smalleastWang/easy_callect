@@ -26,7 +26,7 @@ class _NewMessageWidgetState extends ConsumerState<NewMessageWidget> {
               MaterialPageRoute(
                 builder: (context) => MessageDetailPage(
                   subject: data['subject'],
-                  content: data['data'],
+                  content: data['content'],
                   createTime: data['createTime'],
                 ),
               )
@@ -46,7 +46,7 @@ class _NewMessageWidgetState extends ConsumerState<NewMessageWidget> {
                     color: const Color(0x193489FF),
                     borderRadius: BorderRadius.circular(50)
                   ),
-                  child: SvgPicture.asset('assets/icon/common/message.svg'),
+                  child: SvgPicture.asset('assets/icon/common/optimized/message.svg', fit: BoxFit.fill),
                 ),
                 
                 const SizedBox(width: 10),

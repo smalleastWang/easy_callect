@@ -137,19 +137,19 @@ class _MyWidgetState extends State<MyWidget> {
                         title: '基本信息',
                         onTap: () => _navigateTo(RouteEnum.userInfo.path),
                       ),
-                      CellWidget(
-                        assetIcon: "assets/icon/my/download.png",
-                        title: '资料下载',
-                        onTap: () => _navigateTo(RouteEnum.downLoad.path),
-                      ),
-                      const CellWidget(
-                        assetIcon: "assets/icon/my/help.png",
-                        title: '帮助手册',
-                      ),
-                      const CellWidget(
-                        assetIcon: "assets/icon/my/call.png",
-                        title: '联系我们',
-                      ),
+                      // CellWidget(
+                      //   assetIcon: "assets/icon/my/download.png",
+                      //   title: '资料下载',
+                      //   onTap: () => _navigateTo(RouteEnum.downLoad.path),
+                      // ),
+                      // const CellWidget(
+                      //   assetIcon: "assets/icon/my/help.png",
+                      //   title: '帮助手册',
+                      // ),
+                      // const CellWidget(
+                      //   assetIcon: "assets/icon/my/call.png",
+                      //   title: '联系我们',
+                      // ),
                       CellWidget(
                         assetIcon: "assets/icon/my/logout.png",
                         title: '退出登录',

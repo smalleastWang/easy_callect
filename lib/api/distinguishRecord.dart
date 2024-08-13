@@ -14,3 +14,14 @@ Future<PageVoModel> distinguishRecordPage(DistinguishRecordPageRef ref, Map<Stri
   }
   return data;
 }
+
+// 猪识别记录
+@riverpod
+Future<PageVoModel> distinguishPigRecordPage(DistinguishPigRecordPageRef ref, Map<String, dynamic> params) async {
+  Map<String, dynamic> res = await HttpUtils.get('/biz/DistinguishPig/page', params: params);
+  PageVoModel data = PageVoModel.fromJson(res);
+  if (params['current'] != 1 && ref.state.hasValue) {
+    data.records.insertAll(0, ref.state.value!.records);
+  }
+  return data;
+}

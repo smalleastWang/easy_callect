@@ -1,13 +1,9 @@
-import 'package:easy_collect/enums/index.dart';
-import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
-import 'package:easy_collect/utils/OverlayManager.dart';
-import 'package:easy_collect/views/precisionBreeding/data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/api/precisionBreeding.dart';
 import 'package:easy_collect/widgets/List/index.dart';
-import 'package:easy_collect/api/animal.dart';
+import 'package:easy_collect/api/pigAnimal.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 enum StateStatus {
@@ -32,7 +28,7 @@ extension StateStatusExtension on StateStatus {
       case StateStatus.duplicate:
         return '手机端与摄像头重复';
       case StateStatus.lost:
-        return '盘点牛只丢失';
+        return '盘点猪只丢失';
       case StateStatus.registering:
         return '手机端注册中';
       case StateStatus.sold:
@@ -113,29 +109,23 @@ AuthStatus getAuthStatusFromValue(String value) {
   }
 }
 
-class AnimalPage extends ConsumerStatefulWidget {
-  const AnimalPage({super.key});
+class PigAnimalPage extends ConsumerStatefulWidget {
+  const PigAnimalPage({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _AnimalPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _PigAnimalPageState();
 }
 
-class _AnimalPageState extends ConsumerState<AnimalPage> {
+class _PigAnimalPageState extends ConsumerState<PigAnimalPage> {
   final GlobalKey<ListWidgetState> listWidgetKey = GlobalKey<ListWidgetState>();
 
- @override
-  void dispose() {
-    overlayEntryAllRemove();
-    super.dispose();
-  }
-  
   @override
   Widget build(BuildContext context) {
     final AsyncValue<List<EnclosureModel>> weightInfoTree = ref.watch(weightInfoTreeProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('牛只信息'),
+        title: const Text('猪信息'),
       ),
       body: Container(
         color: const Color(0xFFF1F5F9),
@@ -144,22 +134,17 @@ class _AnimalPageState extends ConsumerState<AnimalPage> {
             Expanded(
               child: weightInfoTree.when(
                 data: (data) {
-                  return ListWidget<AnimalPageFamily>(
+                  return ListWidget<PigAnimalPageFamily>(
                     key: listWidgetKey,
                     pasture: PastureModel(
                       field: 'orgId',
                       options: data,
                     ),
-                    provider: animalPageProvider,
-                    filterList: [
-                      DropDownMenuModel(name: '牛耳标', layerLink: LayerLink(), fieldName: 'no', widget: WidgetType.input),
-                      DropDownMenuModel(name: '授权状态', list:  enumsStrValToOptions(AuthStatusEnum.values, true, false), layerLink: LayerLink(), fieldName: 'pastureAuth'),
-                      DropDownMenuModel(name: '抵押状态', list:  enumsStrValToOptions(MortgageStatusEnum.values, true, false), layerLink: LayerLink(), fieldName: 'mortgage'),
-                    ],
+                    provider: pigAnimalPageProvider,
                     builder: (rowData) {
-                      return AnimalItem(
+                      return PigAnimalItem(
                         rowData: rowData,
-                        listWidgetKey: listWidgetKey, // 将 listWidgetKey 传递给 AnimalItem
+                        listWidgetKey: listWidgetKey, // 将 listWidgetKey 传递给 PigAnimalItem
                       );
                     },
                   );
@@ -175,11 +160,11 @@ class _AnimalPageState extends ConsumerState<AnimalPage> {
   }
 }
 
-class AnimalItem extends StatelessWidget {
+class PigAnimalItem extends StatelessWidget {
   final Map<String, dynamic> rowData;
   final GlobalKey<ListWidgetState> listWidgetKey; // 接收传递过来的 listWidgetKey
 
-  const AnimalItem({super.key, required this.rowData, required this.listWidgetKey});
+  const PigAnimalItem({super.key, required this.rowData, required this.listWidgetKey});
 
   @override
   Widget build(BuildContext context) {
@@ -206,9 +191,9 @@ class AnimalItem extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         _buildInfoRow('牧场', rowData["orgName"]),
-        _buildInfoRow('圈舍', rowData["buildName"]),
-        _buildInfoRowWithButton('授权状态', pastureAuthStatus.description, _buildAuthButton(pastureAuthStatus, rowData)),
-        _buildInfoRowWithButton('抵押状态', mortgageStatus, _buildMortgageButton(mortgageStatus, rowData)),
+        _buildInfoRow('圈舍', rowData["buildingName"]),
+        _buildInfoRowWithButton('授权状态', pastureAuthStatus.description, null),
+        _buildInfoRowWithButton('抵押状态', mortgageStatus, null),
         const SizedBox(height: 12),
         const Divider(height: 0.5, color: Color(0xFFE2E2E2)),
         const SizedBox(height: 12),
@@ -242,7 +227,7 @@ class AnimalItem extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoRowWithButton(String label, String? value, Widget button) {
+  Widget _buildInfoRowWithButton(String label, String? value, Widget? button) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
@@ -253,7 +238,7 @@ class AnimalItem extends StatelessWidget {
               style: const TextStyle(color: Color(0xFF666666)),
             ),
           ),
-          button,
+          button ?? const SizedBox.shrink(),  // 如果 button 是 null，则使用一个占位的 SizedBox
         ],
       ),
     );

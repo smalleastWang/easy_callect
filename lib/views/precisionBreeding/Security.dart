@@ -1,5 +1,8 @@
 
+import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
+import 'package:easy_collect/utils/OverlayManager.dart';
 import 'package:easy_collect/views/precisionBreeding/widgets/PastureVideo.dart';
+import 'package:easy_collect/widgets/List/ListCard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_collect/api/precisionBreeding.dart';
@@ -25,6 +28,7 @@ class _SecurityPageState extends ConsumerState<SecurityPage> with SingleTickerPr
 
   @override
   void dispose() {
+    overlayEntryAllRemove();
     _tabController.dispose();
     super.dispose();
   }
@@ -45,6 +49,10 @@ class _SecurityPageState extends ConsumerState<SecurityPage> with SingleTickerPr
                     options: data,
                   ),
                   provider: securityPageProvider,
+                  filterList: [
+                    DropDownMenuModel(name: '牛耳标', layerLink: LayerLink(), fieldName: 'no', widget: WidgetType.input),
+                    DropDownMenuModel(name: '预警日期', layerLink: LayerLink(), fieldName: 'startDate,endDate', widget: WidgetType.dateRangePicker),
+                  ],
                   builder: (rowData) {
                     return SecurityItem(rowData: rowData);
                   },
@@ -115,21 +123,20 @@ class SecurityItem extends StatelessWidget {
               ),
             ),
             const Spacer(),
-            // const Icon(Icons.chevron_right),
           ],
         ),
-        const SizedBox(height: 12),
-        Text('设备唯一码     ${rowData["devId"] ?? '未知'}', style: const TextStyle(color: Color(0xFF666666))),
-        const SizedBox(height: 12),
-        Text('牛耳标     ${rowData["animalNo"] ?? '未知'}', style: const TextStyle(color: Color(0xFF666666))),
-        // const SizedBox(height: 12),
-        // Text('性能值: ${rowData["dataValue"] ?? '未知'}', style: const TextStyle(color: Color(0xFF666666))),
-        const SizedBox(height: 12),
-        const Divider(height: 0.5, color: Color(0xFFE2E2E2)),
-        const SizedBox(height: 12),
-        Text('预警日期: ${rowData["date"] ?? '未知'}', style: const TextStyle(color: Color(0xFF999999))),
-        // const SizedBox(height: 12),
-        // Text('上传时间: ${rowData.updateTime ?? '未知'}', style: const TextStyle(color: Color(0xFF999999))),
+        ListCardCell(
+          label: '设备唯一码',
+          value: rowData["devId"],
+        ),
+        ListCardCell(
+          label: '牛耳标',
+          value: rowData["animalNo"],
+        ),
+        ListCardCellTime(
+          label: '预警日期',
+          value: rowData["date"],
+        ),
       ],
     );
   }

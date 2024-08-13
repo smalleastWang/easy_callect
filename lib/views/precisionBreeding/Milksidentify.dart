@@ -1,4 +1,7 @@
 import 'package:easy_collect/api/precisionBreeding.dart';
+import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
+import 'package:easy_collect/utils/OverlayManager.dart';
+import 'package:easy_collect/widgets/List/ListCard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_collect/models/register/index.dart';
@@ -13,6 +16,11 @@ class MilksidentifyPage extends ConsumerStatefulWidget {
 }
 
 class _MilksidentifyPageState extends ConsumerState<MilksidentifyPage> {
+  @override
+  void dispose() {
+    overlayEntryAllRemove();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     final AsyncValue<List<EnclosureModel>> weightInfoTree =
@@ -47,6 +55,11 @@ class _MilksidentifyPageState extends ConsumerState<MilksidentifyPage> {
         options: data,
       ),
       provider: milksidentifyPageProvider,
+      filterList: [
+        DropDownMenuModel(name: '牛耳标', layerLink: LayerLink(), fieldName: 'no', widget: WidgetType.input),
+        DropDownMenuModel(name: '奶位号', layerLink: LayerLink(), fieldName: 'milkPos', widget: WidgetType.input),
+        DropDownMenuModel(name: '预警日期', layerLink: LayerLink(), fieldName: 'startDate,endDate', widget: WidgetType.dateRangePicker),
+      ],
       builder: (milksidentifyData) {
         return MilksidentifyItem(rowData: milksidentifyData);
       },
@@ -64,37 +77,33 @@ class MilksidentifyItem extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          '挤奶位编号     ${rowData["milkPos"]}',
-          style: const TextStyle(color: Color(0xFF666666))
+        ListCardCell(
+          label: '挤奶位编号',
+          value: rowData["milkPos"],
         ),
-        // const SizedBox(height: 12),
-        // Text(
-        //   '牧场     ${rowData["orgName"]}',
-        //   style: const TextStyle(color: Color(0xFF666666)),
+        // ListCardCell(
+        //   label: '牧场',
+        //   value: rowData["orgName"],
         // ),
-        const SizedBox(height: 12),
-        Text(
-          '耳标号      ${rowData["no"]}',
-          style: const TextStyle(color: Color(0xFF666666)),
+        ListCardCell(
+          label: '耳标号',
+          value: rowData["no"],
         ),
-        const SizedBox(height: 12),
-        Text('轮次     ${rowData["wave"] == null || rowData["wave"] == "" ? '未知' : rowData["wave"]}',
-            style: const TextStyle(color: Color(0xFF666666))),
-        const SizedBox(height: 12),
-        Text('挤奶量     ${rowData["milkAmount"] == null || rowData["milkAmount"] == "" ? '未知' : rowData["milkAmount"]}',
-            style: const TextStyle(color: Color(0xFF666666))),
-        // const SizedBox(height: 12),
-        // Text(
-        //   '设备唯一码: ${rowData["algorithmCode"]}',
-        //   style: const TextStyle(color: Color(0xFF666666)),
+        ListCardCell(
+          label: '轮次',
+          value: rowData["wave"],
+        ),
+        ListCardCell(
+          label: '挤奶量',
+          value: rowData["milkAmount"],
+        ),
+        // ListCardCell(
+        //   label: '设备唯一码',
+        //   value: rowData["algorithmCode"],
         // ),
-        const SizedBox(height: 12),
-        const Divider(height: 0.5, color: Color(0xFFE2E2E2)),
-        const SizedBox(height: 12),
-        Text(
-          '识别时间: ${rowData["identifyTime"]}',
-          style: const TextStyle(color: Color(0xFF999999)),
+        ListCardCellTime(
+          label: '识别时间',
+          value: rowData["identifyTime"],
         ),
       ],
     );

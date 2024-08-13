@@ -1,5 +1,10 @@
+import 'package:easy_collect/enums/index.dart';
 import 'package:easy_collect/enums/route.dart';
 import 'package:easy_collect/models/buildings/building.dart';
+import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
+import 'package:easy_collect/utils/OverlayManager.dart';
+import 'package:easy_collect/views/precisionBreeding/data.dart';
+import 'package:easy_collect/widgets/List/ListCard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_collect/models/register/index.dart';
@@ -36,6 +41,12 @@ class _BuildingPageState extends ConsumerState<BuildingPage> {
   }
 
   @override
+  void dispose() {
+    overlayEntryAllRemove();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final AsyncValue<List<EnclosureModel>> weightInfoTree = ref.watch(weightInfoTreeProvider);
 
@@ -69,6 +80,10 @@ class _BuildingPageState extends ConsumerState<BuildingPage> {
                       options: data,
                     ),
                     provider: buildingPageProvider,
+                    filterList: [
+                      DropDownMenuModel(name: '圈舍名称', layerLink: LayerLink(), fieldName: 'buildingName', widget: WidgetType.input),
+                      DropDownMenuModel(name: '是否启用', list:  enumsStrValToOptions(EnableStatus.values, true, false), layerLink: LayerLink(), fieldName: 'state'),
+                    ],
                     builder: (rowData) {
                       return BuildingItem(
                         rowData: rowData,
@@ -94,16 +109,6 @@ class BuildingItem extends StatelessWidget {
 
   const BuildingItem({super.key, required this.rowData, required this.onToggle});
 
-  Widget _buildInfoRow(String label, String? value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Text(
-        '$label     ${value == null || value.isEmpty ? '未知' : value}',
-        style: const TextStyle(color: Color(0xFF666666)),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     String onlineStatus = rowData["state"] == "0" ? "启用" : "禁用";
@@ -122,9 +127,7 @@ class BuildingItem extends StatelessWidget {
               ),
             ),
             const Spacer(),
-            Text(
-              onlineStatus
-            ),
+            Text(onlineStatus),
             Switch(
               value: isEnabled,
               onChanged: (value) {
@@ -135,12 +138,26 @@ class BuildingItem extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 12),
-        _buildInfoRow('牧场', rowData["orgName"]),
-        _buildInfoRow('期初数量', rowData["maxNum"]),
-        _buildInfoRow('当前牛数量', rowData["currentNum"]),
-        _buildInfoRow('栋别', rowData["blockNum"]),
-        _buildInfoRow('栏别', rowData["hurdleNum"]),
+        ListCardCell(
+          label: '牧场',
+          value: rowData["orgName"],
+        ),
+        ListCardCell(
+          label: '期初数量',
+          value: rowData["maxNum"],
+        ),
+        ListCardCell(
+          label: '当前牛数量',
+          value: rowData["currentNum"],
+        ),
+        ListCardCell(
+          label: '栋别',
+          value: rowData["blockNum"],
+        ),
+        ListCardCell(
+          label: '栏别',
+          value: rowData["hurdleNum"],
+        ),
       ],
     );
   }

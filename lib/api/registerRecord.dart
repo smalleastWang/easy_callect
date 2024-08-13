@@ -14,3 +14,14 @@ Future<PageVoModel> registerRecordPage(RegisterRecordPageRef ref, Map<String, dy
   }
   return data;
 }
+
+// 猪注册记录
+@riverpod
+Future<PageVoModel> registerPigRecordPage(RegisterPigRecordPageRef ref, Map<String, dynamic> params) async {
+  Map<String, dynamic> res = await HttpUtils.get('/biz/registerpig/page', params: params);
+  PageVoModel data = PageVoModel.fromJson(res);
+  if (params['current'] != 1 && ref.state.hasValue) {
+    data.records.insertAll(0, ref.state.value!.records);
+  }
+  return data;
+}

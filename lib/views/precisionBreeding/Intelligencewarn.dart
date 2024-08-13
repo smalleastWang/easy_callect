@@ -1,6 +1,8 @@
 import 'package:easy_collect/api/precisionBreeding.dart';
 import 'package:easy_collect/enums/index.dart';
+import 'package:easy_collect/utils/OverlayManager.dart';
 import 'package:easy_collect/views/precisionBreeding/data.dart';
+import 'package:easy_collect/widgets/List/ListCard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_collect/api/intelligencewarn.dart';
@@ -17,6 +19,11 @@ class IntelligencewarnPage extends ConsumerStatefulWidget {
 }
 
 class _IntelligencewarnPageState extends ConsumerState<IntelligencewarnPage> {
+  @override
+  void dispose() {
+    overlayEntryAllRemove();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     final AsyncValue<List<EnclosureModel>> weightInfoTree = ref.watch(weightInfoTreeProvider);
@@ -39,9 +46,9 @@ class _IntelligencewarnPageState extends ConsumerState<IntelligencewarnPage> {
                     ),
                     provider: intelligencewarnPageProvider,
                     filterList: [
-                      DropDownMenuModel(name: '输入牛耳标', layerLink: LayerLink(), fieldName: 'state', widget: WidgetType.input),
+                      DropDownMenuModel(name: '牛耳标', layerLink: LayerLink(), fieldName: 'no', widget: WidgetType.input),
                       DropDownMenuModel(name: '预警类型', list: enumsToOptions(WarnType.values, true), layerLink: LayerLink(), fieldName: 'warnType'),
-                      DropDownMenuModel(name: '预警时间', layerLink: LayerLink(), fieldName: 'first,last', widget: WidgetType.dateRangePicker),
+                      DropDownMenuModel(name: '预警时间', layerLink: LayerLink(), fieldName: 'startDate,endDate', widget: WidgetType.dateRangePicker),
                     ],
                     builder: (rowData) {
                       return IntelligencewarnItem(rowData: rowData);
@@ -91,12 +98,14 @@ class IntelligencewarnItem extends StatelessWidget {
             // const Icon(Icons.chevron_right),
           ],
         ),
-        const SizedBox(height: 12),
-        Text('牧场名称     ${rowData["orgName"]}', style: const TextStyle(color: Color(0xFF666666))),
-        const SizedBox(height: 12),
-        const Divider(height: 0.5, color: Color(0xFFE2E2E2)),
-        const SizedBox(height: 12),
-        Text('预警时间: ${rowData["createTime"]}', style: const TextStyle(color: Color(0xFF999999))),
+        ListCardCell(
+          label: '牧场名称',
+          value: rowData["orgName"],
+        ),
+        ListCardCellTime(
+          label: '预警时间',
+          value: rowData["createTime"],
+        ),
       ],
     );
   }

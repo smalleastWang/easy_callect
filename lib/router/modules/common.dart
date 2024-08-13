@@ -1,5 +1,8 @@
 
 import 'package:easy_collect/enums/route.dart';
+import 'package:easy_collect/views/common/DistinguishPigRecord.dart';
+import 'package:easy_collect/views/common/PigAnimal.dart';
+import 'package:easy_collect/views/common/RegisterPigRecord.dart';
 import 'package:easy_collect/views/common/index.dart';
 import 'package:easy_collect/views/common/Building.dart';
 import 'package:easy_collect/views/common/AIBox.dart';
@@ -31,6 +34,10 @@ final commonRoutes = GoRoute(
       builder: (context, state) => const AnimalPage(),
     ),
     GoRoute(
+      path: RouteEnum.pigAnimal.path,
+      builder: (context, state) => const PigAnimalPage(),
+    ),
+    GoRoute(
       path: RouteEnum.email.path,
       builder: (context, state) => const EmailPage(),
     ),
@@ -41,6 +48,14 @@ final commonRoutes = GoRoute(
     GoRoute(
       path: RouteEnum.distinguishRecord.path,
       builder: (context, state) => const DistinguishRecordPage(),
+    ),
+    GoRoute(
+      path: RouteEnum.registerPigRecord.path,
+      builder: (context, state) => const RegisterPigRecordPage(),
+    ),
+    GoRoute(
+      path: RouteEnum.distinguishPigRecord.path,
+      builder: (context, state) => const DistinguishPigRecordPage(),
     ),
   ]
 );
