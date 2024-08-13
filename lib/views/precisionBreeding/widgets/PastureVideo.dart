@@ -67,13 +67,11 @@ class _PastureVideoState extends ConsumerState<PastureVideo> {
           controller: ChewieController(videoPlayerController: VideoPlayerController.networkUrl(Uri.parse(element['algorithmUrl']))..initialize())
         ));
       } else if (videoType == VideoType.live) {
-        // Map<String, dynamic> data =  await getCameraLiveUrlApi(element['easyCvrId']);
+        Map<String, dynamic> data =  await getCameraLiveUrlApi(element['easyCvrId']);
         final FijkPlayer player = FijkPlayer();
-        // player.setDataSource(data['url'], autoPlay: true);
-        player.setDataSource('http://36.133.213.146:18000/flv/live/34020000001320001278_34020000001320001278_0200001278.flv', autoPlay: true);
+        player.setDataSource(data['url'], autoPlay: true);
         videoList.add(VideoCardModel(
           camera: element['name'],
-          // controller: VideoPlayerController.networkUrl(Uri.parse(data['url']))..initialize()
           livePlayer: player
         ));
       }
@@ -226,7 +224,7 @@ class _PastureVideoState extends ConsumerState<PastureVideo> {
                     child:  _videoList.isNotEmpty ? GridView.builder(
                       itemCount: _videoList.length,
                       gridDelegate:  const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
+                        crossAxisCount: 1,
                         childAspectRatio: 1.3,
                         // mainAxisSpacing: 8,
                         crossAxisSpacing: 8,

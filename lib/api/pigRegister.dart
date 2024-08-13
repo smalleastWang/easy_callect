@@ -1,4 +1,4 @@
-import 'package:easy_collect/models/register/pigRegister.dart';
+import 'package:easy_collect/models/register/PigRegister.dart';
 import 'package:easy_collect/utils/http/request.dart';
 
 
