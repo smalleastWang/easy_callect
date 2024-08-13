@@ -45,7 +45,7 @@ class ModuleWidget extends StatelessWidget {
                         shrinkWrap: true,
                         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           mainAxisSpacing: 10,
-                          crossAxisSpacing: 25,
+                          crossAxisSpacing: 10,
                           crossAxisCount: 4,
                           childAspectRatio: 1.0,
                         ),
@@ -70,8 +70,10 @@ class ModuleWidget extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 10),
                                 Text(
-                                  e.title ?? e.route.title, 
-                                  style: const TextStyle(fontSize: 13, color: Color(0xFF444444)), // 设置小模块标题字体大小为13px，颜色为#444444
+                                  e.title ?? e.route.title,
+                                  style: const TextStyle(fontSize: 13, color: Color(0xFF444444)),
+                                  softWrap: false, // 禁用自动换行
+                                  maxLines: 1, // 限制为一行
                                 ),
                               ],
                             ),
