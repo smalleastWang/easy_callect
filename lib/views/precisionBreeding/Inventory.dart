@@ -110,8 +110,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
       filterList: [
         DropDownMenuModel(name: '模型类型', 
         list: enumsStrValToOptions(CountMediaEnum.values, true, false),
-    
-        layerLink: LayerLink(), fieldName: 'state'),
+        layerLink: LayerLink(), fieldName: 'model'),
         DropDownMenuModel(name: '选择盘点时间', layerLink: LayerLink(), fieldName: 'first,last', widget: WidgetType.dateRangePicker),
       ],
       provider: imageInventoryProvider,
