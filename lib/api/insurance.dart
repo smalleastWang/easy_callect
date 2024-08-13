@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:easy_collect/models/PageVo.dart';
-import 'package:easy_collect/models/insurance/InsuranceApplicant.dart';
 import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/utils/http/request.dart';
 import 'package:image_picker/image_picker.dart';

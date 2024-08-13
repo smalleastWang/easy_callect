@@ -5,13 +5,23 @@ import 'package:easy_collect/utils/icons.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final int? currentIndex;
+  const HomePage({super.key, this.currentIndex});
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.currentIndex != null) {
+      _currentIndex = widget.currentIndex!;
+    }
+  }
 
   int _currentIndex = 1;
   final List<Widget> _widgetList = [

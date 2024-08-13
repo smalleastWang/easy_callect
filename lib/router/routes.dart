@@ -33,7 +33,10 @@ final List<GoRoute> routes = [
   ),
   GoRoute(
     path: RouteEnum.home.path,
-    builder: (context, state) => const HomePage(),
+    builder: (context, state) {
+      final extra = (state.extra ?? {}.cast<String, int>()) as Map<String, int>;
+      return HomePage(currentIndex: extra['currentIndex']);
+    },
     redirect: (context, state) {
       String? token = SharedPreferencesManager().getString(StorageKeyEnum.token.value);
       if (token == null) {
