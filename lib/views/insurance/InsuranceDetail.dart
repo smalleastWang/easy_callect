@@ -52,28 +52,44 @@ class _InsuranceDetailPageState extends ConsumerState<InsuranceDetailPage> {
         params: _createRequestParams(),
         provider: insuranceDetailProvider,
         builder: (data) {
-          return Container(
-            color: const Color(0xFFF1F5F9),
-            child: Column(
+          return Column(
               children: [
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.all(16.0),
-                    children: [
-                      _buildHeader(data),
-                      const SizedBox(height: 12),
-                      _buildInfoRows(data),
-                      const SizedBox(height: 12),
-                      const Divider(height: 0.5, color: Color(0xFFE2E2E2)),
-                      const SizedBox(height: 12),
-                      Text('合同生效日期: ${data["effectiveTime"]}', style: const TextStyle(color: Color(0xFF999999))),
-                      Text('合同期满日期: ${data["expiryTime"]}', style: const TextStyle(color: Color(0xFF999999))),
-                      Text('创建时间: ${data["createTime"]}', style: const TextStyle(color: Color(0xFF999999))),
-                    ],
-                  ),
-                ),
+                _buildHeader(data),
+                const SizedBox(height: 8),
+                _buildInfoRows(data),
+                const SizedBox(height: 8),
+                const Divider(height: 0.5, color: Color(0xFFE2E2E2)),
+                const SizedBox(height: 8),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 2.0), // 设置底部间距
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          '合同生效日期: ${data["effectiveTime"] ?? '-'}',
+                          style: const TextStyle(color: Color(0xFF999999)),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 2.0), // 设置底部间距
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          '合同期满日期: ${data["expiryTime"] ?? '-'}',
+                          style: const TextStyle(color: Color(0xFF999999)),
+                        ),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text('创建时间： ${data["createTime"] ?? '-'}', style: const TextStyle(color: Color(0xFF999999))),
+                    ),
+                  ],
+                )
               ],
-            ),
           );
         },
       ),
@@ -90,13 +106,13 @@ class _InsuranceDetailPageState extends ConsumerState<InsuranceDetailPage> {
             borderRadius: BorderRadius.circular(5),
           ),
           child: Text(
-            data["policyContent"],
+            data["policyContent"] ?? '-',
             style: const TextStyle(color: Colors.white),
           ),
         ),
         const SizedBox(width: 10),
         Text(
-          data["policyNo"],
+          data["policyNo"] ?? '-',
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const Spacer(),
@@ -125,19 +141,24 @@ class _InsuranceDetailPageState extends ConsumerState<InsuranceDetailPage> {
         const SizedBox(height: 12),
         _buildTwoColumns('开户行省', data["bankProvince"], '开户行市', data["bankCity"]),
         const SizedBox(height: 12),
-        _buildTwoColumns('备注', data["remarks"], '', ''),
+        _buildTwoColumns('备注', data["remarks"], null, null),
       ],
     );
   }
 
-  Widget _buildTwoColumns(String label1, dynamic value1, String label2, dynamic value2) {
-    return Row(
-      children: [
-        Expanded(child: _buildInfoRow(label1, value1)),
-        Expanded(child: _buildInfoRow(label2, value2)),
-      ],
-    );
-  }
+ Widget _buildTwoColumns(String label1, dynamic value1, String? label2, dynamic? value2) {
+  return Row(
+    children: [
+      Expanded(
+        child: _buildInfoRow(label1, value1),
+      ),
+      if (label2 != null && value2 != null) // 仅在label2和value2不为null时显示第二列
+        Expanded(
+          child: _buildInfoRow(label2, value2),
+        ),
+    ],
+  );
+}
 
   Widget _buildInfoRow(String label, dynamic value) {
     return RichText(
@@ -145,7 +166,7 @@ class _InsuranceDetailPageState extends ConsumerState<InsuranceDetailPage> {
         children: [
           TextSpan(
             text: '$label: ',
-            style: const TextStyle(color: Color(0xFF3B81F2)),
+            style: const TextStyle(color: Color(0xFF666666)),
           ),
           TextSpan(
             text: '${value ?? '未知'}',
