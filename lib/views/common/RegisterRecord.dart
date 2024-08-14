@@ -73,9 +73,18 @@ class _RegisterRecordPageState extends ConsumerState<RegisterRecordPage> {
                         focusNode: _focusSearchInputNode,
                         decoration: InputDecoration(
                           hintText: '请输入操作人',
-                          border: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            borderSide: BorderSide.none,
+                          ),
                           fillColor: const Color(0xFFF5F7F9),
                           filled: true,
                           contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
@@ -96,7 +105,7 @@ class _RegisterRecordPageState extends ConsumerState<RegisterRecordPage> {
                                 style: TextButton.styleFrom(
                                   backgroundColor: const Color(0xFF5D8FFD),
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12.0),
+                                    borderRadius: BorderRadius.circular(8.0),
                                   ),
                                   padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                                   minimumSize: const Size(50.0, 40.0),
