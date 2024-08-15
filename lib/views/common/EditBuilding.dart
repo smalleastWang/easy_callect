@@ -208,7 +208,7 @@ class _EditBuildingPageState extends State<EditBuildingPage> {
           },
         ),
       ),
-      body: Padding(
+      body: SingleChildScrollView(  // 添加 SingleChildScrollView
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Column(
           children: [
