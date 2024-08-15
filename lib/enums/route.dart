@@ -21,6 +21,7 @@ enum RouteEnum {
   orderList('orderList', '保单信息', '/insurance/orderList'),
   editPolicy('/editPolicy', '添加保单', '/editPolicy'),
   insuranceDetail('/insuranceDetail', '保单详情', '/insuranceDetail'),
+  insuranceDetailAdd('/insuranceDetailAdd', '保单绑定', '/insuranceDetailAdd'),
   insuranceApplicant('insuranceApplicant', '投保人信息', '/insurance/insuranceApplicant'),
   editInsuranceApplicant('/editInsuranceApplicant', '添加投保人', '/editInsuranceApplicant'),
   countRegister('countRegister', '计数盘点', '/insurance/countRegister'),

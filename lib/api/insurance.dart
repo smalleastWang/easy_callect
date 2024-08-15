@@ -116,3 +116,8 @@ Future<void> editInsuranceApplicant(Map<String, dynamic> params) async {
   }
   await HttpUtils.post('/biz/insuranceapplicant/add', params: params);
 }
+
+// 绑定
+Future<void> insurancedetailAdd(Map<String, dynamic> params) async {
+  await HttpUtils.post('/biz/insurancedetail/add', params: params);
+}

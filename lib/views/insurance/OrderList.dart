@@ -201,8 +201,8 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             PrimaryActionButton(text: '修改', onPressed: () => context.push(RouteEnum.editPolicy.fullpath, extra: data)),
-                            // const SizedBox(width: 10),
-                            // OutlineActionButton(text: '绑定', onPressed: () => context.push(RouteEnum.inventorySetUploadTime.fullpath)),
+                            const SizedBox(width: 10),
+                            OutlineActionButton(text: '绑定', onPressed: () => context.push(RouteEnum.insuranceDetailAdd.fullpath)),
                             const SizedBox(width: 10),
                             OutlineActionButton(text: '详情', onPressed: () {
                               context.push(RouteEnum.insuranceDetail.fullpath, extra: { 'id': data['id'] as String });
