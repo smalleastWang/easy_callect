@@ -1,5 +1,6 @@
 
 import 'package:easy_collect/enums/route.dart';
+import 'package:easy_collect/views/common/AnimalSelect.dart';
 import 'package:easy_collect/views/common/DistinguishPigRecord.dart';
 import 'package:easy_collect/views/common/PigAnimal.dart';
 import 'package:easy_collect/views/common/RegisterPigRecord.dart';
@@ -56,6 +57,10 @@ final commonRoutes = GoRoute(
     GoRoute(
       path: RouteEnum.distinguishPigRecord.path,
       builder: (context, state) => const DistinguishPigRecordPage(),
+    ),
+    GoRoute(
+      path: RouteEnum.animalSelect.path,
+      builder: (context, state) => const AnimalSelectPage(),
     ),
   ]
 );

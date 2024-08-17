@@ -1,3 +1,5 @@
+import 'package:easy_collect/api/insurance.dart';
+import 'package:easy_collect/enums/route.dart';
 import 'package:easy_collect/widgets/InsuranceApplicantSelector/InsuranceApplicantSelector.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -14,6 +16,7 @@ class _InsuranceDetailAddPageState extends State<InsuranceDetailAddPage> {
   late GoRouterState state;
   final GlobalKey<InsuranceApplicantSelectorState> _applicantSelectorKey = GlobalKey<InsuranceApplicantSelectorState>();
   late final Map<String, dynamic>? policy;
+  final List<Map<String, dynamic>>? selectedAnimalArr = [];
 
   @override
   void initState() {
@@ -27,7 +30,21 @@ class _InsuranceDetailAddPageState extends State<InsuranceDetailAddPage> {
   }
 
   void _selectApplicant() {
-      _applicantSelectorKey.currentState?.show();
+    _applicantSelectorKey.currentState?.show();
+  }
+
+  void _navigateTo(String path) async {
+    List<Map<String, dynamic>>? selectedAnimalArr = await context.push(path);
+    print('-----result-----: $selectedAnimalArr');
+    String algorithmCodes = selectedAnimalArr!.map((animal) => animal["algorithmCode"])
+      .join(',');
+    setState(() {
+      selectedAnimalArr = selectedAnimalArr;
+      _algorithmCodeController.text = algorithmCodes;
+      _startNoController.text = selectedAnimalArr![0]["no"] ?? '';
+      _endNoController.text = selectedAnimalArr![selectedAnimalArr!.length - 1]["no"] ?? '';
+      _insuranceAmountController.text = selectedAnimalArr!.length > 1 ? '' : '1';
+    });
   }
 
   final TextEditingController _startNoController = TextEditingController();
@@ -100,12 +117,12 @@ class _InsuranceDetailAddPageState extends State<InsuranceDetailAddPage> {
       'algorithmCode': _algorithmCodeController.text,
     };
 
-    // 调用保存方法，假设有一个 `addInsuranceDetail` 方法可以用来保存数据
-    // await addInsuranceDetail(params);
+    // 调用保存方法
+    await insurancedetailAdd(params);
 
     // 保存成功提示
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('保存成功')),
+      const SnackBar(content: Text('绑定成功')),
     );
 
     Navigator.of(context).pop(true);
@@ -171,8 +188,8 @@ class _InsuranceDetailAddPageState extends State<InsuranceDetailAddPage> {
         child: Column(
           children: [
             _buildTextField('保单ID', _policyIdController, readOnly: true,),
-            _buildTextField('选择投保人', _applicantIdController, suffixIcon: const Icon(Icons.arrow_forward_ios, size: 16,), readOnly: true, onTap: _selectApplicant,),
-            _buildTextField('选择牛只', _algorithmCodeController, suffixIcon: const Icon(Icons.arrow_forward_ios, size: 16,), readOnly: true),
+            _buildTextField('选择投保人', _applicantIdController, suffixIcon: const Icon(Icons.arrow_forward_ios, size: 16,), readOnly: true, onTap: _selectApplicant),
+            _buildTextField('选择牛只', _algorithmCodeController, suffixIcon: const Icon(Icons.arrow_forward_ios, size: 16,), readOnly: true, onTap: () => _navigateTo(RouteEnum.animalSelect.fullpath)),
             _buildTextField('起始耳标号', _startNoController),
             _buildTextField('终止耳标号', _endNoController),
             _buildRadioField('性别', _selectedSex!, {'公': '0', '母': '1'}, (value) {
@@ -223,15 +240,15 @@ class _InsuranceDetailAddPageState extends State<InsuranceDetailAddPage> {
               ),
             ),
             const SizedBox(height: 30),
-             InsuranceApplicantSelector(
-                key: _applicantSelectorKey,
-                onApplicantSelected: (applicant) {
-                  setState(() {
-                    applicantId = applicant?.id;
-                    _applicantIdController.text = applicant?.farmerName ?? '';
-                  });
-                },
-              ),
+            InsuranceApplicantSelector(
+              key: _applicantSelectorKey,
+              onApplicantSelected: (applicant) {
+                setState(() {
+                  applicantId = applicant?.id;
+                  _applicantIdController.text = applicant?.farmerName ?? '';
+                });
+              },
+            ),
           ],
         ),
       ),
@@ -239,7 +256,7 @@ class _InsuranceDetailAddPageState extends State<InsuranceDetailAddPage> {
   }
 
   Widget _buildTextField(String label, TextEditingController controller,
-      {bool readOnly = false, Widget? suffixIcon, bool isRequired = false, VoidCallback? onTap}) {
+    {bool readOnly = false, Widget? suffixIcon, bool isRequired = false, VoidCallback? onTap}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Container(
@@ -273,6 +290,7 @@ class _InsuranceDetailAddPageState extends State<InsuranceDetailAddPage> {
                   child: TextField(
                     controller: controller,
                     readOnly: readOnly,
+                    maxLines: null, // 设置为 null 允许换行
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       suffixIcon: suffixIcon,
