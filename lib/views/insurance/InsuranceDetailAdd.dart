@@ -1,3 +1,4 @@
+import 'package:easy_collect/widgets/InsuranceApplicantSelector/InsuranceApplicantSelector.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -10,6 +11,25 @@ class InsuranceDetailAddPage extends StatefulWidget {
 }
 
 class _InsuranceDetailAddPageState extends State<InsuranceDetailAddPage> {
+  late GoRouterState state;
+  final GlobalKey<InsuranceApplicantSelectorState> _applicantSelectorKey = GlobalKey<InsuranceApplicantSelectorState>();
+  late final Map<String, dynamic>? policy;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.state != null && widget.state!.extra != null) {
+      policy = widget.state!.extra as Map<String, dynamic>;
+      setState(() {
+        _policyIdController.text = policy!['id'] ?? '';
+      });
+    }
+  }
+
+  void _selectApplicant() {
+      _applicantSelectorKey.currentState?.show();
+  }
+
   final TextEditingController _startNoController = TextEditingController();
   final TextEditingController _endNoController = TextEditingController();
   final TextEditingController _insuranceNumController = TextEditingController();
@@ -35,6 +55,7 @@ class _InsuranceDetailAddPageState extends State<InsuranceDetailAddPage> {
   String? _selectedQuarantineStatus = '0';
   String? _selectedCoatColor;
   String? _selectedAnimalType;
+  String? applicantId;
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -149,9 +170,9 @@ class _InsuranceDetailAddPageState extends State<InsuranceDetailAddPage> {
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Column(
           children: [
-            _buildTextField('保单ID', _policyIdController),
-            _buildTextField('投保人ID', _applicantIdController),
-            _buildTextField('牛只唯一码', _algorithmCodeController),
+            _buildTextField('保单ID', _policyIdController, readOnly: true,),
+            _buildTextField('选择投保人', _applicantIdController, suffixIcon: const Icon(Icons.arrow_forward_ios, size: 16,), readOnly: true, onTap: _selectApplicant,),
+            _buildTextField('选择牛只', _algorithmCodeController, suffixIcon: const Icon(Icons.arrow_forward_ios, size: 16,), readOnly: true),
             _buildTextField('起始耳标号', _startNoController),
             _buildTextField('终止耳标号', _endNoController),
             _buildRadioField('性别', _selectedSex!, {'公': '0', '母': '1'}, (value) {
@@ -202,51 +223,66 @@ class _InsuranceDetailAddPageState extends State<InsuranceDetailAddPage> {
               ),
             ),
             const SizedBox(height: 30),
+             InsuranceApplicantSelector(
+                key: _applicantSelectorKey,
+                onApplicantSelected: (applicant) {
+                  setState(() {
+                    applicantId = applicant?.id;
+                    _applicantIdController.text = applicant?.farmerName ?? '';
+                  });
+                },
+              ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller, {TextInputType keyboardType = TextInputType.text}) {
+  Widget _buildTextField(String label, TextEditingController controller,
+      {bool readOnly = false, Widget? suffixIcon, bool isRequired = false, VoidCallback? onTap}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Container(
         decoration: BoxDecoration(
           border: Border(bottom: BorderSide(color: Colors.grey.shade300)),
         ),
-        child: Row(
-          children: [
-            Flexible(
-              flex: 3,
-              child: Row(
-                children: [
-                  const Text(
-                    '*',
-                    style: TextStyle(color: Colors.red, fontSize: 16),
+        child: GestureDetector(
+          onTap: onTap,
+          child: AbsorbPointer(
+            absorbing: readOnly,
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Row(
+                    children: [
+                      if (isRequired)
+                        const Text(
+                          '*',
+                          style: TextStyle(color: Colors.red, fontSize: 16),
+                        ),
+                      Text(
+                        label,
+                        style: const TextStyle(color: Colors.black, fontSize: 16),
+                      ),
+                    ],
                   ),
-                  Expanded(
-                    child: Text(
-                      label,
-                      style: const TextStyle(color: Colors.black, fontSize: 16),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Flexible(
-              flex: 7,
-              child: TextField(
-                controller: controller,
-                keyboardType: keyboardType,
-                decoration: const InputDecoration(
-                  border: InputBorder.none,
                 ),
-                style: const TextStyle(color: Colors.black, fontSize: 16),
-              ),
+                Expanded(
+                  flex: 5,
+                  child: TextField(
+                    controller: controller,
+                    readOnly: readOnly,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      suffixIcon: suffixIcon,
+                    ),
+                    style: const TextStyle(color: Colors.black, fontSize: 16),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
