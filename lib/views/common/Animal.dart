@@ -177,15 +177,15 @@ class _AnimalPageState extends ConsumerState<AnimalPage> {
 
 class AnimalItem extends StatelessWidget {
   final Map<String, dynamic> rowData;
-  final GlobalKey<ListWidgetState> listWidgetKey; // 接收传递过来的 listWidgetKey
+  final GlobalKey<ListWidgetState> listWidgetKey; 
 
   const AnimalItem({super.key, required this.rowData, required this.listWidgetKey});
 
   @override
   Widget build(BuildContext context) {
-    StateStatus stateStatus = getStateStatusFromValue(rowData["state"]);
-    AuthStatus pastureAuthStatus = getAuthStatusFromValue(rowData["pastureAuth"]);
-    String mortgageStatus = rowData["mortgage"] == '0' ? '未抵押' : '已抵押';
+    StateStatus stateStatus = getStateStatusFromValue(rowData["state"] ?? '');
+    AuthStatus pastureAuthStatus = getAuthStatusFromValue(rowData["pastureAuth"] ?? '');
+    String mortgageStatus = (rowData["mortgage"] ?? '0') == '0' ? '未抵押' : '已抵押';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -195,7 +195,7 @@ class AnimalItem extends StatelessWidget {
             _buildStatusContainer(stateStatus.description, stateStatus == StateStatus.available),
             const SizedBox(width: 10),
             Text(
-              rowData["no"],
+              rowData["no"] ?? '未知',
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -212,7 +212,7 @@ class AnimalItem extends StatelessWidget {
         const SizedBox(height: 12),
         const Divider(height: 0.5, color: Color(0xFFE2E2E2)),
         const SizedBox(height: 12),
-        Text('注册时间: ${rowData["createTime"]}',
+        Text('注册时间: ${rowData["createTime"] ?? '未知'}',
             style: const TextStyle(color: Color(0xFF999999))),
       ],
     );
