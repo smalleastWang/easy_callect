@@ -16,6 +16,11 @@ Future<PageVoModel> animalPage(AnimalPageRef ref, Map<String, dynamic> params) a
   return data;
 }
 
+// 牛只抵押
+Future<void> animalMortgage(Map<String, dynamic> params) async {
+  await HttpUtils.post('/biz/animal/mortgage', params: params);
+}
+
 // 新增/编辑牛只
 Future<void> editAnimal(Animal params) async {
   if(params.id != null) {
@@ -34,8 +39,8 @@ Future<void> deleteAnimal(Map<String, dynamic> params) async {
 // 牛只授权
 Future<void> handAuth(Map<String, dynamic> params) async {
   String algorithmCode = params['algorithmCode'];
-List<String> algorithmCodes = [];
-  algorithmCodes.add("\"$algorithmCode\"");
+  List<String> algorithmCodes = [];
+  algorithmCodes.add(algorithmCode);
   print('algorithmCodes: $algorithmCodes');
   await HttpUtils.post('/biz/animal/handAuth', params: algorithmCodes);
 }

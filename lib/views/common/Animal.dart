@@ -1,3 +1,4 @@
+import 'package:easy_collect/enums/Route.dart';
 import 'package:easy_collect/enums/index.dart';
 import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
 import 'package:easy_collect/utils/OverlayManager.dart';
@@ -9,6 +10,7 @@ import 'package:easy_collect/api/precisionBreeding.dart';
 import 'package:easy_collect/widgets/List/index.dart';
 import 'package:easy_collect/api/animal.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:go_router/go_router.dart';
 
 enum StateStatus {
   available,
@@ -122,8 +124,14 @@ class AnimalPage extends ConsumerStatefulWidget {
 
 class _AnimalPageState extends ConsumerState<AnimalPage> {
   final GlobalKey<ListWidgetState> listWidgetKey = GlobalKey<ListWidgetState>();
-
- @override
+  void _navigateTo(String path, data) async {
+    bool? result = await context.push(path, extra: data);
+    // 如果返回结果为true，则刷新列表
+    if (result == true) {
+      listWidgetKey.currentState?.refreshWithPreviousParams();
+    }
+  }
+  @override
   void dispose() {
     overlayEntryAllRemove();
     super.dispose();
@@ -160,6 +168,7 @@ class _AnimalPageState extends ConsumerState<AnimalPage> {
                       return AnimalItem(
                         rowData: rowData,
                         listWidgetKey: listWidgetKey, // 将 listWidgetKey 传递给 AnimalItem
+                        onMortgageTap: () => _navigateTo(RouteEnum.animalMortgage.path, rowData),
                       );
                     },
                   );
@@ -178,8 +187,9 @@ class _AnimalPageState extends ConsumerState<AnimalPage> {
 class AnimalItem extends StatelessWidget {
   final Map<String, dynamic> rowData;
   final GlobalKey<ListWidgetState> listWidgetKey; 
+  final VoidCallback onMortgageTap; // 添加回调函数
 
-  const AnimalItem({super.key, required this.rowData, required this.listWidgetKey});
+  const AnimalItem({super.key, required this.rowData, required this.listWidgetKey, required this.onMortgageTap});
 
   @override
   Widget build(BuildContext context) {
@@ -208,7 +218,7 @@ class AnimalItem extends StatelessWidget {
         _buildInfoRow('牧场', rowData["orgName"]),
         _buildInfoRow('圈舍', rowData["buildName"]),
         _buildInfoRowWithButton('授权状态', pastureAuthStatus.description, _buildAuthButton(pastureAuthStatus, rowData)),
-        _buildInfoRowWithButton('抵押状态', mortgageStatus, _buildMortgageButton(mortgageStatus, rowData)),
+        _buildInfoRowWithButton('抵押状态', mortgageStatus, _buildMortgageButton(mortgageStatus, pastureAuthStatus, rowData, context)),
         const SizedBox(height: 12),
         const Divider(height: 0.5, color: Color(0xFFE2E2E2)),
         const SizedBox(height: 12),
@@ -289,13 +299,19 @@ class AnimalItem extends StatelessWidget {
       ),
     );
   }
-  Widget _buildMortgageButton(String status, rowData) {
-    final buttonText = status == '未抵押' ? '抵押' : '解除抵押';
+  Widget _buildMortgageButton(String status, AuthStatus authStatus, rowData, context) {
+    final buttonText = status == '未抵押' ? '抵押' : '';
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 0),
       child: GestureDetector(
         onTap: () async {
-          // todo
+          if(authStatus == AuthStatus.authorized) {
+            onMortgageTap();
+          }else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('牛只未授权, 不能抵押，请先授权')),
+            );
+          }
         },
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),

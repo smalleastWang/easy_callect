@@ -13,7 +13,7 @@ enum RouteEnum {
   editBuilding('/editBuilding', '添加圈舍信息', '/editBuilding'),
   performanceDetail('/performanceDetail', '体征详情', '/performanceDetail'),
   editAiBox('/editAiBox', '添加AI盒子', '/editAiBox'),
-
+  animalMortgage('/animalMortgage', '抵押', '/common/animalMortgage'),
   // 智慧保险
   insurance('/insurance', '智慧保险', '/insurance'),
   standardVerification('standardVerification', '验标注册', '/insurance/standardVerification'),
