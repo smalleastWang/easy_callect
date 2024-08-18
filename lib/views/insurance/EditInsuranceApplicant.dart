@@ -219,7 +219,7 @@ class _EditInsuranceApplicantPageState extends State<EditInsuranceApplicantPage>
             _buildTextField('是否贫困户', _isPovertyController),
             _buildTextField('纬度', _latitudeController),
             _buildTextField('经度', _longitudeController),
-            _buildTextField('其他证件号码', _otherCardNumberController),
+            _buildTextField('其他证件', _otherCardNumberController),
             _buildTextField('联系电话', _phoneController),
             _buildTextField('备注', _remarksController),
             const SizedBox(height: 20),
