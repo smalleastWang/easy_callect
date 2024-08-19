@@ -22,6 +22,7 @@ final List<ModuleModel> moduleList = [
     bgColor: MyColors.insuranceColor,
     children: [
       ModuleItemModel(route: RouteEnum.standardVerification, iconPath: 'assets/icon/insurance/optimized/1.svg'),
+      ModuleItemModel(route: RouteEnum.standardVerificationPig, iconPath: 'assets/icon/insurance/optimized/1.svg'),
       ModuleItemModel(route: RouteEnum.surveyCompared, iconPath: 'assets/icon/insurance/optimized/5.svg'),
       ModuleItemModel(route: RouteEnum.orderList, iconPath: 'assets/icon/insurance/optimized/6.svg'),
       ModuleItemModel(route: RouteEnum.insuranceApplicant, iconPath: 'assets/icon/insurance/optimized/10.svg'),

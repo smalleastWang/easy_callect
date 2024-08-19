@@ -47,6 +47,7 @@ class ListWidget<T> extends ConsumerStatefulWidget {
 
 class ListWidgetState<T> extends ConsumerState<ListWidget> {
   Action? action;
+  bool loading = false;
   Map<String, dynamic> params = {
     'current': 0,
     'pages': 1,
@@ -64,9 +65,10 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
       params.addAll(widget.params!);
     }
     _getList();
-    // ref.listenManual(widget.provider(filterData), (previous, next) {
+    Future.delayed(const Duration(seconds: 10),(){
 
-    // });
+      
+    });
     super.initState();
   }
 
@@ -93,6 +95,11 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
 
   // 获取table数据
   AsyncValue<PageVoModel>? _getList([int? current, bool? isRefresh]) {
+    if (current == 1) {
+      setState(() {
+        loading = true;
+      });
+    }
     // 判断是否需要刷新
     if (isRefresh == true || current == 1) {
       params['current'] = 1; // 重置为第一页
@@ -123,6 +130,14 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
     params.removeWhere((key, value) => value == null || value == 'null');
     // 请求数据
     final AsyncValue<PageVoModel> res = ref.refresh(widget.provider(params));
+    ref.listenManual(widget.provider(params), (previous, next) {
+      if (previous != null) {
+        setState(() {
+          loading = !(previous as dynamic).isLoading;
+        });
+      }
+    });
+    
     if (res.hasError) {
       print('Error: ${res.error}');
       throw Exception(res.error);
@@ -271,6 +286,7 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
                       params['pages'] = value.pages;
                       params['size'] = value.size;
                       params['total'] = value.total;
+                      if (loading) return const Center(child: CircularProgressIndicator());
                       return ListView.builder(
                         shrinkWrap: true,
                         itemCount: value.records.length,

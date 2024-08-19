@@ -1,5 +1,6 @@
 
 import 'package:easy_collect/api/insurance.dart';
+import 'package:easy_collect/api/pigRegister.dart';
 import 'package:easy_collect/enums/Route.dart';
 import 'package:easy_collect/enums/index.dart';
 import 'package:easy_collect/enums/register.dart';
@@ -20,7 +21,8 @@ final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 ///
 /// 验标注册
 class StandardVerificationPage extends ConsumerStatefulWidget {
-  const StandardVerificationPage({super.key});
+  final RegisterAnimalType registerType;
+  const StandardVerificationPage({super.key, required this.registerType});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _StandardVerificationPageState();
@@ -107,7 +109,7 @@ class _StandardVerificationPageState extends ConsumerState<StandardVerificationP
         "pastureId": houseData.parentId,
       });
       if (isRegister.toLowerCase() != 'false') {
-        return EasyLoading.showError('牛编号在该牧场已注册');
+        return EasyLoading.showError('编号在该牧场已注册');
       }
 
       RegisterQueryModel params = RegisterQueryModel(
@@ -116,6 +118,7 @@ class _StandardVerificationPageState extends ConsumerState<StandardVerificationP
         pastureId: houseData.parentId,
         // faceImgs: _imageController.value!.map((e) => e.value).toList()
       );
+      
       // 无人机注册
       if (registerMedia == RegisterMediaEnum.drones.value) {
         if (_dronesController.value == null || _dronesController.value!.isEmpty) return EasyLoading.showError('请上传牛脸图片');
@@ -139,7 +142,13 @@ class _StandardVerificationPageState extends ConsumerState<StandardVerificationP
         if (_bodyImgsController.value == null || _bodyImgsController.value!.isEmpty) return EasyLoading.showError('请上传牛脸图片');
         params.bodyImgs = _bodyImgsController.value!.map((e) => e.value).toList();
       }
-      await RegisterApi.cattleApp(params);
+      // 猪注册
+      if (widget.registerType == RegisterAnimalType.pig) {
+        params.pigNo = _numController.text;
+        await registerPigAppApi(params);
+      } else {
+        await RegisterApi.cattleApp(params);
+      }
       context.pop();
     } finally {
       setState(() {

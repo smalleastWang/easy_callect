@@ -16,8 +16,10 @@ enum RouteEnum {
 
   // 智慧保险
   insurance('/insurance', '智慧保险', '/insurance'),
-  standardVerification('standardVerification', '验标注册', '/insurance/standardVerification'),
-  surveyCompared('surveyCompared', '查勘对比', '/insurance/surveyCompared'),
+  standardVerification('standardVerification', '验标注册牛', '/insurance/standardVerification'),
+  standardVerificationPig('standardVerificationPig', '验标注册猪', '/insurance/standardVerificationPig'),
+  surveyCompared('surveyCompared', '查勘对比牛', '/insurance/surveyCompared'),
+  surveyComparedPig('surveyComparedPig', '查勘对比猪', '/insurance/surveyComparedPig'),
   orderList('orderList', '保单信息', '/insurance/orderList'),
   editPolicy('/editPolicy', '添加保单', '/editPolicy'),
   insuranceDetail('/insuranceDetail', '保单详情', '/insuranceDetail'),

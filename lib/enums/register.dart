@@ -4,6 +4,13 @@ import 'package:easy_collect/enums/index.dart';
 import 'package:easy_collect/models/common/Option.dart';
 
 
+// 注册动物
+enum RegisterAnimalType {
+  ox,
+  pig
+}
+
+
 enum RegisterTypeEnum implements EnumOption {
   single(1, '单个注册'),
   multiple(2, '批量注册');

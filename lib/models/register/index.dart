@@ -5,7 +5,9 @@ part 'index.g.dart';
 @JsonSerializable()
 class RegisterQueryModel {
   // 牛只编号
-  String cattleNo;
+  String? cattleNo;
+  // 猪编号
+  String? pigNo;
   // 牧场id
   String pastureId;
   // 圈舍id
@@ -15,9 +17,10 @@ class RegisterQueryModel {
   // 牛身图片
   List<String>? bodyImgs;
   RegisterQueryModel({
-    required this.cattleNo,
+    this.cattleNo,
     required this.pastureId,
     required this.houseId,
+    this.pigNo,
     this.faceImgs,
     this.bodyImgs,
   });

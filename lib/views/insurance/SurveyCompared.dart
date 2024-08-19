@@ -20,7 +20,8 @@ final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 ///
 /// 查勘对比
 class SurveyComparedPage extends ConsumerStatefulWidget {
-  const SurveyComparedPage({super.key});
+  final RegisterAnimalType registerType;
+  const SurveyComparedPage({super.key, required this.registerType});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _SurveyComparedPageState();
@@ -116,9 +117,11 @@ class _SurveyComparedPageState extends ConsumerState<SurveyComparedPage> {
         return;
       }
       // 视频
-      if (registerMedia == RegisterMediaEnum.video.value) {
+      if ('surveyType' == SurveyTypeEnum.single.value) {
       }
-      
+      // 视频
+      if ('surveyType' == SurveyTypeEnum.multiple.value) {
+      }
     } finally {
       setState(() {
         submitLoading = false;
@@ -212,15 +215,6 @@ class _SurveyComparedPageState extends ConsumerState<SurveyComparedPage> {
                     ],
                   ),
                 ),
-                // EnclosurePickerWidget(
-                //   scaffoldKey: _scaffoldKey,
-                //   options: enclosureList.value ?? [],
-                //   controller: _enclosureController,
-                //   decoration: getInputDecoration(
-                //     labelText: '牧场/圈舍',
-                //     hintText: '请输入牛耳耳标号(不支持中文)',
-                //   ),
-                // ),
                 RegisterTypeWidget<int>(defaultValue: registerType, options: enumsToOptions(RegisterTypeEnum.values), onChange: _changeRegisterType),
                 _getRegisterCnt,
 
@@ -230,7 +224,7 @@ class _SurveyComparedPageState extends ConsumerState<SurveyComparedPage> {
                 const SizedBox(height: 50),
                 BlockButton(
                   onPressed: submitLoading ? null : () => _handleSubmit(enclosureList.value ?? []),
-                  text: '注册'
+                  text: '查勘'
                 )
               ],
             ),

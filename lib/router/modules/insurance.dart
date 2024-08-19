@@ -1,5 +1,6 @@
 
 
+import 'package:easy_collect/enums/register.dart';
 import 'package:easy_collect/enums/route.dart';
 import 'package:easy_collect/views/insurance/CountRegister.dart';
 import 'package:easy_collect/views/insurance/OrderList.dart';
@@ -14,15 +15,25 @@ final insuranceRoutes = GoRoute(
   path: RouteEnum.insurance.path,
   builder: (context, state) => const InsurancePage(),
   routes: [
-    // 验标注册
+    // 验标注册-牛
     GoRoute(
       path: RouteEnum.standardVerification.path,
-      builder: (context, state) => const StandardVerificationPage(),
+      builder: (context, state) => const StandardVerificationPage(registerType: RegisterAnimalType.ox),
+    ),
+    // 验标注册-猪
+    GoRoute(
+      path: RouteEnum.standardVerificationPig.path,
+      builder: (context, state) => const StandardVerificationPage(registerType: RegisterAnimalType.pig),
     ),
     // 查勘对比
     GoRoute(
       path: RouteEnum.surveyCompared.path,
-      builder: (context, state) => const SurveyComparedPage(),
+      builder: (context, state) => const SurveyComparedPage(registerType: RegisterAnimalType.ox),
+    ),
+    // 查勘对比-猪
+    GoRoute(
+      path: RouteEnum.surveyComparedPig.path,
+      builder: (context, state) => const SurveyComparedPage(registerType: RegisterAnimalType.pig),
     ),
     GoRoute(
       path: RouteEnum.orderList.path,

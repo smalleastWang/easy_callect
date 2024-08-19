@@ -70,8 +70,9 @@ class ModuleWidget extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 10),
                                 Text(
-                                  e.title ?? e.route.title, 
-                                  style: const TextStyle(fontSize: 13, color: Color(0xFF444444)), // 设置小模块标题字体大小为13px，颜色为#444444
+                                  e.title ?? e.route.title,
+                                  maxLines: 1,
+                                  style: const TextStyle(fontSize: 13, color: Color(0xFF444444), overflow: TextOverflow.fade), // 设置小模块标题字体大小为13px，颜色为#444444
                                 ),
                               ],
                             ),
