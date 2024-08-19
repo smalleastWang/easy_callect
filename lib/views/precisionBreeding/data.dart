@@ -38,28 +38,28 @@ enum InventoryType {
   static String getLabel(int value) => InventoryType.values.firstWhere((i) => i.value == value, orElse: () => InventoryType.unknown).label;
 }
 
-enum WarnType implements EnumOption {
-  increaseExercise(0, '运动量增加'),
-  reducedExercise(1, '运动量减少'),
-  reducedFoodIntake(2, '食量异常'),
-  crawlOver(3, '爬跨行为'),
-  abnormalLyingTime(4, '躺卧时间异常'),
-  deathWarning(5, '死亡预警'),
-  outOfCircleWarning(6, '离圈预警'),
-  unknown(-1, '未知');
+enum WarnType implements EnumStrOption {
+  increaseExercise('0', '运动量增加'),
+  reducedExercise('1', '运动量减少'),
+  reducedFoodIntake('2', '食量异常'),
+  crawlOver('3', '爬跨行为'),
+  abnormalLyingTime('4', '躺卧时间异常'),
+  deathWarning('5', '死亡预警'),
+  outOfCircleWarning('6', '离圈预警'),
+  unknown('-1', '未知');
 
-  final int value;
+  final String value;
   final String label;
   const WarnType(this.value, this.label);
   
   static WarnType getTypeByLabel(String title) => WarnType.values.firstWhere((i) => i.name == title, orElse: () => WarnType.unknown);
-  static WarnType getTypeByValue(int value) => WarnType.values.firstWhere((i) => i.value == value, orElse: () => WarnType.unknown);
+  static WarnType getTypeByValue(String value) => WarnType.values.firstWhere((i) => i.value == value, orElse: () => WarnType.unknown);
 
-  static int getValue(String label) => WarnType.values.firstWhere((i) => i.label == label, orElse: () => WarnType.unknown).value;
-  static String getLabel(int value) => WarnType.values.firstWhere((i) => i.value == value, orElse: () => WarnType.unknown).label;
+  static String getValue(String label) => WarnType.values.firstWhere((i) => i.label == label, orElse: () => WarnType.unknown).value;
+  static String getLabel(String value) => WarnType.values.firstWhere((i) => i.value == value, orElse: () => WarnType.unknown).label;
 
   @override
-  OptionModel<int> toOptionModel() {
+  OptionModel<String> toOptionModel() {
     return OptionModel(value: value, label: label);
   }
 }

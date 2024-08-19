@@ -47,7 +47,7 @@ class _IntelligencewarnPageState extends ConsumerState<IntelligencewarnPage> {
                     provider: intelligencewarnPageProvider,
                     filterList: [
                       DropDownMenuModel(name: '牛耳标', layerLink: LayerLink(), fieldName: 'no', widget: WidgetType.input),
-                      DropDownMenuModel(name: '预警类型', list: enumsToOptions(WarnType.values, true), layerLink: LayerLink(), fieldName: 'warnType'),
+                      DropDownMenuModel(name: '预警类型', list: enumsStrValToOptions(WarnType.values, true), layerLink: LayerLink(), fieldName: 'warnType'),
                       DropDownMenuModel(name: '预警时间', layerLink: LayerLink(), fieldName: 'startDate,endDate', widget: WidgetType.dateRangePicker),
                     ],
                     builder: (rowData) {
@@ -91,7 +91,7 @@ class IntelligencewarnItem extends StatelessWidget {
             ),
             const SizedBox(width: 10),
             Text(
-              rowData["no"],
+              rowData["no"] ?? "未上传耳标号",
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const Spacer(),
