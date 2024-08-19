@@ -91,7 +91,7 @@ class BehaviorItem extends StatelessWidget {
               ),
               const SizedBox(width: 10),
               Text(
-                rowData["no"],
+                rowData["no"] ?? '未上传耳标号',
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -107,7 +107,7 @@ class BehaviorItem extends StatelessWidget {
         ),
         ListCardCellTime(
           label: '检测时间',
-          value: rowData["createTime"],
+          value: rowData["createTime"] ?? '',
         ),
       ],
     );
