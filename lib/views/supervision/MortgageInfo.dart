@@ -73,29 +73,30 @@ class _MortgageInfoPageState extends ConsumerState<MortgageInfoPage> {
       appBar: AppBar(
         title: Text(RouteEnum.mortgageInfo.title),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          children: [
-            AreaSelector(
-              enableCitySelection: true,
-              onAreaSelected: _onAreaSelected,
-            ),
-            const SizedBox(height: 16.0),
-            Expanded(
-              child: mortgageInfo.when(
+      body: SingleChildScrollView( // 包裹整个内容区域
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            children: [
+              AreaSelector(
+                enableCitySelection: true,
+                onAreaSelected: _onAreaSelected,
+              ),
+              const SizedBox(height: 16.0),
+              mortgageInfo.when(
                 data: (data) => data == null
                     ? _buildNoDataWidget()
                     : _buildDataWidget(context, data),
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, stack) => Center(child: Text('Error: $error')),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
+
 
   Widget _buildNoDataWidget() {
     return const Center(child: Text('未获取到抵押信息'));
@@ -104,31 +105,31 @@ class _MortgageInfoPageState extends ConsumerState<MortgageInfoPage> {
   Widget _buildDataWidget(BuildContext context, Monitoring data) {
     final breedingData = _getBreedingData(data);
 
-    return StatefulBuilder(
-      builder: (context, setState) {
+    String selectedCategory = '';
+    int selectedValue = 0;
 
-        return Column(
-          children: [
-            _buildInfoGrid(data),
-            if (data.cowNum != null && data.cowNum! > 0) ...[
-              _buildPieChart(
-                context,
-                breedingData,
-                (selectedDatum) {
-                  setState(() {
-                    EasyLoading.showToast(
-                      '${selectedDatum.category}: ${selectedDatum.value}',
-                      duration: const Duration(seconds: 2),
-                      toastPosition: EasyLoadingToastPosition.bottom,
-                    );
-                  });
-                }
-              ),
-              _buildLegend(breedingData),
-            ],
-          ],
-        );
-      },
+    return Column(
+      children: [
+        _buildInfoGrid(data),
+        if (data.cowNum != null && data.cowNum! > 0) ...[
+          _buildPieChart(
+            context,
+            breedingData,
+            (selectedDatum) {
+              setState(() {
+                selectedCategory = selectedDatum.category;
+                selectedValue = selectedDatum.value;
+                EasyLoading.showToast(
+                  '$selectedCategory: $selectedValue',
+                  duration: const Duration(seconds: 2),
+                  toastPosition: EasyLoadingToastPosition.bottom,
+                );
+              });
+            },
+          ),
+          _buildLegend(breedingData),
+        ],
+      ],
     );
   }
 
@@ -147,7 +148,7 @@ class _MortgageInfoPageState extends ConsumerState<MortgageInfoPage> {
       padding: const EdgeInsets.symmetric(horizontal: 0),
       child: GridView.builder(
         shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
+        physics: const BouncingScrollPhysics(), // 允许滚动
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           childAspectRatio: 2,
@@ -211,16 +212,16 @@ class _MortgageInfoPageState extends ConsumerState<MortgageInfoPage> {
   Widget _buildPieChart(
     BuildContext context,
     List<BreedingData> breedingData,
-    Function(BreedingData) onSelect
+    Function(BreedingData) onSelect,
   ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12.0),
       child: Tooltip(
         message: '点击图表查看详情',
         child: Transform.translate(
-          offset: const Offset(0, -30),
+          offset: const Offset(0, -5), // 缩小偏移量
           child: SizedBox(
-            height: 400,
+            height: MediaQuery.of(context).size.height * 0.4, // 根据屏幕高度调整图表高度
             child: charts.PieChart<String>(
               _createDonutChartData(breedingData),
               animate: true,
