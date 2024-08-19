@@ -95,12 +95,12 @@ enum SurveyMediaEnum implements EnumOption {
 }
 
 enum CountMediaEnum implements EnumStrOption {
-  img('cattle-img', '图像盘点'),
-  video('cattle-video', '视频盘点'),
-  stream('cattle-stream', '视频流盘点');
-  // pigImg('pig-img', '猪图片'),
-  // pigVideo('pig-video', '猪视频'),
-  // pigStream('pig-stream', '猪视频流');
+  img('cattle-img', '牛只图片'),
+  video('cattle-video', '牛只视频'),
+  stream('cattle-stream', '牛视频流'),
+  pigImg('pig-img', '猪图片'),
+  pigVideo('pig-video', '猪视频'),
+  pigStream('pig-stream', '猪视频流');
   final String value;
   final String label;
 

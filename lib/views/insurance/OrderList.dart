@@ -107,9 +107,18 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
                         focusNode: _focusSearchInputNode,
                         decoration: InputDecoration(
                           hintText: '请输入保单合同号',
-                          border: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            borderSide: BorderSide.none,
+                          ),
                           fillColor: const Color(0xFFF5F7F9),
                           filled: true,
                           contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
@@ -130,7 +139,7 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
                                 style: TextButton.styleFrom(
                                   backgroundColor: const Color(0xFF5D8FFD),
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12.0),
+                                    borderRadius: BorderRadius.circular(8.0),
                                   ),
                                   padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                                   minimumSize: const Size(50.0, 40.0),
@@ -192,8 +201,8 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             PrimaryActionButton(text: '修改', onPressed: () => context.push(RouteEnum.editPolicy.fullpath, extra: data)),
-                            // const SizedBox(width: 10),
-                            // OutlineActionButton(text: '绑定', onPressed: () => context.push(RouteEnum.inventorySetUploadTime.fullpath)),
+                            const SizedBox(width: 10),
+                            OutlineActionButton(text: '绑定', onPressed: () => context.push(RouteEnum.insuranceDetailAdd.fullpath, extra: data)),
                             const SizedBox(width: 10),
                             OutlineActionButton(text: '详情', onPressed: () {
                               context.push(RouteEnum.insuranceDetail.fullpath, extra: { 'id': data['id'] as String });

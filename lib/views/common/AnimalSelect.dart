@@ -1,4 +1,3 @@
-import 'package:easy_collect/enums/Route.dart';
 import 'package:easy_collect/enums/index.dart';
 import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
 import 'package:easy_collect/utils/OverlayManager.dart';
@@ -9,8 +8,6 @@ import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/api/precisionBreeding.dart';
 import 'package:easy_collect/widgets/List/index.dart';
 import 'package:easy_collect/api/animal.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:go_router/go_router.dart';
 
 enum StateStatus {
   available,
@@ -115,22 +112,17 @@ AuthStatus getAuthStatusFromValue(String value) {
   }
 }
 
-class AnimalPage extends ConsumerStatefulWidget {
-  const AnimalPage({super.key});
+class AnimalSelectPage extends ConsumerStatefulWidget {
+  const AnimalSelectPage({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _AnimalPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _AnimalSelectPageState();
 }
 
-class _AnimalPageState extends ConsumerState<AnimalPage> {
+class _AnimalSelectPageState extends ConsumerState<AnimalSelectPage> {
   final GlobalKey<ListWidgetState> listWidgetKey = GlobalKey<ListWidgetState>();
-  void _navigateTo(String path, data) async {
-    bool? result = await context.push(path, extra: data);
-    // 如果返回结果为true，则刷新列表
-    if (result == true) {
-      listWidgetKey.currentState?.refreshWithPreviousParams();
-    }
-  }
+  List<Map<String, dynamic>> selectedItems = []; // 用于保存选中的牛只项
+
   @override
   void dispose() {
     overlayEntryAllRemove();
@@ -143,7 +135,32 @@ class _AnimalPageState extends ConsumerState<AnimalPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('牛只信息'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        title: const Text('选择牛只'),
+         actions: [
+          GestureDetector(
+            onTap: () {
+              // 处理确定按钮的点击事件，输出选中的项
+              if (selectedItems.isNotEmpty) {
+                // 执行保存逻辑，或将数据传递给上一个页面
+                print('选中的牛只项: ${selectedItems.length}');
+              }
+              Navigator.of(context).pop(selectedItems);
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+              child: const Text(
+                '确定',
+                style: TextStyle(color: Color(0xFF297DFF), fontSize: 14),
+              ),
+            ),
+          ),
+        ],
       ),
       body: Container(
         color: const Color(0xFFF1F5F9),
@@ -167,8 +184,9 @@ class _AnimalPageState extends ConsumerState<AnimalPage> {
                     builder: (rowData) {
                       return AnimalItem(
                         rowData: rowData,
-                        listWidgetKey: listWidgetKey, // 将 listWidgetKey 传递给 AnimalItem
-                        onMortgageTap: () => _navigateTo(RouteEnum.animalMortgage.path, rowData),
+                        listWidgetKey: listWidgetKey,
+                        isSelected: selectedItems.contains(rowData), // 检查当前项是否被选中
+                        onSelect: _handleItemSelected, // 处理选中事件
                       );
                     },
                   );
@@ -182,14 +200,31 @@ class _AnimalPageState extends ConsumerState<AnimalPage> {
       ),
     );
   }
+
+  void _handleItemSelected(Map<String, dynamic> rowData, bool isSelected) {
+    setState(() {
+      if (isSelected) {
+        selectedItems.add(rowData);
+      } else {
+        selectedItems.remove(rowData);
+      }
+    });
+  }
 }
 
 class AnimalItem extends StatelessWidget {
   final Map<String, dynamic> rowData;
-  final GlobalKey<ListWidgetState> listWidgetKey; 
-  final VoidCallback onMortgageTap; // 添加回调函数
+  final GlobalKey<ListWidgetState> listWidgetKey;
+  final bool isSelected; // 是否选中
+  final Function(Map<String, dynamic>, bool) onSelect; // 选中事件回调
 
-  const AnimalItem({super.key, required this.rowData, required this.listWidgetKey, required this.onMortgageTap});
+  const AnimalItem({
+    super.key, 
+    required this.rowData, 
+    required this.listWidgetKey, 
+    required this.isSelected, 
+    required this.onSelect,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -197,34 +232,49 @@ class AnimalItem extends StatelessWidget {
     AuthStatus pastureAuthStatus = getAuthStatusFromValue(rowData["pastureAuth"] ?? '');
     String mortgageStatus = (rowData["mortgage"] ?? '0') == '0' ? '未抵押' : '已抵押';
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
+    return InkWell(
+      onTap: () {
+        onSelect(rowData, !isSelected); // 切换选中状态
+      },
+      child: Container(
+        color: Colors.transparent,
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildStatusContainer(stateStatus.description, stateStatus == StateStatus.available),
-            const SizedBox(width: 10),
-            Text(
-              rowData["no"] ?? '未知',
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+            Row(
+              children: [
+                _buildStatusContainer(stateStatus.description, stateStatus == StateStatus.available),
+                const SizedBox(width: 10),
+                Text(
+                  rowData["no"] ?? '未知',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Spacer(),
+                Checkbox(
+                  value: isSelected, // 根据当前状态确定是否选中
+                  onChanged: (value) {
+                    onSelect(rowData, value ?? false);
+                  },
+                ),
+              ],
             ),
-            const Spacer(),
+            const SizedBox(height: 12),
+            _buildInfoRow('牧场', rowData["orgName"]),
+            _buildInfoRow('圈舍', rowData["buildName"]),
+            _buildInfoRow('授权状态', pastureAuthStatus.description),
+            _buildInfoRow('抵押状态', mortgageStatus),
+            // const SizedBox(height: 12),
+            // const Divider(height: 0.5, color: Color(0xFFE2E2E2)),
+            // const SizedBox(height: 12),
+            // Text('注册时间: ${rowData["createTime"] ?? '未知'}',
+            //     style: const TextStyle(color: Color(0xFF999999))),
           ],
         ),
-        const SizedBox(height: 12),
-        _buildInfoRow('牧场', rowData["orgName"]),
-        _buildInfoRow('圈舍', rowData["buildName"]),
-        _buildInfoRowWithButton('授权状态', pastureAuthStatus.description, _buildAuthButton(pastureAuthStatus, rowData)),
-        _buildInfoRowWithButton('抵押状态', mortgageStatus, _buildMortgageButton(mortgageStatus, pastureAuthStatus, rowData, context)),
-        const SizedBox(height: 12),
-        const Divider(height: 0.5, color: Color(0xFFE2E2E2)),
-        const SizedBox(height: 12),
-        Text('注册时间: ${rowData["createTime"] ?? '未知'}',
-            style: const TextStyle(color: Color(0xFF999999))),
-      ],
+      ),
     );
   }
 
@@ -248,78 +298,6 @@ class AnimalItem extends StatelessWidget {
       child: Text(
         '$label     ${value == null || value.isEmpty ? '未知' : value}',
         style: const TextStyle(color: Color(0xFF666666)),
-      ),
-    );
-  }
-
-  Widget _buildInfoRowWithButton(String label, String? value, Widget button) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              '$label     ${value == null || value.isEmpty ? '未知' : value}',
-              style: const TextStyle(color: Color(0xFF666666)),
-            ),
-          ),
-          button,
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAuthButton(AuthStatus status, rowData) {
-    final buttonText = status == AuthStatus.authorized ? '取消授权' : '授权';
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 0),
-      child: GestureDetector(
-        onTap: () async {
-          if (status == AuthStatus.authorized) {
-            await checkAuth(rowData);
-            await cancelAuth(rowData);
-            EasyLoading.showToast('取消授权成功');
-          } else {
-            await handAuth(rowData);
-            EasyLoading.showToast('授权成功');
-          }
-          if (listWidgetKey.currentState != null) {
-            listWidgetKey.currentState?.refreshWithPreviousParams();
-          } else {
-            EasyLoading.showToast('刷新失败，listWidgetKey为空');
-          }
-        },
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-          child: Text(
-            buttonText,
-            style: const TextStyle(color: Color(0xFF297DFF), fontSize: 14),
-          ),
-        ),
-      ),
-    );
-  }
-  Widget _buildMortgageButton(String status, AuthStatus authStatus, rowData, context) {
-    final buttonText = status == '未抵押' ? '抵押' : '';
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 0),
-      child: GestureDetector(
-        onTap: () async {
-          if(authStatus == AuthStatus.authorized) {
-            onMortgageTap();
-          }else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('牛只未授权, 不能抵押，请先授权')),
-            );
-          }
-        },
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-          child: Text(
-            buttonText,
-            style: const TextStyle(color: Color(0xFF297DFF), fontSize: 14),
-          ),
-        ),
       ),
     );
   }

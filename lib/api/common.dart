@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:easy_collect/models/buildings/building.dart';
 import 'package:easy_collect/models/common/Area.dart';
+import 'package:easy_collect/models/common/Bank.dart';
 import 'package:easy_collect/models/dict/Dict.dart';
 import 'package:easy_collect/models/register/Upload.dart';
 import 'package:easy_collect/utils/global.dart';
@@ -85,4 +86,15 @@ Future<List<DictModel>> dict(DictRef ref) async {
   await databaseBatch.commit();
 
   return dictTree;
+}
+
+/// 金融机构列表
+@riverpod
+Future<List<Bank>> bankList(BankListRef ref, Map<String, dynamic> params) async {
+  List<dynamic> data = await HttpUtils.get('/biz/animal/bankSelector', params: params);
+  List<Bank> list = [];
+  for (var item in data) {
+    list.add(Bank.fromJson(item));
+  }
+  return list;
 }

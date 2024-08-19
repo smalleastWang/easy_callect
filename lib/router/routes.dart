@@ -9,12 +9,14 @@ import 'package:easy_collect/router/modules/precisionBreeding.dart';
 import 'package:easy_collect/router/modules/supervision.dart';
 import 'package:easy_collect/router/modules/common.dart';
 import 'package:easy_collect/utils/storage.dart';
+import 'package:easy_collect/views/common/AnimalMortgage.dart';
 import 'package:easy_collect/views/common/EditBuilding.dart';
 import 'package:easy_collect/views/common/EditAiBox.dart';
 import 'package:easy_collect/views/home/index.dart';
 import 'package:easy_collect/views/insurance/EditInsuranceApplicant.dart';
 import 'package:easy_collect/views/insurance/EditPolicy.dart';
 import 'package:easy_collect/views/insurance/InsuranceDetail.dart';
+import 'package:easy_collect/views/insurance/InsuranceDetailAdd.dart';
 import 'package:easy_collect/views/my/Login.dart';
 import 'package:easy_collect/views/my/ComboList.dart';
 import 'package:easy_collect/views/my/ComboDetail.dart';
@@ -113,6 +115,19 @@ final List<GoRoute> routes = [
       return InsuranceDetailPage(
         id: extra['id']!,
       );
+    },
+  ),
+  GoRoute(
+    path: RouteEnum.insuranceDetailAdd.path,
+    builder: (context, state) {
+      return InsuranceDetailAddPage(state: state);
+    },
+  ),
+  GoRoute(
+    path: RouteEnum.animalMortgage.path,
+    // builder: (context, state) => const AnimalMortgagePage(),
+    builder: (context, state) {
+      return AnimalMortgagePage(state: state);
     },
   ),
   GoRoute(

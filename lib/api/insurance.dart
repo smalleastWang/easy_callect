@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:easy_collect/models/PageVo.dart';
+import 'package:easy_collect/models/insurance/InsuranceApplicant.dart';
 import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/utils/http/request.dart';
 import 'package:image_picker/image_picker.dart';
@@ -108,6 +109,26 @@ Future<PageVoModel> insuranceApplicantList(InsuranceApplicantListRef ref, Map<St
   return data;
 }
 
+/// 投保人选择组件列表
+@riverpod
+Future<List<InsuranceApplicant>> applicantList(ApplicantListRef ref, Map<String, dynamic> params) async {
+  // 发送 HTTP 请求并获取响应数据
+  Map<String, dynamic> res = await HttpUtils.get('/biz/insuranceapplicant/page', params: params);
+  
+  // 将响应数据解析为 PageVoModel
+  PageVoModel data = PageVoModel.fromJson(res);
+  
+  // 将记录转换为 InsuranceApplicant 列表
+  List<InsuranceApplicant> list = data.records.map((item) => InsuranceApplicant.fromJson(item)).toList();
+  
+  // 如果当前页不是第一页，并且有以前的状态，则合并记录
+  if (params['current'] != 1 && ref.state.hasValue) {
+    list.insertAll(0, ref.state.value!);
+  }
+  
+  return list;
+}
+
 // 新增/编辑投保人
 Future<void> editInsuranceApplicant(Map<String, dynamic> params) async {
   if(params['id'] != null) {
@@ -115,4 +136,9 @@ Future<void> editInsuranceApplicant(Map<String, dynamic> params) async {
       return;
   }
   await HttpUtils.post('/biz/insuranceapplicant/add', params: params);
+}
+
+// 绑定
+Future<void> insurancedetailAdd(Map<String, dynamic> params) async {
+  await HttpUtils.post('/biz/insurancedetail/add', params: params);
 }
