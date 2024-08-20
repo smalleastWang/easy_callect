@@ -72,7 +72,7 @@ Future<List<EnclosureModel>> enclosureList(EnclosureListRef ref) async {
 Future<PageVoModel> orderList(OrderListRef ref, Map<String, dynamic> params) async {
   Map<String, dynamic> res = await HttpUtils.get('/biz/policy/page', params: params);
   PageVoModel data = PageVoModel.fromJson(res);
-  if (params['current'] != 1 && ref.state.hasValue) {
+  if (data.current != 1 && ref.state.hasValue) {
     data.records.insertAll(0, ref.state.value!.records);
   }
   return data;
@@ -92,7 +92,7 @@ Future<void> editPolicy(Map<String, dynamic> params) async {
 Future<PageVoModel> insuranceDetail(InsuranceDetailRef ref, Map<String, dynamic> params) async {
   Map<String, dynamic> res = await HttpUtils.get('/biz/insurancedetail/page', params: params);
   PageVoModel data = PageVoModel.fromJson(res);
-  if (params['current'] != 1 && ref.state.hasValue) {
+  if (data.current != 1 && ref.state.hasValue) {
     data.records.insertAll(0, ref.state.value!.records);
   }
   return data;
@@ -103,7 +103,7 @@ Future<PageVoModel> insuranceDetail(InsuranceDetailRef ref, Map<String, dynamic>
 Future<PageVoModel> insuranceApplicantList(InsuranceApplicantListRef ref, Map<String, dynamic> params) async {
   Map<String, dynamic> res = await HttpUtils.get('/biz/insuranceapplicant/page', params: params);
   PageVoModel data = PageVoModel.fromJson(res);
-  if (params['current'] != 1 && ref.state.hasValue) {
+  if (data.current != 1 && ref.state.hasValue) {
     data.records.insertAll(0, ref.state.value!.records);
   }
   return data;
@@ -122,7 +122,7 @@ Future<List<InsuranceApplicant>> applicantList(ApplicantListRef ref, Map<String,
   List<InsuranceApplicant> list = data.records.map((item) => InsuranceApplicant.fromJson(item)).toList();
   
   // 如果当前页不是第一页，并且有以前的状态，则合并记录
-  if (params['current'] != 1 && ref.state.hasValue) {
+  if (data.current != 1 && ref.state.hasValue) {
     list.insertAll(0, ref.state.value!);
   }
   

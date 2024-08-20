@@ -12,7 +12,7 @@ part 'inventory.g.dart';
 Future<PageVoModel> imageInventory(ImageInventoryRef ref, Map<String, dynamic> params) async {
   Map<String, dynamic> res = await HttpUtils.get('/biz/scanAmount/pageApplicationPlatform', params: params);
   PageVoModel data = PageVoModel.fromJson(res);
-  if (params['current'] != 1 && ref.state.hasValue) {
+  if (data.current != 1 && ref.state.hasValue) {
     data.records.insertAll(0, ref.state.value!.records);
   }
   return data;
@@ -23,7 +23,7 @@ Future<PageVoModel> imageInventory(ImageInventoryRef ref, Map<String, dynamic> p
 Future<PageVoModel> cntInventoryInfoPage(CntInventoryInfoPageRef ref, Map<String, dynamic> params) async {
   Map<String, dynamic> res = await HttpUtils.get('/biz/inventoryCnt/page', params: params);
   PageVoModel data = PageVoModel.fromJson(res);
-  if (params['current'] != 1 && ref.state.hasValue) {
+  if (data.current != 1 && ref.state.hasValue) {
     data.records.insertAll(0, ref.state.value!.records);
   }
   return data;
@@ -34,7 +34,7 @@ Future<PageVoModel> cntInventoryInfoPage(CntInventoryInfoPageRef ref, Map<String
 Future<PageVoModel> regInventoryInfoPage(RegInventoryInfoPageRef ref, Map<String, dynamic> params) async {
   Map<String, dynamic> res = await HttpUtils.get('/biz/inventory/page', params: params);
   PageVoModel data = PageVoModel.fromJson(res);
-  if (params['current'] != 1 && ref.state.hasValue) {
+  if (data.current != 1 && ref.state.hasValue) {
     data.records.insertAll(0, ref.state.value!.records);
   }
   return data;
@@ -49,7 +49,7 @@ Future<PageVoModel> inventoryOrgListApi(InventoryOrgListApiRef ref, Map<String, 
     Map<String, dynamic> map = {'selected': false};
     element.addAll(map);
   }
-  if (params['current'] != 1 && ref.state.hasValue) {
+  if (data.current != 1 && ref.state.hasValue) {
     data.records.insertAll(0, ref.state.value!.records);
   }
   return data;
@@ -60,7 +60,7 @@ Future<PageVoModel> inventoryOrgListApi(InventoryOrgListApiRef ref, Map<String, 
 Future<PageVoModel> inventoryHistoryDataListApi(InventoryHistoryDataListApiRef ref, Map<String, dynamic> params) async {
   Map<String, dynamic> res = await HttpUtils.get('/biz/inventory/historyDetail', params: params);
   PageVoModel data = PageVoModel.fromJson(res);
-  if (params['current'] != 1 && ref.state.hasValue) {
+  if (data.current != 1 && ref.state.hasValue) {
     data.records.insertAll(0, ref.state.value!.records);
   }
   return data;

@@ -146,7 +146,7 @@ class _InsuranceDetailPageState extends ConsumerState<InsuranceDetailPage> {
     );
   }
 
- Widget _buildTwoColumns(String label1, dynamic value1, String? label2, dynamic? value2) {
+ Widget _buildTwoColumns(String label1, dynamic value1, String? label2, dynamic value2) {
   return Row(
     children: [
       Expanded(

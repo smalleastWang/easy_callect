@@ -113,11 +113,11 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
       params['current'] = current ?? params['current'] + 1;
     }
 
-    return _fetchData();
+    return _fetchData(isRefresh);
   }
 
   // 调用接口
-  AsyncValue<PageVoModel>? _fetchData() {
+  AsyncValue<PageVoModel>? _fetchData([bool? isRefresh]) {
     // 加入筛选参数
     if (widget.pasture != null && _enclosureController.value != null) {
       final pastureVal = _enclosureController.value![_enclosureController.value!.length - 1];
@@ -131,7 +131,13 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
     // 请求数据
     final AsyncValue<PageVoModel> res = ref.refresh(widget.provider(params));
     ref.listenManual(widget.provider(params), (previous, next) {
-      if (previous != null) {
+      if (params['current'] != 1 || isRefresh == true) {
+        setState(() {
+          loading = false;
+        });
+        return;
+      } 
+      if (previous != null && params['current'] == 1) {
         setState(() {
           loading = !(previous as dynamic).isLoading;
         });

@@ -9,7 +9,7 @@ part 'registerRecord.g.dart';
 Future<PageVoModel> registerRecordPage(RegisterRecordPageRef ref, Map<String, dynamic> params) async {
   Map<String, dynamic> res = await HttpUtils.get('/biz/register/page', params: params);
   PageVoModel data = PageVoModel.fromJson(res);
-  if (params['current'] != 1 && ref.state.hasValue) {
+  if (data.current != 1 && ref.state.hasValue) {
     data.records.insertAll(0, ref.state.value!.records);
   }
   return data;
@@ -20,7 +20,7 @@ Future<PageVoModel> registerRecordPage(RegisterRecordPageRef ref, Map<String, dy
 Future<PageVoModel> registerPigRecordPage(RegisterPigRecordPageRef ref, Map<String, dynamic> params) async {
   Map<String, dynamic> res = await HttpUtils.get('/biz/registerpig/page', params: params);
   PageVoModel data = PageVoModel.fromJson(res);
-  if (params['current'] != 1 && ref.state.hasValue) {
+  if (data.current != 1 && ref.state.hasValue) {
     data.records.insertAll(0, ref.state.value!.records);
   }
   return data;

@@ -10,7 +10,7 @@ part 'pigAnimal.g.dart';
 Future<PageVoModel> pigAnimalPage(PigAnimalPageRef ref, Map<String, dynamic> params) async {
   Map<String, dynamic> res = await HttpUtils.get('/biz/animalpig/page', params: params);
   PageVoModel data = PageVoModel.fromJson(res);
-  if (params['current'] != 1 && ref.state.hasValue) {
+  if (data.current != 1 && ref.state.hasValue) {
     data.records.insertAll(0, ref.state.value!.records);
   }
   return data;
