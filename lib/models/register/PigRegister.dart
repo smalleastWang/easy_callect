@@ -11,13 +11,13 @@ class PigRegisterParams {
   String pigNo;
   String pastureId;
   String houseId;
-  List<String> faceImgs;
+  List<String>? faceImgs;
   List<String>? bodyImgs;
   PigRegisterParams({
     required this.pigNo,
     required this.pastureId,
     required this.houseId,
-    required this.faceImgs,
+    this.faceImgs,
     this.bodyImgs,
   });
 
@@ -31,12 +31,12 @@ class PigRegisterParams {
 class DistinguishPigAppParams {
   
   String pastureId;
-  List<String> faceImgs;
+  List<String>? faceImgs;
   List<String>? bodyImgs;
   String? earId;
   DistinguishPigAppParams({
     required this.pastureId,
-    required this.faceImgs,
+    this.faceImgs,
     this.earId,
     this.bodyImgs,
   });

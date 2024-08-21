@@ -59,10 +59,27 @@ enum RegisterMediaEnum implements EnumOption {
     return OptionModel(value: value, label: label);
   }
 
-
   static getOptions(RegisterTypeEnum type) => RegisterMediaEnum.values.where((i) => i.type == type || i.type == null).map((e) => e.toOptionModel()).toList();
 }
 
+
+enum PigRegisterMediaEnum implements EnumOption {
+  face(1, '猪脸注册', RegisterTypeEnum.single),
+  back(2, '猪背注册', RegisterTypeEnum.single);
+  final int value;
+  final String label;
+  
+  final RegisterTypeEnum? type;
+
+  const PigRegisterMediaEnum(this.value, this.label, [this.type]);
+
+  @override
+  OptionModel<int> toOptionModel() {
+    return OptionModel(value: value, label: label);
+  }
+
+  static getOptions(RegisterTypeEnum type) => PigRegisterMediaEnum.values.where((i) => i.type == type || i.type == null).map((e) => e.toOptionModel()).toList();
+}
 
 
 enum SurveyTypeEnum implements EnumOption {
@@ -78,6 +95,23 @@ enum SurveyTypeEnum implements EnumOption {
     return OptionModel(value: value, label: label);
   }
 }
+
+enum PigSurveyMediaEnum implements EnumOption {
+  face(1, '猪脸查勘'),
+  back(2, '猪背查勘');
+  final int value;
+  final String label;
+
+  const PigSurveyMediaEnum(this.value, this.label);
+
+  @override
+  OptionModel<int> toOptionModel() {
+    return OptionModel(value: value, label: label);
+  }
+
+  static getOptions(RegisterTypeEnum type) => PigRegisterMediaEnum.values.map((e) => e.toOptionModel()).toList();
+}
+
 enum SurveyMediaEnum implements EnumOption {
   drones(1, '无人机'),
   // img(2, '图片'),

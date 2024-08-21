@@ -21,8 +21,7 @@ final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 ///
 /// 验标注册
 class StandardVerificationPage extends ConsumerStatefulWidget {
-  final RegisterAnimalType registerType;
-  const StandardVerificationPage({super.key, required this.registerType});
+  const StandardVerificationPage({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _StandardVerificationPageState();
@@ -142,13 +141,7 @@ class _StandardVerificationPageState extends ConsumerState<StandardVerificationP
         if (_bodyImgsController.value == null || _bodyImgsController.value!.isEmpty) return EasyLoading.showError('请上传牛脸图片');
         params.bodyImgs = _bodyImgsController.value!.map((e) => e.value).toList();
       }
-      // 猪注册
-      if (widget.registerType == RegisterAnimalType.pig) {
-        params.pigNo = _numController.text;
-        await registerPigAppApi(params);
-      } else {
-        await RegisterApi.cattleApp(params);
-      }
+      await RegisterApi.cattleApp(params);
       context.pop();
     } finally {
       setState(() {
