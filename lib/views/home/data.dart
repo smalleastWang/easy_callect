@@ -76,12 +76,12 @@ final List<ModuleModel> moduleList = [
       ModuleItemModel(route: RouteEnum.aibox, iconPath: 'assets/icon/common/optimized/2.svg'),
       ModuleItemModel(route: RouteEnum.camera, iconPath: 'assets/icon/common/optimized/3.svg'),
       ModuleItemModel(route: RouteEnum.animal, iconPath: 'assets/icon/common/optimized/4.svg'),
-      ModuleItemModel(route: RouteEnum.pigAnimal, iconPath: 'assets/icon/common/optimized/4.svg'),
+      ModuleItemModel(route: RouteEnum.pigAnimal, iconPath: 'assets/icon/common/optimized/11.svg'),
       ModuleItemModel(route: RouteEnum.email, iconPath: 'assets/icon/common/optimized/5.svg'),
-      ModuleItemModel(route: RouteEnum.registerRecord, iconPath: 'assets/icon/common/optimized/8.svg'),
+      ModuleItemModel(route: RouteEnum.registerRecord, iconPath: 'assets/icon/common/optimized/13.svg'),
       ModuleItemModel(route: RouteEnum.distinguishRecord, iconPath: 'assets/icon/common/optimized/9.svg'),
-      ModuleItemModel(route: RouteEnum.registerPigRecord, iconPath: 'assets/icon/common/optimized/8.svg'),
-      ModuleItemModel(route: RouteEnum.distinguishPigRecord, iconPath: 'assets/icon/common/optimized/9.svg'),
+      ModuleItemModel(route: RouteEnum.registerPigRecord, iconPath: 'assets/icon/common/optimized/12.svg'),
+      ModuleItemModel(route: RouteEnum.distinguishPigRecord, iconPath: 'assets/icon/common/optimized/10.svg'),
     ]
   ),
 ];
