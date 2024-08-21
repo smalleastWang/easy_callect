@@ -64,7 +64,7 @@ enum RouteEnum {
   building('building', '圈舍信息', '/common/building'),
   camera('camera', '摄像头管理', '/common/camera'),
   animal('animal', '牛只信息', '/common/animal'),
-  pigAnimal('pigAnimal', '猪信息', '/common/pigAnimal'),
+  pigAnimal('pigAnimal', '猪只信息', '/common/pigAnimal'),
   email('email', '邮箱管理', '/common/email'),
   registerRecord('registerRecord', '牛注册记录', '/common/registerRecord'),
   distinguishRecord('distinguishRecord', '牛识别记录', '/common/distinguishRecord'),

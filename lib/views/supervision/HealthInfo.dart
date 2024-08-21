@@ -1,12 +1,12 @@
-import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:community_charts_flutter/community_charts_flutter.dart' as charts;
 import 'package:easy_collect/api/monitoring.dart';
 import 'package:easy_collect/enums/route.dart';
 import 'package:easy_collect/models/monitoring/Monitoring.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart'; // 导入 EasyLoading
-import 'package:easy_collect/widgets/AreaSelector/AreaSelector.dart'; // 导入 AreaSelector
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:easy_collect/widgets/AreaSelector/AreaSelector.dart';
 
 class BreedingData {
   final String category;
@@ -47,10 +47,21 @@ class _HealthInfoPageState extends ConsumerState<HealthInfoPage> {
   String? selectedProvince;
   String? selectedCity;
 
+  List<BreedingData> breedingData = [];
+
   @override
   void initState() {
     super.initState();
     ref.read(mortgageInfoProvider.notifier).fetchMonitoringData();
+  }
+
+  @override
+  void dispose() {
+    // 页面关闭时清除饼图数据
+    setState(() {
+      breedingData = [];
+    });
+    super.dispose();
   }
 
   void _onAreaSelected(String? province, String? city) {
@@ -73,25 +84,28 @@ class _HealthInfoPageState extends ConsumerState<HealthInfoPage> {
       appBar: AppBar(
         title: Text(RouteEnum.healthInfo.title),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          children: [
-            AreaSelector(
-              enableCitySelection: true,
-              onAreaSelected: _onAreaSelected,
-            ),
-            const SizedBox(height: 16.0),
-            Expanded(
-              child: mortgageInfo.when(
-                data: (data) => data == null
-                    ? _buildNoDataWidget()
-                    : _buildDataWidget(context, data),
+      body: SingleChildScrollView( // 包裹整个内容区域
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            children: [
+              AreaSelector(
+                enableCitySelection: true,
+                onAreaSelected: _onAreaSelected,
+              ),
+              const SizedBox(height: 16.0),
+              mortgageInfo.when(
+                data: (data) {
+                  breedingData = data == null ? [] : _getBreedingData(data);
+                  return data == null
+                      ? _buildNoDataWidget()
+                      : _buildDataWidget(context, data);
+                },
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, stack) => Center(child: Text('Error: $error')),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -102,34 +116,31 @@ class _HealthInfoPageState extends ConsumerState<HealthInfoPage> {
   }
 
   Widget _buildDataWidget(BuildContext context, Monitoring data) {
-    final breedingData = _getBreedingData(data);
+    String selectedCategory = '';
+    int selectedValue = 0;
 
-    return StatefulBuilder(
-      builder: (context, setState) {
-        int touchedIndex = -1;
-        int lastTouchedIndex = -1; // 用于存储上一次触摸的索引
-
-        return Column(
-          children: [
-            _buildInfoGrid(data),
-             if (data.cowNum != null && data.cowNum! > 0) ...[
-              _buildPieChart(context, breedingData, setState, (index) {
-                if (lastTouchedIndex != index) {
-                  lastTouchedIndex = index;
-                  final item = breedingData[index];
-                  EasyLoading.showToast(
-                    '${item.category} ${item.value}',
-                    duration: const Duration(seconds: 2),
-                    toastPosition: EasyLoadingToastPosition.bottom,
-                  );
-                }
-                touchedIndex = index;
-              }),
-              _buildLegend(breedingData),
-            ]
-          ],
-        );
-      },
+    return Column(
+      children: [
+        _buildInfoGrid(data),
+        if (data.cowNum != null && data.cowNum! > 0) ...[
+          _buildPieChart(
+            context,
+            breedingData,
+            (selectedDatum) {
+              setState(() {
+                selectedCategory = selectedDatum.category;
+                selectedValue = selectedDatum.value;
+                EasyLoading.showToast(
+                  '$selectedCategory: $selectedValue',
+                  duration: const Duration(seconds: 2),
+                  toastPosition: EasyLoadingToastPosition.bottom,
+                );
+              });
+            },
+          ),
+          _buildLegend(breedingData),
+        ],
+      ],
     );
   }
 
@@ -148,7 +159,7 @@ class _HealthInfoPageState extends ConsumerState<HealthInfoPage> {
       padding: const EdgeInsets.symmetric(horizontal: 0),
       child: GridView.builder(
         shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
+        physics: const BouncingScrollPhysics(), // 允许滚动
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           childAspectRatio: 2,
@@ -212,37 +223,41 @@ class _HealthInfoPageState extends ConsumerState<HealthInfoPage> {
   Widget _buildPieChart(
     BuildContext context,
     List<BreedingData> breedingData,
-    StateSetter setState,
-    Function(int) onTouch
+    Function(BreedingData) onSelect
   ) {
-    final pieChartData = _createPieChartData(breedingData);
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12.0),
       child: Tooltip(
         message: '点击图表查看详情',
         child: Transform.translate(
-          offset: const Offset(0, -30),
+          offset: const Offset(0, -5),
           child: SizedBox(
-            height: 400,
-            child: PieChart(
-              PieChartData(
-                sections: pieChartData,
-                centerSpaceRadius: 100,
-                sectionsSpace: 0,
-                borderData: FlBorderData(show: false),
-                pieTouchData: PieTouchData(
-                  touchCallback: (FlTouchEvent event, pieTouchResponse) {
-                    if (!event.isInterestedForInteractions ||
-                        pieTouchResponse == null ||
-                        pieTouchResponse.touchedSection == null) {
-                      return;
+            height: MediaQuery.of(context).size.height * 0.4, // 根据屏幕高度调整图表高度
+            child: charts.PieChart<String>(
+              _createDonutChartData(breedingData),
+              animate: true,
+              defaultRenderer: charts.ArcRendererConfig<String>(
+                arcWidth: 60,
+                startAngle: 4 / 5 * 3.14,
+                strokeWidthPx: 0.0,
+                arcRendererDecorators: [
+                  charts.ArcLabelDecorator<String>(
+                    labelPosition: charts.ArcLabelPosition.inside,
+                  ),
+                ],
+              ),
+              selectionModels: [
+                charts.SelectionModelConfig(
+                  type: charts.SelectionModelType.info,
+                  changedListener: (model) {
+                    final selectedDatum = model.selectedDatum;
+                    if (selectedDatum.isNotEmpty) {
+                      final BreedingData selectedData = selectedDatum.first.datum;
+                      onSelect(selectedData);
                     }
-                    final index = pieTouchResponse.touchedSection!.touchedSectionIndex;
-                    setState(() => onTouch(index));
                   },
                 ),
-              ),
+              ],
             ),
           ),
         ),
@@ -250,46 +265,38 @@ class _HealthInfoPageState extends ConsumerState<HealthInfoPage> {
     );
   }
 
-  List<PieChartSectionData> _createPieChartData(List<BreedingData> data) {
+  List<charts.Series<BreedingData, String>> _createDonutChartData(List<BreedingData> data) {
     final total = data.fold(0, (sum, item) => sum + item.value);
 
-    return data.map((item) {
-      final percentage = (item.value / total * 100).toStringAsFixed(1);
-
-      return PieChartSectionData(
-        color: item.color,
-        value: item.value.toDouble(),
-        title: '$percentage%',
-        radius: 50,
-        titleStyle: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
-        ),
-      );
-    }).toList();
+    return [
+      charts.Series<BreedingData, String>(
+        id: 'Breeding Data',
+        colorFn: (BreedingData data, _) => charts.ColorUtil.fromDartColor(data.color),
+        domainFn: (BreedingData data, _) => data.category,
+        measureFn: (BreedingData data, _) => data.value,
+        data: data,
+        labelAccessorFn: (BreedingData row, _) {
+          final percentage = (row.value / total * 100).toStringAsFixed(1);
+          return '$percentage%';
+        },
+      )
+    ];
   }
 
   Widget _buildLegend(List<BreedingData> data) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12.0),
-      child: Wrap(
-        spacing: 10,
-        runSpacing: 10,
-        alignment: WrapAlignment.center,
+      padding: const EdgeInsets.only(top: 16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: data.map((item) {
           return Row(
-            mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                width: 16,
-                height: 16,
-                decoration: BoxDecoration(
-                  color: item.color,
-                  shape: BoxShape.rectangle,
-                ),
+                width: 12,
+                height: 12,
+                color: item.color,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 4),
               Text(item.category),
             ],
           );
@@ -301,43 +308,39 @@ class _HealthInfoPageState extends ConsumerState<HealthInfoPage> {
   Widget _buildInfoCard(
     String title,
     String value,
-    String icon, {
-    Color bgColor = Colors.green,
+    String iconPath, {
+    Color bgColor = Colors.blue,
     Color iconColor = Colors.white,
   }) {
     return Card(
       color: bgColor,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(12.0),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         child: Row(
           children: [
             SvgPicture.asset(
-              icon,
-              width: 24,
-              height: 24,
+              iconPath,
               color: iconColor,
+              width: 30,
+              height: 30,
             ),
-            const SizedBox(width: 10),
+            const SizedBox(width: 8),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.white.withOpacity(0.8),
-                  ),
+                  style: const TextStyle(color: Colors.white),
                 ),
                 Text(
                   value,
                   style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
                     color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
                   ),
                 ),
               ],
