@@ -145,11 +145,11 @@ class _SurveyComparedPigPageState extends ConsumerState<SurveyComparedPigPage> {
   
 
   List<Widget> get _getImgWidget {
-    // 单个注册-牛脸注册
+    // 单个注册-猪脸注册
     if (registerMedia == RegisterMediaEnum.face.value) {
       return [PickerImageField(controller: _faceImgsController, maxNum: 1, label: '请上传猪脸图片')];
     }
-    // 单个注册-牛背注册
+    // 单个注册-猪背注册
     if (registerMedia == RegisterMediaEnum.back.value) {
       return [
         PickerImageField(controller: _bodyImgsController, maxNum: 1, label: '请上传猪背图片'),
@@ -190,7 +190,7 @@ class _SurveyComparedPigPageState extends ConsumerState<SurveyComparedPigPage> {
                           controller: _numController,
                           decoration: const InputDecoration(
                             border: InputBorder.none,
-                            hintText: '请输入牛耳耳标号(不支持中文)'
+                            hintText: '请输入猪耳耳标号(不支持中文)'
                           ),
                           validator: (v) {
                             return v!.trim().isNotEmpty ? null : "耳标号不能为空";

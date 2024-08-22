@@ -71,7 +71,7 @@ class _StandardVerificationPigPageState extends ConsumerState<StandardVerificati
   }
 
   _handleSubmit(List<EnclosureModel> options) async {
-    if (_numController.text.isEmpty) return EasyLoading.showError('请选择输入牛编号');
+    if (_numController.text.isEmpty) return EasyLoading.showError('请选择输入猪编号');
     if (_enclosureController.value == null) return EasyLoading.showError('请选择牧场和圈舍');
     EnclosureModel? houseData = findNode(options);
     if (houseData == null || houseData.nodeType != 'bld') {
@@ -117,15 +117,15 @@ class _StandardVerificationPigPageState extends ConsumerState<StandardVerificati
   }
 
   List<Widget> get _getImgWidget {
-    // 单个注册-牛脸注册
+    // 单个注册-猪脸注册
     if (registerMedia == RegisterMediaEnum.face.value) {
-      return [PickerImageField(controller: _faceImgsController, maxNum: 1, label: '牛脸图片')];
+      return [PickerImageField(controller: _faceImgsController, maxNum: 1, label: '猪脸图片')];
     }
-    // 单个注册-牛背注册
+    // 单个注册-猪背注册
     if (registerMedia == RegisterMediaEnum.back.value) {
       return [
-        PickerImageField(controller: _bodyImgsController, maxNum: 1, label: '牛背图片'),
-        PickerImageField(controller: _faceImgsController, maxNum: 1, label: '牛脸图片'),
+        PickerImageField(controller: _bodyImgsController, maxNum: 1, label: '猪背图片'),
+        PickerImageField(controller: _faceImgsController, maxNum: 1, label: '猪脸图片'),
       ];
     }
     return [const SizedBox.shrink()];
@@ -162,7 +162,7 @@ class _StandardVerificationPigPageState extends ConsumerState<StandardVerificati
                           controller: _numController,
                           decoration: const InputDecoration(
                             border: InputBorder.none,
-                            hintText: '请输入牛耳耳标号(不支持中文)'
+                            hintText: '请输入猪耳耳标号(不支持中文)'
                           ),
                           validator: (v) {
                             return v!.trim().isNotEmpty ? null : "耳标号不能为空";
