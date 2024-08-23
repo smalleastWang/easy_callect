@@ -33,7 +33,7 @@ class _SecurityPageState extends ConsumerState<SecurityPage> with SingleTickerPr
     super.dispose();
   }
 
-  // 安防报警
+  // 智能安防
   Widget get _securityList {
     final AsyncValue<List<EnclosureModel>> weightInfoTree = ref.watch(weightInfoTreeProvider);
     return Container(
@@ -74,7 +74,7 @@ class _SecurityPageState extends ConsumerState<SecurityPage> with SingleTickerPr
         bottom: TabBar(
         controller: _tabController,
         tabs: const [
-          Tab(text: '安防报警'),
+          Tab(text: '智能安防'),
           Tab(text: '牧场视频'),
         ],
       ),

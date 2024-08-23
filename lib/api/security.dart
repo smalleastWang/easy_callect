@@ -6,7 +6,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'security.g.dart';
 
 
-// 安防报警
+// 智能安防
 @riverpod
 Future<PageVoModel> securityPage(SecurityPageRef ref, Map<String, dynamic> params) async {
   Map<String, dynamic> res = await HttpUtils.get('/biz/security/page', params: params);

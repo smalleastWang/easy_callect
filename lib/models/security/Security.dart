@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'Security.g.dart';
 
-//安防报警
+//智能安防
 
 @JsonSerializable()
 class Security {
