@@ -23,7 +23,7 @@ class MonitoringApi {
     print('res: $res');
     return monitoring;
   }
-  // 健康监测
+  // 健康状态
   static Future<Monitoring> getHealthInfo(Map<String, dynamic> params) async {
     Map<String, dynamic> res = await HttpUtils.get('/biz/monitoring/health', params: params);
     Monitoring monitoring = Monitoring.fromJson(res);
