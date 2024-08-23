@@ -24,7 +24,7 @@ class _InsuranceDetailAddPageState extends State<InsuranceDetailAddPage> {
     if (widget.state != null && widget.state!.extra != null) {
       policy = widget.state!.extra as Map<String, dynamic>;
       setState(() {
-        _policyIdController.text = policy!['id'] ?? '';
+        _policyNoController.text = policy!['policyNo'] ?? '';
       });
     }
   }
@@ -51,10 +51,13 @@ class _InsuranceDetailAddPageState extends State<InsuranceDetailAddPage> {
   final TextEditingController _endNoController = TextEditingController();
   final TextEditingController _insuranceNumController = TextEditingController();
   final TextEditingController _insuranceAmountController = TextEditingController();
+  final TextEditingController _animalAgeController = TextEditingController();
+  final TextEditingController _animalBreedController = TextEditingController();
+  final TextEditingController _animalVarietyController = TextEditingController();
   final TextEditingController _marketValueController = TextEditingController();
   final TextEditingController _evaluateValueController = TextEditingController();
   final TextEditingController _applicantIdController = TextEditingController();
-  final TextEditingController _policyIdController = TextEditingController();
+  final TextEditingController _policyNoController = TextEditingController();
   final TextEditingController _algorithmCodeController = TextEditingController();
 
   // 枚举值和显示文本的映射
@@ -90,10 +93,13 @@ class _InsuranceDetailAddPageState extends State<InsuranceDetailAddPage> {
         _selectedAnimalType == null ||
         _insuranceNumController.text.isEmpty ||
         _insuranceAmountController.text.isEmpty ||
+        _animalAgeController.text.isEmpty ||
+        _animalBreedController.text.isEmpty ||
+        _animalVarietyController.text.isEmpty ||
         _marketValueController.text.isEmpty ||
         _evaluateValueController.text.isEmpty ||
         _applicantIdController.text.isEmpty ||
-        _policyIdController.text.isEmpty ||
+        _policyNoController.text.isEmpty ||
         _algorithmCodeController.text.isEmpty) {
       _showError('请填写所有必填项');
       return;
@@ -110,10 +116,13 @@ class _InsuranceDetailAddPageState extends State<InsuranceDetailAddPage> {
       'isQuarantine': _selectedQuarantineStatus,
       'insuranceNum': _insuranceNumController.text,
       'insuranceAmount': _insuranceAmountController.text,
+      'animalAge': _animalAgeController.text,
+      'animalBreed': _animalBreedController.text,
+      'animalVariety': _animalVarietyController.text,
       'marketValue': _marketValueController.text,
       'evaluateValue': _evaluateValueController.text,
       'applicantId': _applicantIdController.text,
-      'policyId': _policyIdController.text,
+      'policyId': policy!['id'] ?? '',
       'algorithmCode': _algorithmCodeController.text,
     };
 
@@ -128,7 +137,8 @@ class _InsuranceDetailAddPageState extends State<InsuranceDetailAddPage> {
     Navigator.of(context).pop(true);
   }
 
-  Widget _buildRadioField(String label, String groupValue, Map<String, String> options, ValueChanged<String?> onChanged) {
+  Widget _buildRadioField(String label, String groupValue, Map<String, String> options, ValueChanged<String?> onChanged,
+    {bool isRequired = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Container(
@@ -137,15 +147,23 @@ class _InsuranceDetailAddPageState extends State<InsuranceDetailAddPage> {
         ),
         child: Row(
           children: [
-            Expanded(
-              flex: 2,
-              child: Text(
-                label,
-                style: const TextStyle(fontSize: 16, color: Colors.black),
+            IntrinsicWidth(
+              child: Row(
+                children: [
+                  if (isRequired)
+                    const Text(
+                      '*',
+                      style: TextStyle(color: Colors.red, fontSize: 16),
+                    ),
+                  const SizedBox(width: 4), // 添加一个间距，让文本不贴着星号
+                  Text(
+                    label,
+                    style: const TextStyle(fontSize: 16, color: Colors.black),
+                  ),
+                ],
               ),
             ),
             Expanded(
-              flex: 6,
               child: Row(
                 children: options.entries.map((entry) {
                   return Row(
@@ -187,40 +205,43 @@ class _InsuranceDetailAddPageState extends State<InsuranceDetailAddPage> {
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Column(
           children: [
-            _buildTextField('保单ID', _policyIdController, readOnly: true,),
-            _buildTextField('选择投保人', _applicantIdController, suffixIcon: const Icon(Icons.arrow_forward_ios, size: 16,), readOnly: true, onTap: _selectApplicant),
-            _buildTextField('选择牛只', _algorithmCodeController, suffixIcon: const Icon(Icons.arrow_forward_ios, size: 16,), readOnly: true, onTap: () => _navigateTo(RouteEnum.animalSelect.fullpath)),
-            _buildTextField('起始耳标号', _startNoController),
-            _buildTextField('终止耳标号', _endNoController),
-            _buildRadioField('性别', _selectedSex!, {'公': '0', '母': '1'}, (value) {
+            _buildTextField('保单合同号：', _policyNoController, readOnly: true,),
+            _buildTextField('选择投保人：', _applicantIdController, suffixIcon: const Icon(Icons.arrow_forward_ios, size: 16,), readOnly: true, onTap: _selectApplicant, isRequired: true),
+            _buildTextField('选择牛只：', _algorithmCodeController, suffixIcon: const Icon(Icons.arrow_forward_ios, size: 16,), readOnly: true, onTap: () => _navigateTo(RouteEnum.animalSelect.fullpath), isRequired: true),
+            _buildTextField('起始耳标号：', _startNoController),
+            _buildTextField('终止耳标号：', _endNoController),
+            _buildRadioField('性别：', _selectedSex!, {'公': '0', '母': '1'}, (value) {
               setState(() {
                 _selectedSex = value;
               });
-            }),
-            _buildRadioField('健康状况', _selectedHealthStatus!, {'是': '0', '否': '1'}, (value) {
+            }, isRequired: true),
+            _buildRadioField('健康状况：', _selectedHealthStatus!, {'是': '0', '否': '1'}, (value) {
               setState(() {
                 _selectedHealthStatus = value;
               });
-            }),
-            _buildRadioField('是否有检验', _selectedQuarantineStatus!, {'是': '0', '否': '1'}, (value) {
+            }, isRequired: true),
+            _buildRadioField('是否有检验：', _selectedQuarantineStatus!, {'是': '0', '否': '1'}, (value) {
               setState(() {
                 _selectedQuarantineStatus = value;
               });
-            }),
-            _buildDropdownField('毛色', _coatColorOptions, _selectedCoatColor, (value) {
+            }, isRequired: true),
+            _buildDropdownField('毛色：', _coatColorOptions, _selectedCoatColor, (value) {
               setState(() {
                 _selectedCoatColor = value;
               });
-            }),
-            _buildDropdownField('畜别', _animalTypeOptions, _selectedAnimalType, (value) {
+            }, isRequired: true),
+            _buildDropdownField('畜别：', _animalTypeOptions, _selectedAnimalType, (value) {
               setState(() {
                 _selectedAnimalType = value;
               });
-            }),
-            _buildTextField('承保数量', _insuranceNumController),
-            _buildTextField('单位保额', _insuranceAmountController),
-            _buildTextField('市场价格', _marketValueController),
-            _buildTextField('评定价格', _evaluateValueController),
+            }, isRequired: true),
+            _buildTextField('畜龄：', _animalAgeController, isRequired: true),
+            _buildTextField('畜种：', _animalBreedController, isRequired: true),
+            _buildTextField('品种：', _animalVarietyController, isRequired: true),
+            _buildTextField('承保数量：', _insuranceNumController),
+            _buildTextField('单位保额：', _insuranceAmountController, isRequired: true),
+            _buildTextField('市场价格：', _marketValueController, isRequired: true),
+            _buildTextField('评定价格：', _evaluateValueController, isRequired: true),
             const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
@@ -269,8 +290,7 @@ class _InsuranceDetailAddPageState extends State<InsuranceDetailAddPage> {
             absorbing: readOnly,
             child: Row(
               children: [
-                Expanded(
-                  flex: 2,
+                IntrinsicWidth(
                   child: Row(
                     children: [
                       if (isRequired)
@@ -278,6 +298,7 @@ class _InsuranceDetailAddPageState extends State<InsuranceDetailAddPage> {
                           '*',
                           style: TextStyle(color: Colors.red, fontSize: 16),
                         ),
+                      const SizedBox(width: 4), // 添加一个间距，让文本不贴着星号
                       Text(
                         label,
                         style: const TextStyle(color: Colors.black, fontSize: 16),
@@ -286,7 +307,6 @@ class _InsuranceDetailAddPageState extends State<InsuranceDetailAddPage> {
                   ),
                 ),
                 Expanded(
-                  flex: 5,
                   child: TextField(
                     controller: controller,
                     readOnly: readOnly,
@@ -306,7 +326,8 @@ class _InsuranceDetailAddPageState extends State<InsuranceDetailAddPage> {
     );
   }
 
-  Widget _buildDropdownField<T>(String label, Map<T, dynamic> items, dynamic value, ValueChanged<dynamic> onChanged) {
+  Widget _buildDropdownField<T>(String label, Map<T, dynamic> items, dynamic value, ValueChanged<dynamic> onChanged,
+    {bool isRequired = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Container(
@@ -315,23 +336,23 @@ class _InsuranceDetailAddPageState extends State<InsuranceDetailAddPage> {
         ),
         child: Row(
           children: [
-            // Label
-            Expanded(
-              flex: 3, // Label占据3份
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Text(
-                  label,
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 16.0,
+            IntrinsicWidth(
+              child: Row(
+                children: [
+                  if (isRequired)
+                    const Text(
+                      '*',
+                      style: TextStyle(color: Colors.red, fontSize: 16),
+                    ),
+                  const SizedBox(width: 4), // 添加一个间距，让文本不贴着星号
+                  Text(
+                    label,
+                    style: const TextStyle(color: Colors.black, fontSize: 16),
                   ),
-                ),
+                ],
               ),
             ),
-            // Dropdown
             Expanded(
-              flex: 5, // Dropdown占据5份
               child: DropdownButtonFormField<T>(
                 decoration: const InputDecoration(
                   border: InputBorder.none,
@@ -342,7 +363,7 @@ class _InsuranceDetailAddPageState extends State<InsuranceDetailAddPage> {
                   return DropdownMenuItem<T>(
                     value: item,
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0), // Adjust padding as needed
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: Text(item.toString()),
                     ),
                   );
