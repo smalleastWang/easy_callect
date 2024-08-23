@@ -80,10 +80,11 @@ Future<PageVoModel> orderList(OrderListRef ref, Map<String, dynamic> params) asy
 
 // 新增/编辑保单信息
 Future<void> editPolicy(Map<String, dynamic> params) async {
-  if(params['id'] != null) {
+  if(!params['id'].isEmpty) {
       await HttpUtils.post('/biz/policy/edit', params: params);
       return;
   }
+  params.remove('id');
   await HttpUtils.post('/biz/policy/add', params: params);
 }
 

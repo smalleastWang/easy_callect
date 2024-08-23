@@ -67,9 +67,8 @@ class _EditPolicyPageState extends State<EditPolicyPage> {
   @override
   void initState() {
     super.initState();
+    policy = widget.state?.extra as Map<String, dynamic>? ?? {};
     if (widget.state != null && widget.state!.extra != null) {
-      policy = widget.state!.extra as Map<String, dynamic>;
-
       setState(() {
         _policyNoController.text = policy!['policyNo'] ?? '';
         _premiumController.text = policy!['premium']?.toString() ?? '';
@@ -151,6 +150,7 @@ class _EditPolicyPageState extends State<EditPolicyPage> {
 
     // 构建保存数据
     Map<String, dynamic> params = {
+      'id': policy!['id'] ?? '',
       'policyNo': _policyNoController.text,
       'policyContent': _selectedPolicyContent,
       'premium': double.tryParse(_premiumController.text),
@@ -270,26 +270,23 @@ class _EditPolicyPageState extends State<EditPolicyPage> {
         ),
         child: Row(
           children: [
-            Flexible(
-              flex: 3,
+            IntrinsicWidth(
               child: Row(
                 children: [
                   const Text(
                     '*',
                     style: TextStyle(color: Colors.red, fontSize: 16),
                   ),
-                  Expanded(
-                    child: Text(
-                      label,
-                      style: const TextStyle(color: Colors.black, fontSize: 16),
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                  const SizedBox(width: 4), // 添加一个间距，让文本不贴着星号
+                  Text(
+                    label,
+                    style: const TextStyle(color: Colors.black, fontSize: 16),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
             ),
-            Flexible(
-              flex: 7,
+            Expanded(
               child: TextField(
                 controller: controller,
                 keyboardType: keyboardType,
@@ -305,6 +302,7 @@ class _EditPolicyPageState extends State<EditPolicyPage> {
     );
   }
 
+
   Widget _buildDropdownField(String label, List<String> options, String selectedValue, void Function(String?) onChanged) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -314,14 +312,14 @@ class _EditPolicyPageState extends State<EditPolicyPage> {
         ),
         child: Row(
           children: [
-            Expanded(
-              flex: 3,
+            IntrinsicWidth(
               child: Row(
                 children: [
                   const Text(
                     '*',
                     style: TextStyle(color: Colors.red, fontSize: 16),
                   ),
+                  const SizedBox(width: 4), // 添加一个间距，让文本不贴着星号
                   Text(
                     label,
                     style: const TextStyle(color: Colors.black, fontSize: 16),
@@ -330,11 +328,10 @@ class _EditPolicyPageState extends State<EditPolicyPage> {
               ),
             ),
             Expanded(
-              flex: 7,
               child: DropdownButton<String>(
                 value: selectedValue,
                 isExpanded: true,
-                underline: Container(),
+                underline: Container(), // 移除下划线
                 items: options.map((String option) {
                   return DropdownMenuItem<String>(
                     value: option,
@@ -354,7 +351,7 @@ class _EditPolicyPageState extends State<EditPolicyPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('编辑保单'),
+        title:  (policy?['policyNo'] ?? '').isNotEmpty ? const Text('编辑保单') : const Text('新增保单'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -366,30 +363,30 @@ class _EditPolicyPageState extends State<EditPolicyPage> {
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Column(
           children: [
-            _buildTextField('保险合同号', _policyNoController),
-            _buildDropdownField('保险项目', _policyContentOptions, _selectedPolicyContent, (newValue) {
+            _buildTextField('保险合同号：', _policyNoController),
+            _buildDropdownField('保险项目：', _policyContentOptions, _selectedPolicyContent, (newValue) {
               setState(() {
                 _selectedPolicyContent = newValue!;
               });
             }),
-            _buildTextField('保险费', _premiumController, keyboardType: TextInputType.number),
-            _buildDateTimeField('合同生效日期', _effectiveTime, () async {
+            _buildTextField('保险费：', _premiumController, keyboardType: TextInputType.number),
+            _buildDateTimeField('合同生效日期：', _effectiveTime, () async {
               await _selectDateTime(context, (dateTime) {
                 setState(() {
                   _effectiveTime = dateTime;
                 });
               });
             }),
-            _buildDateTimeField('合同期满日期', _expiryTime, () async {
+            _buildDateTimeField('合同期满日期：', _expiryTime, () async {
               await _selectDateTime(context, (dateTime) {
                 setState(() {
                   _expiryTime = dateTime;
                 });
               });
             }),
-            _buildTextField('联系人', _personController),
-            _buildTextField('联系电话', _phoneController, keyboardType: TextInputType.phone),
-            _buildDropdownField('保单状态', PolicyState.values.map((e) => e.name).toList(), _selectedState.name, (newValue) {
+            _buildTextField('联系人：', _personController),
+            _buildTextField('联系电话：', _phoneController, keyboardType: TextInputType.phone),
+            _buildDropdownField('保单状态：', PolicyState.values.map((e) => e.name).toList(), _selectedState.name, (newValue) {
               setState(() {
                 _selectedState = PolicyState.values.firstWhere((element) => element.name == newValue);
               });
