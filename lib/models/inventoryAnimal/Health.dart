@@ -28,7 +28,7 @@ class Health {
   String? step;
   // 实际重量
   String? weight;
-  // 对应盘点管理id
+  // 对应智能盘点id
   String? taskId;
   // 盘点时授权状态
   int? currAuthState;

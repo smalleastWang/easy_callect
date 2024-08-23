@@ -38,7 +38,7 @@ enum RouteEnum {
 
   // 精准养殖
   precisionBreeding('/precisionBreeding', '精准养殖', '/precisionBreeding'),
-  inventory('inventory', '盘点管理', '/precisionBreeding/inventory'),
+  inventory('inventory', '智能盘点', '/precisionBreeding/inventory'),
   inventorySetTime('setTime', '设置盘点时间', '/precisionBreeding/inventory/setTime'),
   inventorySetUploadTime('setUploadTime', '设置上传时间', '/precisionBreeding/inventory/setUploadTime'),
   inventoryHistoryData('historyData', '历史数据', '/precisionBreeding/inventory/historyData'),

@@ -20,7 +20,7 @@ final precisionBreedingRoutes = GoRoute(
   path: RouteEnum.precisionBreeding.path,
   builder: (context, state) => const PrecisionBreedingPage(),
   routes: [
-    // 盘点管理
+    // 智能盘点
     GoRoute(
       path: RouteEnum.inventory.path,
       builder: (context, state) => const InventoryPage(),
