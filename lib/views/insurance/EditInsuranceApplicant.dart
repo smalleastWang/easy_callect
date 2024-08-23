@@ -11,12 +11,13 @@ class EditInsuranceApplicantPage extends StatefulWidget {
 class _EditInsuranceApplicantPageState extends State<EditInsuranceApplicantPage> {
   final TextEditingController _accountNameController = TextEditingController();
   final TextEditingController _bankAccountController = TextEditingController();
-  final TextEditingController _bankAddressController = TextEditingController();
+  final TextEditingController _bankAdressController = TextEditingController();
   final TextEditingController _bankCityController = TextEditingController();
   final TextEditingController _bankNameController = TextEditingController();
   final TextEditingController _bankProvinceController = TextEditingController();
   final TextEditingController _breedingBaseController = TextEditingController();
-  final TextEditingController _farmerAddressController = TextEditingController();
+  final TextEditingController _totalNumController = TextEditingController();
+  final TextEditingController _farmerAdressController = TextEditingController();
   final TextEditingController _farmerNameController = TextEditingController();
   final TextEditingController _idCardNumberController = TextEditingController();
   final TextEditingController _isPovertyController = TextEditingController();
@@ -42,7 +43,7 @@ class _EditInsuranceApplicantPageState extends State<EditInsuranceApplicantPage>
       _showError('请填写银行账号');
       return;
     }
-    if (_bankAddressController.text.isEmpty) {
+    if (_bankAdressController.text.isEmpty) {
       _showError('请填写银行地址');
       return;
     }
@@ -62,7 +63,11 @@ class _EditInsuranceApplicantPageState extends State<EditInsuranceApplicantPage>
       _showError('请填写养殖基地');
       return;
     }
-    if (_farmerAddressController.text.isEmpty) {
+    if (_totalNumController.text.isEmpty) {
+      _showError('请填写养殖数量');
+      return;
+    }
+    if (_farmerAdressController.text.isEmpty) {
       _showError('请填写农户地址');
       return;
     }
@@ -103,12 +108,13 @@ class _EditInsuranceApplicantPageState extends State<EditInsuranceApplicantPage>
     Map<String, dynamic> params = {
       'accountName': _accountNameController.text,
       'bankAccount': _bankAccountController.text,
-      'bankAddress': _bankAddressController.text,
+      'bankAdress': _bankAdressController.text,
       'bankCity': _bankCityController.text,
       'bankName': _bankNameController.text,
       'bankProvince': _bankProvinceController.text,
       'breedingBase': _breedingBaseController.text,
-      'farmerAddress': _farmerAddressController.text,
+      'totalNum': _totalNumController.text,
+      'farmerAdress': _farmerAdressController.text,
       'farmerName': _farmerNameController.text,
       'idCardNumber': _idCardNumberController.text,
       'isPoverty': _isPovertyController.text,
@@ -133,12 +139,13 @@ class _EditInsuranceApplicantPageState extends State<EditInsuranceApplicantPage>
     setState(() {
       _accountNameController.clear();
       _bankAccountController.clear();
-      _bankAddressController.clear();
+      _bankAdressController.clear();
       _bankCityController.clear();
       _bankNameController.clear();
       _bankProvinceController.clear();
       _breedingBaseController.clear();
-      _farmerAddressController.clear();
+      _totalNumController.clear();
+      _farmerAdressController.clear();
       _farmerNameController.clear();
       _idCardNumberController.clear();
       _isPovertyController.clear();
@@ -150,7 +157,7 @@ class _EditInsuranceApplicantPageState extends State<EditInsuranceApplicantPage>
     });
   }
 
-  Widget _buildTextField(String label, TextEditingController controller) {
+  Widget _buildTextField(String label, TextEditingController controller, {bool isRequired = true}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Container(
@@ -159,14 +166,16 @@ class _EditInsuranceApplicantPageState extends State<EditInsuranceApplicantPage>
         ),
         child: Row(
           children: [
-            Expanded(
-              flex: 3,
+            IntrinsicWidth(
               child: Row(
                 children: [
-                  const Text(
-                    '*',
-                    style: TextStyle(color: Colors.red, fontSize: 16),
-                  ),
+                  if (isRequired)
+                    const Text(
+                      '*',
+                      style: TextStyle(color: Colors.red, fontSize: 16),
+                    ),
+                  if (isRequired)
+                    const SizedBox(width: 4), // 添加一个间距，让文本不贴着星号
                   Text(
                     label,
                     style: const TextStyle(color: Colors.black, fontSize: 16),
@@ -175,7 +184,6 @@ class _EditInsuranceApplicantPageState extends State<EditInsuranceApplicantPage>
               ),
             ),
             Expanded(
-              flex: 7,
               child: TextField(
                 controller: controller,
                 decoration: const InputDecoration(
@@ -206,22 +214,23 @@ class _EditInsuranceApplicantPageState extends State<EditInsuranceApplicantPage>
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Column(
           children: [
-            _buildTextField('账户名称', _accountNameController),
-            _buildTextField('银行账号', _bankAccountController),
-            _buildTextField('银行地址', _bankAddressController),
-            _buildTextField('银行所在市', _bankCityController),
-            _buildTextField('银行名称', _bankNameController),
-            _buildTextField('银行所在省', _bankProvinceController),
-            _buildTextField('养殖基地', _breedingBaseController),
-            _buildTextField('农户地址', _farmerAddressController),
-            _buildTextField('农户名称', _farmerNameController),
-            _buildTextField('身份证号码', _idCardNumberController),
-            _buildTextField('是否贫困户', _isPovertyController),
-            _buildTextField('纬度', _latitudeController),
-            _buildTextField('经度', _longitudeController),
-            _buildTextField('其他证件', _otherCardNumberController),
-            _buildTextField('联系电话', _phoneController),
-            _buildTextField('备注', _remarksController),
+            _buildTextField('机构名称：', _farmerNameController),
+            _buildTextField('身份证号码：', _idCardNumberController),
+            _buildTextField('其他证件类型：', _otherCardNumberController),
+            _buildTextField('农户地址：', _farmerAdressController),
+            _buildTextField('农户地址经度：', _longitudeController),
+            _buildTextField('农户地址纬度：', _latitudeController),
+            _buildTextField('联系电话：', _phoneController),
+            _buildTextField('养殖地点：', _breedingBaseController),
+            _buildTextField('养殖数量：', _totalNumController),
+            _buildTextField('银行账号：', _bankAccountController),
+            _buildTextField('账户名称：', _accountNameController),
+            _buildTextField('银行名称：', _bankNameController),
+            _buildTextField('银行地址：', _bankAdressController),
+            _buildTextField('开户行省：', _bankProvinceController),
+            _buildTextField('开户行市：', _bankCityController),
+            _buildTextField('是否贫困户：', _isPovertyController),
+            _buildTextField('备注：', _remarksController),
             const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
