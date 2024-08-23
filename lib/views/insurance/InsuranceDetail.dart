@@ -63,26 +63,26 @@ class _InsuranceDetailPageState extends ConsumerState<InsuranceDetailPage> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 2.0), // 设置底部间距
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          '合同生效日期: ${data["effectiveTime"] ?? '-'}',
-                          style: const TextStyle(color: Color(0xFF999999)),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 2.0), // 设置底部间距
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          '合同期满日期: ${data["expiryTime"] ?? '-'}',
-                          style: const TextStyle(color: Color(0xFF999999)),
-                        ),
-                      ),
-                    ),
+                    // Padding(
+                    //   padding: const EdgeInsets.only(bottom: 2.0), // 设置底部间距
+                    //   child: Align(
+                    //     alignment: Alignment.centerLeft,
+                    //     child: Text(
+                    //       '合同生效日期: ${data["effectiveTime"] ?? '-'}',
+                    //       style: const TextStyle(color: Color(0xFF999999)),
+                    //     ),
+                    //   ),
+                    // ),
+                    // Padding(
+                    //   padding: const EdgeInsets.only(bottom: 2.0), // 设置底部间距
+                    //   child: Align(
+                    //     alignment: Alignment.centerLeft,
+                    //     child: Text(
+                    //       '合同期满日期: ${data["expiryTime"] ?? '-'}',
+                    //       style: const TextStyle(color: Color(0xFF999999)),
+                    //     ),
+                    //   ),
+                    // ),
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text('创建时间： ${data["createTime"] ?? '-'}', style: const TextStyle(color: Color(0xFF999999))),
@@ -106,13 +106,13 @@ class _InsuranceDetailPageState extends ConsumerState<InsuranceDetailPage> {
             borderRadius: BorderRadius.circular(5),
           ),
           child: Text(
-            data["policyContent"] ?? '-',
+            data["farmerName"] ?? '-',
             style: const TextStyle(color: Colors.white),
           ),
         ),
         const SizedBox(width: 10),
         Text(
-          data["policyNo"] ?? '-',
+          data["startNo"] ?? '-',
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const Spacer(),
@@ -123,25 +123,21 @@ class _InsuranceDetailPageState extends ConsumerState<InsuranceDetailPage> {
   Widget _buildInfoRows(Map<String, dynamic> data) {
     return Column(
       children: [
-        _buildTwoColumns('保险费', data["premium"].toString(), '联系人', data["person"]),
+        _buildTwoColumns('唯一码', data["algorithmCode"], '性别', data["animalSex"] == 1 ? '公' : '母'),
         const SizedBox(height: 12),
-        _buildTwoColumns('联系电话', data["phone"], '农户（机构）名称', data["farmerName"]),
+        _buildTwoColumns('畜龄', data["animalAge"], '毛色', data["coatColor"]),
         const SizedBox(height: 12),
         _buildTwoColumns('身份证号码', data["idCardNumber"], '畜龄', data["animalAge"]),
         const SizedBox(height: 12),
-        _buildTwoColumns('农户地址', data["farmerAdress"], '毛色', data["coatColor"]),
+        _buildTwoColumns('畜别', data["animalType"], '畜种', data["animalBreed"]),
         const SizedBox(height: 12),
-        _buildTwoColumns('畜别', data["animalType"], '养殖地点', data["breedingBase"]),
+        _buildTwoColumns('品种', data["animalVariety"], '健康状况', data["isHealthy"].toString() == "0" ? '是' : '否'),
         const SizedBox(height: 12),
-        _buildTwoColumns('品种', data["animalVariety"], '银行账号', data["bankAccount"]),
+        _buildTwoColumns('是否有检验', data["isQuarantine"].toString() == "0" ? '是' : '否', '承保数量', data["insuranceNum"]),
         const SizedBox(height: 12),
-        _buildTwoColumns('账户名称', data["accountName"], '健康状况', data["isHealthy"]),
+        _buildTwoColumns('单位保额', data["insuranceAmount"], '市场价格', data["marketValue"]),
         const SizedBox(height: 12),
-        _buildTwoColumns('是否有检验', data["isQuarantine"], '银行名称', data["bankName"]),
-        const SizedBox(height: 12),
-        _buildTwoColumns('开户行省', data["bankProvince"], '开户行市', data["bankCity"]),
-        const SizedBox(height: 12),
-        _buildTwoColumns('备注', data["remarks"], null, null),
+        _buildTwoColumns('评定价格', data["evaluateValue"], null, null),
       ],
     );
   }
