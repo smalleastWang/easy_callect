@@ -21,6 +21,8 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _unameController = TextEditingController();
   final TextEditingController _pwdController = TextEditingController();
+  final FocusNode _unameFocusNode = FocusNode();
+  final FocusNode _pwdFocusNode = FocusNode();
   final GlobalKey _formKey = GlobalKey<FormState>();
 
   bool isShow = false;
@@ -29,6 +31,8 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
+    // 页面进入时自动聚焦到账号输入框
+    _unameFocusNode.requestFocus();
   }
   
   handlesSubmit() async {
@@ -74,6 +78,7 @@ class _LoginPageState extends State<LoginPage> {
                       padding: const EdgeInsets.only(bottom: 24),
                       child: TextFormField(
                         autofocus: true,
+                        focusNode: _unameFocusNode,
                         controller: _unameController,
                         decoration: const InputDecoration(
                           contentPadding: EdgeInsets.symmetric(horizontal: 6),
@@ -87,6 +92,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   const Text('密码', style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.bold)),
                     TextFormField(
+                      focusNode: _pwdFocusNode,
                       controller: _pwdController,
                       textAlignVertical: TextAlignVertical.center,
                       decoration: InputDecoration(
