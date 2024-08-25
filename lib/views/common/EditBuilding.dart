@@ -232,14 +232,15 @@ class _EditBuildingPageState extends State<EditBuildingPage> {
               readOnly: true,
               onTap: _selectOrg,
             ),
-            _buildTextField(
-              '圈舍：',
-              _buildingController,
-              isRequired: true,
-              suffixIcon: const Icon(Icons.arrow_forward_ios, size: 16,),
-              readOnly: true,
-              onTap: _selectBuilding,
-            ),
+            // _buildTextField(
+            //   '圈舍：',
+            //   _buildingController,
+            //   isRequired: true,
+            //   suffixIcon: const Icon(Icons.arrow_forward_ios, size: 16,),
+            //   readOnly: true,
+            //   onTap: _selectBuilding,
+            // ),
+            _buildTextField('圈舍名称：', _buildingController, isRequired: true),
             _buildTextField('当前数量：', _currentNumController, isRequired: true),
             _buildTextField('初期数量：', _initialNumController),
             _buildTextField('栋别：', _blockController),
@@ -288,7 +289,7 @@ class _EditBuildingPageState extends State<EditBuildingPage> {
                   _orgController.text = orgName!;
                   // 清空已选择的圈舍
                   buildingId = null;
-                  _buildingController.clear();
+                  // _buildingController.clear();
                 });
               },
             ),
