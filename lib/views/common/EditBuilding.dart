@@ -110,7 +110,7 @@ class _EditBuildingPageState extends State<EditBuildingPage> {
   }
 
   Widget _buildTextField(String label, TextEditingController controller,
-      {bool readOnly = false, Widget? suffixIcon, bool isRequired = false, VoidCallback? onTap}) {
+    {bool readOnly = false, Widget? suffixIcon, bool isRequired = false, VoidCallback? onTap}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Container(
@@ -123,8 +123,7 @@ class _EditBuildingPageState extends State<EditBuildingPage> {
             absorbing: readOnly,
             child: Row(
               children: [
-                Expanded(
-                  flex: 2,
+                IntrinsicWidth(
                   child: Row(
                     children: [
                       if (isRequired)
@@ -132,6 +131,8 @@ class _EditBuildingPageState extends State<EditBuildingPage> {
                           '*',
                           style: TextStyle(color: Colors.red, fontSize: 16),
                         ),
+                      if (isRequired)
+                        const SizedBox(width: 4), // 添加一个间距，让文本不贴着星号
                       Text(
                         label,
                         style: const TextStyle(color: Colors.black, fontSize: 16),
@@ -140,7 +141,6 @@ class _EditBuildingPageState extends State<EditBuildingPage> {
                   ),
                 ),
                 Expanded(
-                  flex: 5,
                   child: TextField(
                     controller: controller,
                     readOnly: readOnly,
@@ -159,7 +159,7 @@ class _EditBuildingPageState extends State<EditBuildingPage> {
     );
   }
 
-  Widget _buildDropdownField(String label, String value, List<String> items, Function(String?) onChanged) {
+  Widget _buildDropdownField(String label, String value, List<String> items, Function(String?) onChanged, {bool isRequired = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Container(
@@ -168,15 +168,24 @@ class _EditBuildingPageState extends State<EditBuildingPage> {
         ),
         child: Row(
           children: [
-            Expanded(
-              flex: 3,
-              child: Text(
-                label,
-                style: const TextStyle(color: Colors.black, fontSize: 16),
+            IntrinsicWidth(
+              child: Row(
+                children: [
+                  if (isRequired)
+                    const Text(
+                      '*',
+                      style: TextStyle(color: Colors.red, fontSize: 16),
+                    ),
+                  if (isRequired)
+                    const SizedBox(width: 4), // 添加一个间距，让文本不贴着星号
+                  Text(
+                    label,
+                    style: const TextStyle(color: Colors.black, fontSize: 16),
+                  ),
+                ],
               ),
             ),
             Expanded(
-              flex: 5,
               child: DropdownButton<String>(
                 value: value,
                 isExpanded: true,
@@ -185,7 +194,10 @@ class _EditBuildingPageState extends State<EditBuildingPage> {
                 items: items.map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
-                    child: Text(value, style: const TextStyle(color: Colors.black, fontSize: 16)),
+                    child: Text(
+                      value,
+                      style: const TextStyle(color: Colors.black, fontSize: 16),
+                    ),
                   );
                 }).toList(),
               ),
@@ -213,7 +225,7 @@ class _EditBuildingPageState extends State<EditBuildingPage> {
         child: Column(
           children: [
             _buildTextField(
-              '牧场',
+              '牧场：',
               _orgController,
               isRequired: true,
               suffixIcon: const Icon(Icons.arrow_forward_ios, size: 16,),
@@ -221,32 +233,32 @@ class _EditBuildingPageState extends State<EditBuildingPage> {
               onTap: _selectOrg,
             ),
             _buildTextField(
-              '圈舍',
+              '圈舍：',
               _buildingController,
               isRequired: true,
               suffixIcon: const Icon(Icons.arrow_forward_ios, size: 16,),
               readOnly: true,
               onTap: _selectBuilding,
             ),
-            _buildTextField('当前数量', _currentNumController, isRequired: true),
-            _buildTextField('初期数量', _initialNumController),
-            _buildTextField('栋别', _blockController),
-            _buildDropdownField('圈舍类型', _selectedBuildingType, ['正式圈舍', '临时圈舍'], (value) {
+            _buildTextField('当前数量：', _currentNumController, isRequired: true),
+            _buildTextField('初期数量：', _initialNumController),
+            _buildTextField('栋别：', _blockController),
+            _buildDropdownField('圈舍类型：', _selectedBuildingType, ['正式圈舍', '临时圈舍'], (value) {
               setState(() {
                 _selectedBuildingType = value!;
               });
             }),
-            _buildDropdownField('监控视频数量', _selectedMonitorCnt, ['1', '4', '9'], (value) {
+            _buildDropdownField('监控视频数量：', _selectedMonitorCnt, ['1', '4', '9'], (value) {
               setState(() {
                 _selectedMonitorCnt = value!;
               });
             }),
-            _buildDropdownField('算法视频数量', _selectedAlgorithmCnt, ['1', '4', '9'], (value) {
+            _buildDropdownField('算法视频数量：', _selectedAlgorithmCnt, ['1', '4', '9'], (value) {
               setState(() {
                 _selectedAlgorithmCnt = value!;
               });
             }),
-            _buildTextField('备注', _remarkController),
+            _buildTextField('备注：', _remarkController),
             const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,

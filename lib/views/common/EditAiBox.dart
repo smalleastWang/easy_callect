@@ -167,8 +167,7 @@ class _EditAiBoxPageState extends State<EditAiBoxPage> {
             absorbing: readOnly,
             child: Row(
               children: [
-                Expanded(
-                  flex: 2,
+                IntrinsicWidth(
                   child: Row(
                     children: [
                       if (isRequired)
@@ -176,6 +175,8 @@ class _EditAiBoxPageState extends State<EditAiBoxPage> {
                           '*',
                           style: TextStyle(color: Colors.red, fontSize: 16),
                         ),
+                      if (isRequired)
+                        const SizedBox(width: 4), // 为星号和标签之间添加一点间距
                       Text(
                         label,
                         style: const TextStyle(color: Colors.black, fontSize: 16),
@@ -184,7 +185,6 @@ class _EditAiBoxPageState extends State<EditAiBoxPage> {
                   ),
                 ),
                 Expanded(
-                  flex: 5,
                   child: TextField(
                     controller: controller,
                     readOnly: readOnly,
@@ -220,7 +220,7 @@ class _EditAiBoxPageState extends State<EditAiBoxPage> {
         child: Column(
           children: [
             _buildTextField(
-              '牧场',
+              '牧场：',
               _orgController,
               isRequired: true,
               suffixIcon: const Icon(Icons.arrow_forward_ios, size: 16,),
@@ -228,16 +228,16 @@ class _EditAiBoxPageState extends State<EditAiBoxPage> {
               onTap: _selectOrg,
             ),
             _buildTextField(
-              '圈舍',
+              '圈舍：',
               _buildingController,
               isRequired: true,
               suffixIcon: const Icon(Icons.arrow_forward_ios, size: 16,),
               readOnly: true,
               onTap: _selectBuilding,
             ),
-            _buildTextField('设备名称', _nameController, isRequired: true),
+            _buildTextField('设备名称：', _nameController, isRequired: true),
             _buildDropdownField<Brand>(
-              '品牌',
+              '品牌：',
               Brand.values,
               isRequired: true,
               value: brand,
@@ -247,10 +247,10 @@ class _EditAiBoxPageState extends State<EditAiBoxPage> {
                 });
               },
             ),
-            _buildTextField('型号', _modelController, isRequired: true),
-            _buildTextField('设备编号', _boxNoController, isRequired: true),
+            _buildTextField('型号：', _modelController, isRequired: true),
+            _buildTextField('设备编号：', _boxNoController, isRequired: true),
             _buildDropdownField<OnlineStatus>(
-              '在线状态',
+              '在线状态：',
               OnlineStatus.values,
               isRequired: true,
               value: online,
@@ -325,8 +325,7 @@ class _EditAiBoxPageState extends State<EditAiBoxPage> {
         ),
         child: Row(
           children: [
-            Expanded(
-              flex: 2,
+            IntrinsicWidth(
               child: Row(
                 children: [
                   if (isRequired)
@@ -334,6 +333,8 @@ class _EditAiBoxPageState extends State<EditAiBoxPage> {
                       '*',
                       style: TextStyle(color: Colors.red, fontSize: 16),
                     ),
+                  if (isRequired)
+                    const SizedBox(width: 4), // 为星号和标签之间添加一点间距
                   Text(
                     label,
                     style: const TextStyle(color: Colors.black, fontSize: 16),
@@ -342,7 +343,6 @@ class _EditAiBoxPageState extends State<EditAiBoxPage> {
               ),
             ),
             Expanded(
-              flex: 5,
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<T>(
                   value: value,
@@ -350,7 +350,9 @@ class _EditAiBoxPageState extends State<EditAiBoxPage> {
                   items: options.map((option) {
                     return DropdownMenuItem<T>(
                       value: option,
-                      child: Text(option is OnlineStatus ? option.name : (option as Brand).name),
+                      child: Text(option is OnlineStatus
+                          ? option.name
+                          : (option as Brand).name), // 修改此处以适应不同类型的选项
                     );
                   }).toList(),
                   onChanged: onChanged,
