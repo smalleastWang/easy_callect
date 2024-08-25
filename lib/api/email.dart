@@ -1,5 +1,4 @@
 import 'package:easy_collect/models/PageVo.dart';
-import 'package:easy_collect/models/email/email.dart';
 import 'package:easy_collect/utils/http/request.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -17,6 +16,15 @@ Future<PageVoModel> emailPage(EmailPageRef ref, Map<String, dynamic> params) asy
 }
 
 // 新增email
-Future<void> addEmail(Email params) async {
-  await HttpUtils.post('/biz/email/add', params: params.toJson());
+Future<void> addEmail(Map<String, dynamic> params) async {
+  if(params['id'] != null) {
+      await HttpUtils.post('/biz/email/edit', params: params);
+      return;
+  }
+  await HttpUtils.post('/biz/email/add', params: params);
+}
+
+// 删除email
+Future<void> delEmail(List<Map<String, String?>> params) async {
+  await HttpUtils.post('/biz/email/delete', params: params);
 }

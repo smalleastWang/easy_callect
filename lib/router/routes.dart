@@ -12,6 +12,7 @@ import 'package:easy_collect/utils/storage.dart';
 import 'package:easy_collect/views/common/AnimalMortgage.dart';
 import 'package:easy_collect/views/common/EditBuilding.dart';
 import 'package:easy_collect/views/common/EditAiBox.dart';
+import 'package:easy_collect/views/common/EditEmail.dart';
 import 'package:easy_collect/views/home/index.dart';
 import 'package:easy_collect/views/insurance/EditInsuranceApplicant.dart';
 import 'package:easy_collect/views/insurance/EditPolicy.dart';
@@ -138,6 +139,12 @@ final List<GoRoute> routes = [
         algorithmCode: extra['algorithmCode']!,
         dataType: extra['dataType']!,
       );
+    },
+  ),
+  GoRoute(
+    path: RouteEnum.editEmail.path,
+     builder: (context, state) {
+      return EditEmailPage(state: state);
     },
   ),
   

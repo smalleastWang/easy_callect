@@ -66,6 +66,7 @@ enum RouteEnum {
   animal('animal', '牛只信息', '/common/animal'),
   pigAnimal('pigAnimal', '猪只信息', '/common/pigAnimal'),
   email('email', '邮箱管理', '/common/email'),
+  editEmail('/editEmail', '添加邮箱', '/editEmail'),
   registerRecord('registerRecord', '牛注册记录', '/common/registerRecord'),
   distinguishRecord('distinguishRecord', '牛识别记录', '/common/distinguishRecord'),
   registerPigRecord('registerPigRecord', '猪注册记录', '/common/registerPigRecord'),
