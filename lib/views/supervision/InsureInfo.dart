@@ -16,26 +16,6 @@ class BreedingData {
   BreedingData(this.category, this.value, this.color);
 }
 
-final mortgageInfoProvider = StateNotifierProvider<MonitoringNotifier, AsyncValue<Monitoring?>>((ref) {
-  return MonitoringNotifier();
-});
-
-class MonitoringNotifier extends StateNotifier<AsyncValue<Monitoring?>> {
-  MonitoringNotifier() : super(const AsyncValue.loading());
-
-  Future<void> fetchMonitoringData({String? provinceId, String? cityId}) async {
-    try {
-      final id = cityId ?? provinceId;
-      final monitoringData = await MonitoringApi.getInsureInfo({
-        "id": id,
-      });
-      state = AsyncValue.data(monitoringData);
-    } catch (error) {
-      print('error: $error');
-    }
-  }
-}
-
 class InsureInfoPage extends ConsumerStatefulWidget {
   const InsureInfoPage({super.key});
 
@@ -46,34 +26,43 @@ class InsureInfoPage extends ConsumerStatefulWidget {
 class _InsureInfoPageState extends ConsumerState<InsureInfoPage> {
   String? selectedProvince;
   String? selectedCity;
+  AsyncValue<Monitoring> mortgageInfo = const AsyncValue.loading();
 
   @override
   void initState() {
     super.initState();
-    ref.read(mortgageInfoProvider.notifier).fetchMonitoringData();
+    _fetchMortgageInfo();
+  }
+
+  void _fetchMortgageInfo() {
+    final provider = getInsureInfoProvider({
+      'province': selectedProvince,
+      'city': selectedCity,
+    });
+    ref.read(provider.future).then((data) {
+      setState(() {
+        mortgageInfo = AsyncValue.data(data);
+      });
+    }).catchError((error) {
+      print('error: $error');
+    });
   }
 
   void _onAreaSelected(String? province, String? city) {
     setState(() {
       selectedProvince = province;
       selectedCity = city;
+      _fetchMortgageInfo(); // Fetch data when area selection changes
     });
-
-    ref.read(mortgageInfoProvider.notifier).fetchMonitoringData(
-      provinceId: province,
-      cityId: city,
-    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final AsyncValue<Monitoring?> mortgageInfo = ref.watch(mortgageInfoProvider);
-
     return Scaffold(
       appBar: AppBar(
         title: Text(RouteEnum.insureInfo.title),
       ),
-      body: SingleChildScrollView( // 包裹整个内容区域
+      body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
@@ -84,9 +73,7 @@ class _InsureInfoPageState extends ConsumerState<InsureInfoPage> {
               ),
               const SizedBox(height: 16.0),
               mortgageInfo.when(
-                data: (data) => data == null
-                    ? _buildNoDataWidget()
-                    : _buildDataWidget(context, data),
+                data: (data) => _buildContent(context, data),
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, stack) => Center(child: Text('Error: $error')),
               ),
@@ -97,39 +84,25 @@ class _InsureInfoPageState extends ConsumerState<InsureInfoPage> {
     );
   }
 
-  Widget _buildNoDataWidget() {
-    return const Center(child: Text('未获取到投保信息'));
-  }
+  Widget _buildContent(BuildContext context, Monitoring data) {
+    if (data == null) {
+      return _buildNoDataWidget();
+    }
 
-  Widget _buildDataWidget(BuildContext context, Monitoring data) {
     final breedingData = _getBreedingData(data);
-
-    String selectedCategory = '';
-    int selectedValue = 0;
-
     return Column(
       children: [
         _buildInfoGrid(data),
         if (data.cowNum != null && data.cowNum! > 0) ...[
-          _buildPieChart(
-            context,
-            breedingData,
-            (selectedDatum) {
-              setState(() {
-                selectedCategory = selectedDatum.category;
-                selectedValue = selectedDatum.value;
-                EasyLoading.showToast(
-                  '$selectedCategory: $selectedValue',
-                  duration: const Duration(seconds: 2),
-                  toastPosition: EasyLoadingToastPosition.bottom,
-                );
-              });
-            },
-          ),
+          _buildPieChart(context, breedingData),
           _buildLegend(breedingData),
         ],
       ],
     );
+  }
+
+  Widget _buildNoDataWidget() {
+    return const Center(child: Text('未获取到投保信息'));
   }
 
   List<BreedingData> _getBreedingData(Monitoring data) {
@@ -147,7 +120,7 @@ class _InsureInfoPageState extends ConsumerState<InsureInfoPage> {
       padding: const EdgeInsets.symmetric(horizontal: 0),
       child: GridView.builder(
         shrinkWrap: true,
-        physics: const BouncingScrollPhysics(), // 允许滚动
+        physics: const BouncingScrollPhysics(),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           childAspectRatio: 2,
@@ -208,11 +181,7 @@ class _InsureInfoPageState extends ConsumerState<InsureInfoPage> {
     }
   }
 
-  Widget _buildPieChart(
-    BuildContext context,
-    List<BreedingData> breedingData,
-    Function(BreedingData) onSelect
-  ) {
+  Widget _buildPieChart(BuildContext context, List<BreedingData> breedingData) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12.0),
       child: Tooltip(
@@ -220,7 +189,7 @@ class _InsureInfoPageState extends ConsumerState<InsureInfoPage> {
         child: Transform.translate(
           offset: const Offset(0, -5),
           child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.4, // 根据屏幕高度调整图表高度
+            height: MediaQuery.of(context).size.height * 0.4,
             child: charts.PieChart<String>(
               _createDonutChartData(breedingData),
               animate: true,
@@ -241,7 +210,11 @@ class _InsureInfoPageState extends ConsumerState<InsureInfoPage> {
                     final selectedDatum = model.selectedDatum;
                     if (selectedDatum.isNotEmpty) {
                       final BreedingData selectedData = selectedDatum.first.datum;
-                      onSelect(selectedData);
+                      EasyLoading.showToast(
+                        '${selectedData.category}: ${selectedData.value}',
+                        duration: const Duration(seconds: 2),
+                        toastPosition: EasyLoadingToastPosition.bottom,
+                      );
                     }
                   },
                 ),
@@ -277,21 +250,22 @@ class _InsureInfoPageState extends ConsumerState<InsureInfoPage> {
       child: Wrap(
         spacing: 10,
         runSpacing: 10,
-        alignment: WrapAlignment.center,
-        children: data.map((item) {
+        children: data.map((BreedingData item) {
           return Row(
-            mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                width: 16,
-                height: 16,
+                width: 20,
+                height: 20,
                 decoration: BoxDecoration(
                   color: item.color,
-                  shape: BoxShape.rectangle,
+                  borderRadius: BorderRadius.circular(4),
                 ),
               ),
-              const SizedBox(width: 4),
-              Text(item.category),
+              const SizedBox(width: 8.0),
+              Text(
+                '${item.category}: ${item.value}',
+                style: const TextStyle(fontSize: 14.0),
+              ),
             ],
           );
         }).toList(),
