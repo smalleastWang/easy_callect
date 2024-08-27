@@ -96,8 +96,7 @@ class _HealthInfoPageState extends ConsumerState<HealthInfoPage> {
       children: [
         _buildInfoGrid(data),
         if (data.cowNum != null && data.cowNum! > 0) ...[
-          _buildPieChart(context, breedingData,
-            (selectedDatum) {
+          _buildPieChart(context, breedingData,(selectedDatum) {
               setState(() {
                 selectedCategory = selectedDatum.category;
                 selectedValue = selectedDatum.value;
@@ -195,7 +194,7 @@ class _HealthInfoPageState extends ConsumerState<HealthInfoPage> {
     }
   }
 
-  Widget _buildPieChart(BuildContext context, List<BreedingData> breedingData, Function(BreedingData) onSelect) {
+  Widget _buildPieChart(BuildContext context, List<BreedingData> breedingData, Function(BreedingData) onSelect,) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12.0),
       child: Tooltip(
@@ -209,7 +208,7 @@ class _HealthInfoPageState extends ConsumerState<HealthInfoPage> {
               animate: true,
               defaultRenderer: charts.ArcRendererConfig<String>(
                 arcWidth: 60,
-                startAngle: 4 / 5 * 3.14,
+                startAngle: 1 / 5 * 3.14,
                 strokeWidthPx: 0.0,
                 arcRendererDecorators: [
                   charts.ArcLabelDecorator<String>(
@@ -217,6 +216,10 @@ class _HealthInfoPageState extends ConsumerState<HealthInfoPage> {
                   ),
                 ],
               ),
+              behaviors: [
+                charts.SelectNearest(), // 添加此行为以确保用户可以选择最近的数据点
+                charts.DomainHighlighter(), // 高亮选中的区域
+              ],
               selectionModels: [
                 charts.SelectionModelConfig(
                   type: charts.SelectionModelType.info,
