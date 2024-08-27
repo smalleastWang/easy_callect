@@ -14,26 +14,6 @@ class BreedingData {
   BreedingData(this.category, this.value, this.color);
 }
 
-final mortgageInfoProvider = StateNotifierProvider<MonitoringNotifier, AsyncValue<Monitoring?>>((ref) {
-  return MonitoringNotifier();
-});
-
-class MonitoringNotifier extends StateNotifier<AsyncValue<Monitoring?>> {
-  MonitoringNotifier() : super(const AsyncValue.loading());
-
-  Future<void> fetchMonitoringData({String? provinceId, String? cityId}) async {
-    try {
-      final id = cityId ?? provinceId;
-      final monitoringData = await MonitoringApi.geScaleInfo({
-        "id": id,
-      });
-      state = AsyncValue.data(monitoringData);
-    } catch (error) {
-      print('error: $error');
-    }
-  }
-}
-
 class BreedingScalePage extends ConsumerStatefulWidget {
   const BreedingScalePage({super.key});
 
@@ -45,30 +25,38 @@ class BreedingScalePage extends ConsumerStatefulWidget {
 class _BreedingScalePageState extends ConsumerState<BreedingScalePage> {
   String? selectedProvince;
   String? selectedCity;
-  String? selectedDistrict;
+  AsyncValue<Monitoring> mortgageInfo = const AsyncValue.loading();
 
   @override
   void initState() {
     super.initState();
-    ref.read(mortgageInfoProvider.notifier).fetchMonitoringData();
+    _fetchMortgageInfo();
+  }
+
+  void _fetchMortgageInfo() {
+    final id = selectedCity ?? selectedProvince;
+    final provider = getScaleInfoProvider({
+      'id': id,
+    });
+    ref.read(provider.future).then((data) {
+      setState(() {
+        mortgageInfo = AsyncValue.data(data);
+      });
+    }).catchError((error) {
+      print('error: $error');
+    });
   }
 
   void _onAreaSelected(String? province, String? city) {
     setState(() {
       selectedProvince = province;
       selectedCity = city;
+      _fetchMortgageInfo(); // Fetch data when area selection changes
     });
-
-    ref.read(mortgageInfoProvider.notifier).fetchMonitoringData(
-      provinceId: province,
-      cityId: city,
-    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final AsyncValue<Monitoring?> mortgageInfo = ref.watch(mortgageInfoProvider);
-
     return Scaffold(
       appBar: AppBar(
         title: Text(RouteEnum.breedingScale.title),

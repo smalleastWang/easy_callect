@@ -2,11 +2,11 @@ import 'package:community_charts_flutter/community_charts_flutter.dart' as chart
 import 'package:easy_collect/api/monitoring.dart';
 import 'package:easy_collect/enums/route.dart';
 import 'package:easy_collect/models/monitoring/Monitoring.dart';
-import 'package:easy_collect/widgets/AreaSelector/AreaSelector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:easy_collect/widgets/AreaSelector/AreaSelector.dart';
 
 class BreedingData {
   final String category;
@@ -14,26 +14,6 @@ class BreedingData {
   final Color color;
 
   BreedingData(this.category, this.value, this.color);
-}
-
-final mortgageInfoProvider = StateNotifierProvider<MonitoringNotifier, AsyncValue<Monitoring?>>((ref) {
-  return MonitoringNotifier();
-});
-
-class MonitoringNotifier extends StateNotifier<AsyncValue<Monitoring?>> {
-  MonitoringNotifier() : super(const AsyncValue.loading());
-
-  Future<void> fetchMortgageData({String? provinceId, String? cityId}) async {
-    try {
-      final id = cityId ?? provinceId;
-      final monitoringData = await MonitoringApi.getMortgageInfo({
-        "id": id,
-      });
-      state = AsyncValue.data(monitoringData);
-    } catch (error) {
-      print('error: $error');
-    }
-  }
 }
 
 class MortgageInfoPage extends ConsumerStatefulWidget {
@@ -46,34 +26,43 @@ class MortgageInfoPage extends ConsumerStatefulWidget {
 class _MortgageInfoPageState extends ConsumerState<MortgageInfoPage> {
   String? selectedProvince;
   String? selectedCity;
+  AsyncValue<Monitoring> mortgageInfo = const AsyncValue.loading();
 
   @override
   void initState() {
     super.initState();
-    ref.read(mortgageInfoProvider.notifier).fetchMortgageData();
+    _fetchMortgageInfo();
+  }
+
+  void _fetchMortgageInfo() {
+    final id = selectedCity ?? selectedProvince;
+    final provider = getMortgageInfoProvider({
+      'id': id,
+    });
+    ref.read(provider.future).then((data) {
+      setState(() {
+        mortgageInfo = AsyncValue.data(data);
+      });
+    }).catchError((error) {
+      print('error: $error');
+    });
   }
 
   void _onAreaSelected(String? province, String? city) {
     setState(() {
       selectedProvince = province;
       selectedCity = city;
+      _fetchMortgageInfo(); // Fetch data when area selection changes
     });
-
-    ref.read(mortgageInfoProvider.notifier).fetchMortgageData(
-      provinceId: province,
-      cityId: city,
-    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final AsyncValue<Monitoring?> mortgageInfo = ref.watch(mortgageInfoProvider);
-
     return Scaffold(
       appBar: AppBar(
         title: Text(RouteEnum.mortgageInfo.title),
       ),
-      body: SingleChildScrollView( // 包裹整个内容区域
+      body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
@@ -84,9 +73,7 @@ class _MortgageInfoPageState extends ConsumerState<MortgageInfoPage> {
               ),
               const SizedBox(height: 16.0),
               mortgageInfo.when(
-                data: (data) => data == null
-                    ? _buildNoDataWidget()
-                    : _buildDataWidget(context, data),
+                data: (data) => _buildContent(context, data),
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, stack) => Center(child: Text('Error: $error')),
               ),
@@ -97,25 +84,20 @@ class _MortgageInfoPageState extends ConsumerState<MortgageInfoPage> {
     );
   }
 
+  Widget _buildContent(BuildContext context, Monitoring data) {
+    if (data == null) {
+      return _buildNoDataWidget();
+    }
 
-  Widget _buildNoDataWidget() {
-    return const Center(child: Text('未获取到抵押信息'));
-  }
-
-  Widget _buildDataWidget(BuildContext context, Monitoring data) {
     final breedingData = _getBreedingData(data);
 
     String selectedCategory = '';
     int selectedValue = 0;
-
     return Column(
       children: [
         _buildInfoGrid(data),
         if (data.cowNum != null && data.cowNum! > 0) ...[
-          _buildPieChart(
-            context,
-            breedingData,
-            (selectedDatum) {
+          _buildPieChart(context, breedingData,(selectedDatum) {
               setState(() {
                 selectedCategory = selectedDatum.category;
                 selectedValue = selectedDatum.value;
@@ -125,12 +107,15 @@ class _MortgageInfoPageState extends ConsumerState<MortgageInfoPage> {
                   toastPosition: EasyLoadingToastPosition.bottom,
                 );
               });
-            },
-          ),
+            },),
           _buildLegend(breedingData),
         ],
       ],
     );
+  }
+
+  Widget _buildNoDataWidget() {
+    return const Center(child: Text('未获取到投保信息'));
   }
 
   List<BreedingData> _getBreedingData(Monitoring data) {
@@ -148,7 +133,7 @@ class _MortgageInfoPageState extends ConsumerState<MortgageInfoPage> {
       padding: const EdgeInsets.symmetric(horizontal: 0),
       child: GridView.builder(
         shrinkWrap: true,
-        physics: const BouncingScrollPhysics(), // 允许滚动
+        physics: const BouncingScrollPhysics(),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           childAspectRatio: 2,
@@ -209,19 +194,15 @@ class _MortgageInfoPageState extends ConsumerState<MortgageInfoPage> {
     }
   }
 
-  Widget _buildPieChart(
-    BuildContext context,
-    List<BreedingData> breedingData,
-    Function(BreedingData) onSelect,
-  ) {
+  Widget _buildPieChart(BuildContext context, List<BreedingData> breedingData, Function(BreedingData) onSelect,) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12.0),
       child: Tooltip(
         message: '点击图表查看详情',
         child: Transform.translate(
-          offset: const Offset(0, -5), // 缩小偏移量
+          offset: const Offset(0, -5),
           child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.4, // 根据屏幕高度调整图表高度
+            height: MediaQuery.of(context).size.height * 0.4,
             child: charts.PieChart<String>(
               _createDonutChartData(breedingData),
               animate: true,

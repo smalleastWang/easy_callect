@@ -35,9 +35,9 @@ class _InsureInfoPageState extends ConsumerState<InsureInfoPage> {
   }
 
   void _fetchMortgageInfo() {
+    final id = selectedCity ?? selectedProvince;
     final provider = getInsureInfoProvider({
-      'province': selectedProvince,
-      'city': selectedCity,
+      'id': id,
     });
     ref.read(provider.future).then((data) {
       setState(() {
@@ -90,11 +90,25 @@ class _InsureInfoPageState extends ConsumerState<InsureInfoPage> {
     }
 
     final breedingData = _getBreedingData(data);
+    String selectedCategory = '';
+    int selectedValue = 0;
+
     return Column(
       children: [
         _buildInfoGrid(data),
         if (data.cowNum != null && data.cowNum! > 0) ...[
-          _buildPieChart(context, breedingData),
+          _buildPieChart(context, breedingData,
+            (selectedDatum) {
+              setState(() {
+                selectedCategory = selectedDatum.category;
+                selectedValue = selectedDatum.value;
+                EasyLoading.showToast(
+                  '$selectedCategory: $selectedValue',
+                  duration: const Duration(seconds: 2),
+                  toastPosition: EasyLoadingToastPosition.bottom,
+                );
+              });
+            }),
           _buildLegend(breedingData),
         ],
       ],
@@ -181,7 +195,7 @@ class _InsureInfoPageState extends ConsumerState<InsureInfoPage> {
     }
   }
 
-  Widget _buildPieChart(BuildContext context, List<BreedingData> breedingData) {
+  Widget _buildPieChart(BuildContext context, List<BreedingData> breedingData, Function(BreedingData) onSelect) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12.0),
       child: Tooltip(
@@ -210,11 +224,7 @@ class _InsureInfoPageState extends ConsumerState<InsureInfoPage> {
                     final selectedDatum = model.selectedDatum;
                     if (selectedDatum.isNotEmpty) {
                       final BreedingData selectedData = selectedDatum.first.datum;
-                      EasyLoading.showToast(
-                        '${selectedData.category}: ${selectedData.value}',
-                        duration: const Duration(seconds: 2),
-                        toastPosition: EasyLoadingToastPosition.bottom,
-                      );
+                      onSelect(selectedData);
                     }
                   },
                 ),
@@ -250,22 +260,21 @@ class _InsureInfoPageState extends ConsumerState<InsureInfoPage> {
       child: Wrap(
         spacing: 10,
         runSpacing: 10,
-        children: data.map((BreedingData item) {
+        alignment: WrapAlignment.center,
+        children: data.map((item) {
           return Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                width: 20,
-                height: 20,
+                width: 16,
+                height: 16,
                 decoration: BoxDecoration(
                   color: item.color,
-                  borderRadius: BorderRadius.circular(4),
+                  shape: BoxShape.rectangle,
                 ),
               ),
-              const SizedBox(width: 8.0),
-              Text(
-                '${item.category}: ${item.value}',
-                style: const TextStyle(fontSize: 14.0),
-              ),
+              const SizedBox(width: 4),
+              Text(item.category),
             ],
           );
         }).toList(),

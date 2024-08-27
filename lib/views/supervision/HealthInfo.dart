@@ -16,26 +16,6 @@ class BreedingData {
   BreedingData(this.category, this.value, this.color);
 }
 
-final mortgageInfoProvider = StateNotifierProvider<MonitoringNotifier, AsyncValue<Monitoring?>>((ref) {
-  return MonitoringNotifier();
-});
-
-class MonitoringNotifier extends StateNotifier<AsyncValue<Monitoring?>> {
-  MonitoringNotifier() : super(const AsyncValue.loading());
-
-  Future<void> fetchMonitoringData({String? provinceId, String? cityId}) async {
-    try {
-      final id = cityId ?? provinceId;
-      final monitoringData = await MonitoringApi.getHealthInfo({
-        "id": id,
-      });
-      state = AsyncValue.data(monitoringData);
-    } catch (error) {
-      print('error: $error');
-    }
-  }
-}
-
 class HealthInfoPage extends ConsumerStatefulWidget {
   const HealthInfoPage({super.key});
 
@@ -46,45 +26,43 @@ class HealthInfoPage extends ConsumerStatefulWidget {
 class _HealthInfoPageState extends ConsumerState<HealthInfoPage> {
   String? selectedProvince;
   String? selectedCity;
-
-  List<BreedingData> breedingData = [];
+  AsyncValue<Monitoring> mortgageInfo = const AsyncValue.loading();
 
   @override
   void initState() {
     super.initState();
-    ref.read(mortgageInfoProvider.notifier).fetchMonitoringData();
+    _fetchMortgageInfo();
   }
 
-  @override
-  void dispose() {
-    // 页面关闭时清除饼图数据
-    setState(() {
-      breedingData = [];
+  void _fetchMortgageInfo() {
+    final id = selectedCity ?? selectedProvince;
+    final provider = getHealthInfoProvider({
+      'id': id,
     });
-    super.dispose();
+    ref.read(provider.future).then((data) {
+      setState(() {
+        mortgageInfo = AsyncValue.data(data);
+      });
+    }).catchError((error) {
+      print('error: $error');
+    });
   }
 
   void _onAreaSelected(String? province, String? city) {
     setState(() {
       selectedProvince = province;
       selectedCity = city;
+      _fetchMortgageInfo(); // Fetch data when area selection changes
     });
-
-    ref.read(mortgageInfoProvider.notifier).fetchMonitoringData(
-      provinceId: province,
-      cityId: city,
-    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final AsyncValue<Monitoring?> mortgageInfo = ref.watch(mortgageInfoProvider);
-
     return Scaffold(
       appBar: AppBar(
         title: Text(RouteEnum.healthInfo.title),
       ),
-      body: SingleChildScrollView( // 包裹整个内容区域
+      body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
@@ -95,12 +73,7 @@ class _HealthInfoPageState extends ConsumerState<HealthInfoPage> {
               ),
               const SizedBox(height: 16.0),
               mortgageInfo.when(
-                data: (data) {
-                  breedingData = data == null ? [] : _getBreedingData(data);
-                  return data == null
-                      ? _buildNoDataWidget()
-                      : _buildDataWidget(context, data);
-                },
+                data: (data) => _buildContent(context, data),
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, stack) => Center(child: Text('Error: $error')),
               ),
@@ -111,21 +84,19 @@ class _HealthInfoPageState extends ConsumerState<HealthInfoPage> {
     );
   }
 
-  Widget _buildNoDataWidget() {
-    return const Center(child: Text('未获取到健康信息'));
-  }
+  Widget _buildContent(BuildContext context, Monitoring data) {
+    if (data == null) {
+      return _buildNoDataWidget();
+    }
 
-  Widget _buildDataWidget(BuildContext context, Monitoring data) {
+    final breedingData = _getBreedingData(data);
     String selectedCategory = '';
     int selectedValue = 0;
-
     return Column(
       children: [
         _buildInfoGrid(data),
         if (data.cowNum != null && data.cowNum! > 0) ...[
-          _buildPieChart(
-            context,
-            breedingData,
+          _buildPieChart(context, breedingData,
             (selectedDatum) {
               setState(() {
                 selectedCategory = selectedDatum.category;
@@ -144,6 +115,10 @@ class _HealthInfoPageState extends ConsumerState<HealthInfoPage> {
     );
   }
 
+  Widget _buildNoDataWidget() {
+    return const Center(child: Text('未获取到投保信息'));
+  }
+
   List<BreedingData> _getBreedingData(Monitoring data) {
     final health = data.health ?? 0;
     final unHealth = data.unHealth ?? 0;
@@ -159,7 +134,7 @@ class _HealthInfoPageState extends ConsumerState<HealthInfoPage> {
       padding: const EdgeInsets.symmetric(horizontal: 0),
       child: GridView.builder(
         shrinkWrap: true,
-        physics: const BouncingScrollPhysics(), // 允许滚动
+        physics: const BouncingScrollPhysics(),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           childAspectRatio: 2,
@@ -220,11 +195,7 @@ class _HealthInfoPageState extends ConsumerState<HealthInfoPage> {
     }
   }
 
-  Widget _buildPieChart(
-    BuildContext context,
-    List<BreedingData> breedingData,
-    Function(BreedingData) onSelect
-  ) {
+  Widget _buildPieChart(BuildContext context, List<BreedingData> breedingData, Function(BreedingData) onSelect) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12.0),
       child: Tooltip(
@@ -232,7 +203,7 @@ class _HealthInfoPageState extends ConsumerState<HealthInfoPage> {
         child: Transform.translate(
           offset: const Offset(0, -5),
           child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.4, // 根据屏幕高度调整图表高度
+            height: MediaQuery.of(context).size.height * 0.4,
             child: charts.PieChart<String>(
               _createDonutChartData(breedingData),
               animate: true,
@@ -285,16 +256,22 @@ class _HealthInfoPageState extends ConsumerState<HealthInfoPage> {
 
   Widget _buildLegend(List<BreedingData> data) {
     return Padding(
-      padding: const EdgeInsets.only(top: 16.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+      child: Wrap(
+        spacing: 10,
+        runSpacing: 10,
+        alignment: WrapAlignment.center,
         children: data.map((item) {
           return Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                width: 12,
-                height: 12,
-                color: item.color,
+                width: 16,
+                height: 16,
+                decoration: BoxDecoration(
+                  color: item.color,
+                  shape: BoxShape.rectangle,
+                ),
               ),
               const SizedBox(width: 4),
               Text(item.category),
@@ -307,43 +284,53 @@ class _HealthInfoPageState extends ConsumerState<HealthInfoPage> {
 
   Widget _buildInfoCard(
     String title,
-    String value,
+    String count,
     String iconPath, {
     Color bgColor = Colors.blue,
     Color iconColor = Colors.white,
   }) {
     return Card(
-      color: bgColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.0),
-      ),
+      color: const Color(0xFFF6F7FD),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SvgPicture.asset(
-              iconPath,
-              color: iconColor,
-              width: 30,
-              height: 30,
+            Container(
+              decoration: BoxDecoration(
+                color: bgColor,
+                borderRadius: BorderRadius.circular(6),
+              ),
+              padding: const EdgeInsets.all(8.0),
+              child: iconPath.endsWith('.svg')
+                  ? SvgPicture.asset(iconPath, fit: BoxFit.fill)
+                  : Image.asset(iconPath, fit: BoxFit.fill),
             ),
-            const SizedBox(width: 8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(color: Colors.white),
-                ),
-                Text(
-                  value,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
+            const SizedBox(width: 10.0),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    count,
+                    style: const TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF000000),
+                    ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 2.0),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 12.0,
+                      color: Color(0xFF666666),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
