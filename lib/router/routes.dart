@@ -32,7 +32,11 @@ import 'package:go_router/go_router.dart';
 final List<GoRoute> routes = [
   GoRoute(
     path: RouteEnum.cameraRegister.path,
-    builder: (context, state) => const CameraMlVision(mTaskMode: EnumTaskMode.cowBodyRegister),
+    builder: (context, state) {
+      final extra = (state.extra ?? {}.cast<String, dynamic>()) as Map<String, dynamic>;
+      //  EnumTaskMode.cowBodyRegister
+      return CameraMlVision(mTaskMode: extra['mTaskMode']);
+    },
     routes: const []
   ),
   GoRoute(

@@ -144,62 +144,66 @@ class _PickerPastureWidgetState extends State<PickerPastureWidget> {
                           )
                         ),
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: tabs[actionIndex].options?.map((e) {
-                          return GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: () {
-                              if (tabs[actionIndex].id != null && tabs[actionIndex].id == e.id) {
-                                setBottomSheetState(() {
-                                  tabs[actionIndex].id = null;
-                                  tabs[actionIndex].name = null;
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: tabs[actionIndex].options?.map((e) {
+                              return GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onTap: () {
+                                  if (tabs[actionIndex].id != null && tabs[actionIndex].id == e.id) {
+                                    setBottomSheetState(() {
+                                      tabs[actionIndex].id = null;
+                                      tabs[actionIndex].name = null;
+                                      if (actionIndex < tabs.length - 1) {
+                                        tabs[actionIndex+1].options = [];
+                                      }
+                                      for (int i = actionIndex; i < tabs.length; i++) {
+                                        tabs[i].id = null;
+                                        tabs[i].name = null;
+                                        if (i < tabs.length - 1) {
+                                          tabs[i+1].options = [];
+                                        }
+                                      }
+                                    });
+                                    return;
+                                  }
+                                  setBottomSheetState(() {
+                                    tabs[actionIndex].id = e.id;
+                                    tabs[actionIndex].name = e.name;
+                                  });
                                   if (actionIndex < tabs.length - 1) {
-                                    tabs[actionIndex+1].options = [];
+                                    actionIndex++;
+                                    tabs[actionIndex].options = findOptionsById(widget.options, e.id);
                                   }
-                                  for (int i = actionIndex; i < tabs.length; i++) {
-                                    tabs[i].id = null;
-                                    tabs[i].name = null;
-                                    if (i < tabs.length - 1) {
-                                      tabs[i+1].options = [];
-                                    }
-                                  }
-                                });
-                                return;
-                              }
-                              setBottomSheetState(() {
-                                tabs[actionIndex].id = e.id;
-                                tabs[actionIndex].name = e.name;
-                              });
-                              if (actionIndex < tabs.length - 1) {
-                                actionIndex++;
-                                tabs[actionIndex].options = findOptionsById(widget.options, e.id);
-                              }
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                              decoration: BoxDecoration(
-                                color: e.id == tabs[actionIndex].id ? MyColors.primaryColor.withOpacity(0.08) : null,
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    e.name,
-                                    style: TextStyle(
-                                      
-                                      color: e.id == tabs[actionIndex].id ? MyColors.primaryColor : null,
-                                      fontSize: 14,
-                                      height: 2
-                                    )
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                                  decoration: BoxDecoration(
+                                    color: e.id == tabs[actionIndex].id ? MyColors.primaryColor.withOpacity(0.08) : null,
                                   ),
-                                  if (e.id == tabs[actionIndex].id) SvgPicture.asset('assets/icon/svg/confirm.svg', width: 25, color: MyColors.primaryColor)
-                                ],
-                              ),
-                            ),
-                          );
-                        }).toList() ?? []
-                      ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        e.name,
+                                        style: TextStyle(
+                                          
+                                          color: e.id == tabs[actionIndex].id ? MyColors.primaryColor : null,
+                                          fontSize: 14,
+                                          height: 2
+                                        )
+                                      ),
+                                      if (e.id == tabs[actionIndex].id) SvgPicture.asset('assets/icon/svg/confirm.svg', width: 25, color: MyColors.primaryColor)
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }).toList() ?? []
+                          ),
+                        ),
+                      )
                     ],
                   ),
                 );

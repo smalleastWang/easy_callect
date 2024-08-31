@@ -1,14 +1,18 @@
 
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:easy_collect/enums/register.dart';
 import 'package:easy_collect/enums/route.dart';
+import 'package:easy_collect/utils/camera/Config.dart';
 import 'package:easy_collect/utils/camera/DetectFFI.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 
 class FileInfo {
   Uint8List? bytes;
@@ -25,7 +29,9 @@ class PickerImageField extends StatefulWidget {
   final bool multiple;
   final Function(List<FileInfo> files)? onChange;
   final PickerImageController controller;
-  const PickerImageField({super.key, this.maxNum = 9, this.onChange, required this.controller, this.multiple = false, this.label, this.uploadApi});
+  final EnumTaskMode mTaskMode;
+  final int? registerMedia;
+  const PickerImageField({super.key, this.maxNum = 9, this.onChange, required this.controller, this.multiple = false, this.label, this.uploadApi,  this.mTaskMode = EnumTaskMode.cowFaceRegister, this.registerMedia});
 
   @override
   State<PickerImageField> createState() => _PickerImageFieldState();
@@ -57,11 +63,35 @@ class _PickerImageFieldState extends State<PickerImageField> {
   }
 
   List<Widget> get _pickImagesWidget {
-    List<Image> imageWidget = _pickImages.map((FileInfo file) {
-      if (file.bytes == null) {
-        return Image.network(file.value);
-      }
-      return Image.memory(file.bytes!, width: 80, height: 80);
+    List<Widget> imageWidget = _pickImages.map((FileInfo file) {
+      return Stack(
+        clipBehavior: Clip.none,
+        children: [
+          if (file.bytes == null) Image.network(file.value, width: 80, height: 80, fit: BoxFit.cover,)
+          else Image.memory(file.bytes!, fit: BoxFit.cover, width: 80, height: 80),
+          Positioned(
+            top: -4,
+            right: -4,
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  _pickImages.remove(file);
+                });
+              },
+              behavior: HitTestBehavior.translucent,
+              child: Container(
+                padding: const EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                  color: Colors.grey.withOpacity(0.9),
+                  borderRadius: BorderRadius.circular(100),
+                  border: Border.all(width: 1, color: Colors.white)
+                ),
+                child: SvgPicture.asset('assets/icon/common/close.svg', width: 10,color: Colors.white),
+              ),
+            )
+          )
+        ],
+      );
     }).toList();
     List<Widget> result = [...imageWidget];
     if (result.length < widget.maxNum) {
@@ -83,14 +113,12 @@ class _PickerImageFieldState extends State<PickerImageField> {
     final picker = ImagePicker();
     List<XFile> pickedFiles = [];
     if (widget.multiple || source == null) {
-      pickedFiles.addAll(await picker.pickMultiImage());
-    } else {
-      
-      if (source == ImageSource.camera) {
-        final barcode = await context.push(RouteEnum.cameraRegister.path);
-        print(barcode);
-        return;
-      }
+      List<XFile> pickfiles = await picker.pickMultiImage();
+      pickedFiles.addAll(pickfiles);
+    } else if (source == ImageSource.camera) {
+      XFile? cameraFile = await context.push<XFile>(RouteEnum.cameraRegister.path, extra: {'mTaskMode': widget.mTaskMode});
+      if (cameraFile != null) pickedFiles.add(cameraFile);
+    } else if (source == ImageSource.gallery) {
       XFile? pickfile = await picker.pickImage(source: source);
       if (pickfile != null) pickedFiles.add(pickfile);
     }
@@ -130,7 +158,7 @@ class _PickerImageFieldState extends State<PickerImageField> {
               onPressed: () => context.pop(ImageSource.gallery),
               child: const Text("相册")
             ),
-            CupertinoActionSheetAction(
+            if (widget.registerMedia != RegisterMediaEnum.drones.value) CupertinoActionSheetAction(
               onPressed: () => context.pop(ImageSource.camera),
               child: const Text("拍照")
             )

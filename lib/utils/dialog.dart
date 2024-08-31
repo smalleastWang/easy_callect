@@ -82,7 +82,7 @@ showConfirmModalBottomSheet({required BuildContext context, required WidgetBuild
                 )
               ],
             ),
-            contentBuilder(context),
+            Expanded(child: contentBuilder(context)),
           ],
         ),
       );

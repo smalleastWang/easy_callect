@@ -4,6 +4,7 @@ import 'package:easy_collect/enums/Route.dart';
 import 'package:easy_collect/enums/index.dart';
 import 'package:easy_collect/enums/register.dart';
 import 'package:easy_collect/models/register/index.dart';
+import 'package:easy_collect/utils/camera/Config.dart';
 import 'package:easy_collect/utils/regExp.dart';
 import 'package:easy_collect/widgets/Button/BlockButton.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
@@ -133,13 +134,22 @@ class _StandardVerificationPageState extends ConsumerState<StandardVerificationP
         context.pop();
         return;
       }
-      // 单个注册
+      // 牛脸注册
       if (registerMedia == RegisterMediaEnum.face.value) {
         if (_faceImgsController.value == null || _faceImgsController.value!.isEmpty) return EasyLoading.showError('请上传牛脸图片');
+        if (_faceImgsController.value!.length < 4) return EasyLoading.showError('请上传4张以上牛脸图片');
         params.faceImgs = _faceImgsController.value!.map((e) => e.value).toList();
+        if (_bodyImgsController.value != null) {
+          params.bodyImgs = _bodyImgsController.value!.map((e) => e.value).toList();
+        }
+        // 牛背注册
       } else if (registerMedia == RegisterMediaEnum.back.value) {
-        if (_bodyImgsController.value == null || _bodyImgsController.value!.isEmpty) return EasyLoading.showError('请上传牛脸图片');
+        if (_bodyImgsController.value == null || _bodyImgsController.value!.isEmpty) return EasyLoading.showError('请上传牛背图片');
+        if (_bodyImgsController.value!.length < 4) return EasyLoading.showError('请上传4张以上牛背图片');
         params.bodyImgs = _bodyImgsController.value!.map((e) => e.value).toList();
+        if (_bodyImgsController.value != null) {
+          params.faceImgs = _faceImgsController.value!.map((e) => e.value).toList();
+        }
       }
       await RegisterApi.cattleApp(params);
       context.pop();
@@ -153,19 +163,22 @@ class _StandardVerificationPageState extends ConsumerState<StandardVerificationP
 
   List<Widget> get _getImgWidget {
     // 单个注册-牛脸注册
-    // if (registerType == RegisterTypeEnum.single.value && registerMedia == RegisterMediaEnum.face.value) {
-    //   return [PickerImageField(controller: _faceImgsController, maxNum: 20, label: '牛脸图片')];
-    // }
-    // 单个注册-牛背注册
-    if (registerType == RegisterTypeEnum.single.value && (registerMedia == RegisterMediaEnum.back.value || registerMedia == RegisterMediaEnum.face.value)) {
+    if (registerType == RegisterTypeEnum.single.value && registerMedia == RegisterMediaEnum.face.value) {
       return [
-        PickerImageField(controller: _bodyImgsController, maxNum: 20, label: '牛背图片'),
-        PickerImageField(controller: _faceImgsController, maxNum: 20, label: '牛脸图片'),
+        PickerImageField(controller: _faceImgsController, maxNum: 20, label: '牛脸图片', mTaskMode: EnumTaskMode.cowFaceRegister),
+        PickerImageField(controller: _bodyImgsController, maxNum: 20, label: '牛背图片', mTaskMode: EnumTaskMode.cowBodyRegister)
+      ];
+    }
+    // 单个注册-牛背注册
+    if (registerType == RegisterTypeEnum.single.value && registerMedia == RegisterMediaEnum.back.value) {
+      return [
+        PickerImageField(controller: _bodyImgsController, maxNum: 20, label: '牛背图片', mTaskMode: EnumTaskMode.cowBodyRegister),
+        PickerImageField(controller: _faceImgsController, maxNum: 20, label: '牛脸图片', mTaskMode: EnumTaskMode.cowFaceRegister),
       ];
     }
     // 批量注册-无人机
     if (registerMedia == RegisterMediaEnum.drones.value) {
-      return [PickerImageField(controller: _dronesController, maxNum: registerType == RegisterTypeEnum.single.value ? 1 : 9,label: '航拍图', uploadApi: RegisterApi.uavUpload)];
+      return [PickerImageField(controller: _dronesController, maxNum: registerType == RegisterTypeEnum.single.value ? 1 : 9, label: '航拍图', uploadApi: RegisterApi.uavUpload), registerMedia: registerMedia];
     }
     return [const SizedBox.shrink()];
   }
@@ -237,9 +250,7 @@ class _StandardVerificationPageState extends ConsumerState<StandardVerificationP
                 ),
                 RegisterTypeWidget<int>(defaultValue: registerType, options: enumsToOptions(RegisterTypeEnum.values), onChange: _changeRegisterType),
                 _getRegisterCnt,
-                
                 ..._getImgWidget,
-
                 const SizedBox(height: 50),
                 BlockButton(
                   onPressed: submitLoading ? null : () => _handleSubmit(enclosureList.value ?? []),
