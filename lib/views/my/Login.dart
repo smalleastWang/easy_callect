@@ -1,5 +1,3 @@
-
-
 import 'package:dart_sm/dart_sm.dart';
 import 'package:easy_collect/api/my.dart';
 import 'package:easy_collect/enums/Route.dart';
@@ -9,7 +7,7 @@ import 'package:easy_collect/utils/storage.dart';
 import 'package:easy_collect/widgets/Button/BlockButton.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -27,21 +25,43 @@ class _LoginPageState extends State<LoginPage> {
 
   bool isShow = false;
   bool pwdVisible = false;
+  bool rememberMe = false;
 
   @override
   void initState() {
     super.initState();
-    // 页面进入时自动聚焦到账号输入框
     _unameFocusNode.requestFocus();
+    _loadSavedCredentials();  // 加载保存的用户名和密码
   }
-  
+
+  // 加载保存的用户名和密码
+  _loadSavedCredentials() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _unameController.text = prefs.getString(StorageKeyEnum.username.value) ?? '';
+      _pwdController.text = prefs.getString(StorageKeyEnum.password.value) ?? '';
+      rememberMe = prefs.getBool(StorageKeyEnum.rememberMe.value) ?? false;
+    });
+  }
+
   handlesSubmit() async {
-    SharedPreferencesManager();
     String token = await MyApi.fetchLoginApi({
       'account': _unameController.text,
       'password': SM2.encrypt(_pwdController.text, sm2PublicKey)
     });
+
+    // 保存token
     SharedPreferencesManager().setString(StorageKeyEnum.token.value, token);
+
+    if (rememberMe) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString(StorageKeyEnum.username.value, _unameController.text);
+      prefs.setString(StorageKeyEnum.password.value, _pwdController.text);
+      prefs.setBool(StorageKeyEnum.rememberMe.value, true);
+    } else {
+      _clearSavedCredentials();
+    }
+
     context.replace(RouteEnum.home.path);
   }
   @override
@@ -51,13 +71,17 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
+  // 清除保存的用户名和密码
+  _clearSavedCredentials() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove(StorageKeyEnum.username.value);
+    prefs.remove(StorageKeyEnum.password.value);
+    prefs.remove(StorageKeyEnum.rememberMe.value);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   automaticallyImplyLeading: false,
-      //   // title: Text(AppLocalizations.of(context).login),
-      // ),
       body: Form(
         key: _formKey,
         child: Column(
@@ -126,14 +150,26 @@ class _LoginPageState extends State<LoginPage> {
                         },
                       ),
                     ),
-                    // 登录按钮
+                    Row(
+                      children: [
+                        Transform.translate(
+                          offset: const Offset(-14, 0),
+                          child: Checkbox(
+                            value: rememberMe,
+                            onChanged: (value) {
+                              setState(() {
+                                rememberMe = value!;
+                              });
+                            },
+                          ),
+                        ),
+                        const Text('记住密码'),
+                      ],
+                    ),
                     Padding(
                       padding: const EdgeInsets.only(top: 70),
                       child: BlockButton(
                         onPressed: () async {
-                          // 通过_formKey.currentState 获取FormState后，
-                          // 调用validate()方法校验用户名密码是否合法，校验
-                          // 通过后再提交数据。
                           if ((_formKey.currentState as FormState).validate()) {
                             handlesSubmit();
                           }
@@ -150,19 +186,5 @@ class _LoginPageState extends State<LoginPage> {
       ),
       resizeToAvoidBottomInset: false,
     );
-  }
-}
-
-class LoginFormWidget extends StatefulWidget {
-  const LoginFormWidget({super.key});
-
-  @override
-  State<LoginFormWidget> createState() => _LoginFormWidgetState();
-}
-
-class _LoginFormWidgetState extends State<LoginFormWidget> {
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
   }
 }
