@@ -1,63 +1,54 @@
-import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:open_file/open_file.dart';
-import 'package:easy_collect/utils/icons.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:easy_collect/api/common.dart';
 
-class DownloadPage extends StatefulWidget {
-  const DownloadPage({super.key});
+// 资料下载页面
+class DownloadPage extends ConsumerStatefulWidget {
+  final GoRouterState state;
+  const DownloadPage({super.key, required this.state});
 
   @override
-  State<DownloadPage> createState() => _DownloadPageState();
+  _DownloadPageState createState() => _DownloadPageState();
 }
 
-class _DownloadPageState extends State<DownloadPage> {
-  final List<String> files = [
-    '2023新版宣传册2.0【网页版】.pdf',
-    '易采天成VI-LOGO标准化.pdf',
-    '文件3.pdf',
-    '文件4.pdf',
-    '文件5.pdf',
-    '文件6.pdf',
-    '文件7.pdf'
-  ];
+class _DownloadPageState extends ConsumerState<DownloadPage> {
+  late GoRouterState state;
+  String? fileType;
+  
+  // 保存文件列表数据
+  AsyncValue<List<dynamic>> fileList = const AsyncValue.loading();
+  // 保存已下载的文件名
+  final Set<String> _downloadedFiles = {};
 
-  final List<String> _downloadedFiles = [];
+  @override
+  void initState() {
+    super.initState();
+    state = widget.state;
+    fileType = state.extra as String?;
+    _fetchFileList();
+  }
 
-  Future<void> _copyFileFromAssets(String fileName) async {
-    try {
-      // 加载asset中的文件
-      final ByteData data = await rootBundle.load('assets/pdf/$fileName');
-      final String documentsDirectory = (await getApplicationDocumentsDirectory()).path;
-      final String filePath = '$documentsDirectory/$fileName';
-      final File file = File(filePath);
-      await file.writeAsBytes(data.buffer.asUint8List(), flush: true);
-
-      // 打开文件
-      OpenFile.open(filePath);
-
-      // 更新UI
+  // 获取文件列表
+  void _fetchFileList() {
+    final provider = fileListProvider({"code": fileType});
+    ref.read(provider.future).then((data) {
       setState(() {
-        _downloadedFiles.add(fileName);
+        fileList = AsyncValue.data(data);
       });
+    }).catchError((error) {
+      print('Error fetching file list: $error');
+    });
+  }
 
-      // 显示SnackBar
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('文件已保存到本地'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    } catch (e) {
-      // 错误处理
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('保存文件时出错: $e'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    }
+  // 更新已下载文件的状态
+  void _onFileDownloaded(String fileName) {
+    setState(() {
+      _downloadedFiles.add(fileName);
+    });
   }
 
   @override
@@ -80,119 +71,142 @@ class _DownloadPageState extends State<DownloadPage> {
             color: Colors.white,
             borderRadius: BorderRadius.circular(6),
           ),
-          child: ListView.builder(
-            itemCount: files.length,
-            itemBuilder: (context, index) {
-              return Column(
-                children: [
-                  DownloadItem(
-                    fileName: files[index],
-                    isDownloaded: _downloadedFiles.contains(files[index]),
-                    onDownload: () => _copyFileFromAssets(files[index]),
-                  ),
-                  if (index < files.length - 1)
-                    Container(
-                      height: 0.5,
-                      color: const Color(0xFFE9E8E8),
-                      margin: const EdgeInsets.symmetric(horizontal: 12),
-                    ),
-                ],
-              );
-            },
+          child: Column(
+            children: [
+              Expanded(
+                child: fileList.when(
+                  data: (data) => _buildFileList(context, data),
+                  loading: () => const Center(child: CircularProgressIndicator()),
+                  error: (error, stack) => Center(child: Text('Error: $error')),
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
+
+  // 构建文件列表
+  Widget _buildFileList(BuildContext context, List<dynamic> files) {
+    return ListView.builder(
+      itemCount: files.length,
+      itemBuilder: (context, index) {
+        final file = files[index];
+        return Column(
+          children: [
+            DownloadItem(
+              fileName: file["fileName"],
+              fileSize: file["fileSize"],
+              filePath: file["filePath"],
+              isDownloaded: _downloadedFiles.contains(file["fileName"]),
+              onDownload: () => _onFileDownloaded(file["fileName"]),
+            ),
+            // if (index < files.length - 1)
+            const Divider(
+              color: Color(0xFFE9E8E8),
+              height: 0.5,
+              indent: 12,
+              endIndent: 12,
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
 
+// 文件下载项组件
 class DownloadItem extends StatefulWidget {
   final String fileName;
+  final String fileSize;
+  final String filePath;
   final bool isDownloaded;
   final VoidCallback onDownload;
 
   const DownloadItem({
     super.key,
     required this.fileName,
+    required this.fileSize,
+    required this.filePath,
     required this.isDownloaded,
     required this.onDownload,
   });
 
   @override
-  State<DownloadItem> createState() => _DownloadItemState();
+  _DownloadItemState createState() => _DownloadItemState();
 }
 
 class _DownloadItemState extends State<DownloadItem> {
   bool isDownloading = false;
   double downloadProgress = 0.0;
-  double fileSizeMB = 10.0; // 假设文件大小为10MB
 
-  void startDownload() async {
+  // 开始下载文件
+  Future<void> startDownload() async {
     setState(() {
       isDownloading = true;
       downloadProgress = 0.0;
     });
 
-    // 模拟下载过程
-    for (int i = 1; i <= 10; i++) {
-      await Future.delayed(const Duration(milliseconds: 500), () {
-        setState(() {
-          downloadProgress = i / 10;
-        });
+    try {
+      final dio = Dio();
+      final dir = await getApplicationDocumentsDirectory();
+      final savePath = '${dir.path}/${widget.fileName}';
+
+      await dio.download(
+        widget.filePath,
+        savePath,
+        onReceiveProgress: (received, total) {
+          setState(() {
+            downloadProgress = received / total;
+          });
+        },
+      );
+
+      setState(() {
+        isDownloading = false;
+        downloadProgress = 1.0;
+      });
+
+      widget.onDownload();
+    } catch (e) {
+      print('Download error: $e');
+      setState(() {
+        isDownloading = false;
       });
     }
-
-    setState(() {
-      isDownloading = false;
-      downloadProgress = 1.0;
-    });
-
-    widget.onDownload();
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: ListTile(
-        leading: const Icon(MyIcons.pdf, color: Color(0xFFFB4337)), 
-        title: Text(widget.fileName),
+        leading: SvgPicture.asset('assets/icon/svg/optimized/pdf.svg', fit: BoxFit.fill),
+        title: Text(widget.fileName, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
         subtitle: Row(
           children: [
-            Text('${fileSizeMB.toStringAsFixed(1)}MB'),
+            Text(widget.fileSize, style: const TextStyle(color: Color(0xFF999999), fontSize: 13)),
             const SizedBox(width: 4),
             if (isDownloading)
               Expanded(
                 child: LinearProgressIndicator(
                   value: downloadProgress,
-                  minHeight: 6, // 设置进度条高度为6像素
+                  minHeight: 6,
                 ),
               ),
           ],
         ),
         trailing: isDownloading
-            ? const SizedBox(
-                child: Text(
-                  '下载中',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Color(0xFF297DFF), fontSize: 16),
-                ),
+            ? const Text(
+                '下载中',
+                style: TextStyle(color: Color(0xFF297DFF), fontSize: 14, fontWeight: FontWeight.bold),
               )
-            : Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: GestureDetector(
-                  onTap: startDownload,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 6),
-                    // decoration: BoxDecoration(
-                    //   borderRadius: BorderRadius.circular(20),
-                    //   color: const Color(0xFF297DFF),
-                    // ),
-                    child: const Text(
-                      '下载',
-                      style: TextStyle(color: Color(0xFF297DFF), fontSize: 14),
-                    ),
-                  ),
+            : GestureDetector(
+                onTap: startDownload,
+                child: const Text(
+                  '下载',
+                  style: TextStyle(color: Color(0xFF297DFF), fontSize: 14, fontWeight: FontWeight.bold),
                 ),
               ),
       ),

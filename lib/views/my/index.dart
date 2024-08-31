@@ -14,8 +14,8 @@ class MyWidget extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<MyWidget> {
-  void _navigateTo(String path) {
-    context.push(path);
+  void _navigateTo(String path, [String? data]) {
+    context.push(path, extra: data);
   }
 
   void _logoutAndNavigateToLogin() async {
@@ -136,17 +136,17 @@ class _MyWidgetState extends State<MyWidget> {
                       CellWidget(
                         assetIcon: "assets/icon/my/download.png",
                         title: '资料下载',
-                        onTap: () => _navigateTo(RouteEnum.downLoad.path),
+                        onTap: () => _navigateTo(RouteEnum.downLoad.path, 'download'),
                       ),
                       CellWidget(
                         assetIcon: "assets/icon/my/help.png",
                         title: '帮助手册',
-                        onTap: () => _navigateTo(RouteEnum.downLoad.path),
+                        onTap: () => _navigateTo(RouteEnum.downLoad.path, 'help'),
                       ),
-                      const CellWidget(
-                        assetIcon: "assets/icon/my/call.png",
-                        title: '联系我们',
-                      ),
+                      // const CellWidget(
+                      //   assetIcon: "assets/icon/my/call.png",
+                      //   title: '联系我们',
+                      // ),
                       CellWidget(
                         assetIcon: "assets/icon/my/logout.png",
                         title: '退出登录',

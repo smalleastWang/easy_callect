@@ -87,7 +87,7 @@ final List<GoRoute> routes = [
   ),
   GoRoute(
     path: RouteEnum.downLoad.path,
-    builder: (context, state) => const DownloadPage(),
+    builder: (context, state) => DownloadPage(state: state),
     routes: const []
   ),
   GoRoute(
