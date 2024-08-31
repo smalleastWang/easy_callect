@@ -44,6 +44,12 @@ class _LoginPageState extends State<LoginPage> {
     SharedPreferencesManager().setString(StorageKeyEnum.token.value, token);
     context.replace(RouteEnum.home.path);
   }
+  @override
+  void dispose() {
+    _unameFocusNode.dispose();
+    _pwdFocusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,43 +82,49 @@ class _LoginPageState extends State<LoginPage> {
                     const Text('账号', style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.bold)),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 24),
-                      child: TextFormField(
-                        autofocus: true,
-                        focusNode: _unameFocusNode,
-                        controller: _unameController,
-                        decoration: const InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(horizontal: 6),
-                          // border: OutlineInputBorder(),
-                          hintText: '请输入您的账号',
-                        ),
-                        validator: (v) {
-                          return v!.trim().isNotEmpty ? null : "账号不能为空";
-                        },
-                      )
-                    ),
-                  const Text('密码', style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.bold)),
-                    TextFormField(
-                      focusNode: _pwdFocusNode,
-                      controller: _pwdController,
-                      textAlignVertical: TextAlignVertical.center,
-                      decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 6),
-                        // border: const UnderlineInputBorder(),
-                        hintText: '请输入您的密码',
-                        suffixIcon: IconButton(
-                          icon: Icon(pwdVisible ? Icons.visibility : Icons.visibility_off),
-                          onPressed: () { 
-                            setState(() {
-                              pwdVisible = !pwdVisible;
-                            });
+                      child: Listener(
+                        onPointerDown: (e) => FocusScope.of(context).requestFocus(_unameFocusNode),
+                        child: TextFormField(
+                          autofocus: true,
+                          focusNode: _unameFocusNode,
+                          controller: _unameController,
+                          decoration: const InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(horizontal: 6),
+                            // border: OutlineInputBorder(),
+                            hintText: '请输入您的账号',
+                          ),
+                          validator: (v) {
+                            return v!.trim().isNotEmpty ? null : "账号不能为空";
                           },
                         ),
+                      )
+                    ),
+                    const Text('密码', style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.bold)),
+                    Listener(
+                      onPointerDown: (e) => FocusScope.of(context).requestFocus(_pwdFocusNode),
+                      child: TextFormField(
+                        focusNode: _pwdFocusNode,
+                        controller: _pwdController,
+                        textAlignVertical: TextAlignVertical.center,
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 6),
+                          // border: const UnderlineInputBorder(),
+                          hintText: '请输入您的密码',
+                          suffixIcon: IconButton(
+                            icon: Icon(pwdVisible ? Icons.visibility : Icons.visibility_off),
+                            onPressed: () { 
+                              setState(() {
+                                pwdVisible = !pwdVisible;
+                              });
+                            },
+                          ),
+                        ),
+                        obscureText: !pwdVisible,
+                        //校验密码
+                        validator: (v) {
+                          return v!.trim().length > 5 ? null : "密码不能少于6位";
+                        },
                       ),
-                      obscureText: !pwdVisible,
-                      //校验密码
-                      validator: (v) {
-                        return v!.trim().length > 5 ? null : "密码不能少于6位";
-                      },
                     ),
                     // 登录按钮
                     Padding(
@@ -133,16 +145,8 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             )
-            
-            
           ],
         ),
-        
-              
-              
-              
-            
-          
       ),
       resizeToAvoidBottomInset: false,
     );

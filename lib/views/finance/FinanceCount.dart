@@ -5,6 +5,7 @@ import 'package:easy_collect/enums/index.dart';
 import 'package:easy_collect/enums/register.dart';
 import 'package:easy_collect/mock.dart';
 import 'package:easy_collect/models/register/index.dart';
+import 'package:easy_collect/utils/regExp.dart';
 import 'package:easy_collect/utils/tool/common.dart';
 import 'package:easy_collect/widgets/Button/BlockButton.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
@@ -109,7 +110,7 @@ class _FinanceCountPageState extends State<FinanceCountPage> {
                     hintText: '请输入牛耳耳标号(不支持中文)',
                   ),
                   validator: (v) {
-                    return v!.trim().isNotEmpty ? null : "耳标号不能为空";
+                    return RegExpValidator.numner(v, '耳标号');
                   },
                 ),
                 const SizedBox(height: 16),

@@ -44,12 +44,12 @@ showMyModalBottomSheet({required BuildContext context, required WidgetBuilder co
 }
 
 
-showConfirmModalBottomSheet({required BuildContext context, required WidgetBuilder contentBuilder, required String title, required Function onConfirm, Function? onCancel}) {
+showConfirmModalBottomSheet({required BuildContext context, required WidgetBuilder contentBuilder, required String title, required Function onConfirm, Function? onCancel, EdgeInsetsGeometry? modalPadding}) {
   return showModalBottomSheet(
     context: context,
     builder: (BuildContext context) {
       return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 15),
+        padding: modalPadding ?? const EdgeInsets.symmetric(horizontal: 15),
         clipBehavior: Clip.antiAlias,
         decoration: const BoxDecoration(
           color: Colors.white,

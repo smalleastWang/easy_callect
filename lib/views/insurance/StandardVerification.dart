@@ -1,10 +1,10 @@
 
 import 'package:easy_collect/api/insurance.dart';
-import 'package:easy_collect/api/pigRegister.dart';
 import 'package:easy_collect/enums/Route.dart';
 import 'package:easy_collect/enums/index.dart';
 import 'package:easy_collect/enums/register.dart';
 import 'package:easy_collect/models/register/index.dart';
+import 'package:easy_collect/utils/regExp.dart';
 import 'package:easy_collect/widgets/Button/BlockButton.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
 import 'package:easy_collect/widgets/Form/PickerImageField.dart';
@@ -153,14 +153,14 @@ class _StandardVerificationPageState extends ConsumerState<StandardVerificationP
 
   List<Widget> get _getImgWidget {
     // 单个注册-牛脸注册
-    if (registerType == RegisterTypeEnum.single.value && registerMedia == RegisterMediaEnum.face.value) {
-      return [PickerImageField(controller: _faceImgsController, maxNum: 1, label: '牛脸图片')];
-    }
+    // if (registerType == RegisterTypeEnum.single.value && registerMedia == RegisterMediaEnum.face.value) {
+    //   return [PickerImageField(controller: _faceImgsController, maxNum: 20, label: '牛脸图片')];
+    // }
     // 单个注册-牛背注册
-    if (registerType == RegisterTypeEnum.single.value && registerMedia == RegisterMediaEnum.back.value) {
+    if (registerType == RegisterTypeEnum.single.value && (registerMedia == RegisterMediaEnum.back.value || registerMedia == RegisterMediaEnum.face.value)) {
       return [
-        PickerImageField(controller: _bodyImgsController, maxNum: 1, label: '牛背图片'),
-        PickerImageField(controller: _faceImgsController, maxNum: 1, label: '牛脸图片'),
+        PickerImageField(controller: _bodyImgsController, maxNum: 20, label: '牛背图片'),
+        PickerImageField(controller: _faceImgsController, maxNum: 20, label: '牛脸图片'),
       ];
     }
     // 批量注册-无人机
@@ -204,7 +204,7 @@ class _StandardVerificationPageState extends ConsumerState<StandardVerificationP
                             hintText: '请输入牛耳耳标号(不支持中文)'
                           ),
                           validator: (v) {
-                            return v!.trim().isNotEmpty ? null : "耳标号不能为空";
+                            return RegExpValidator.numner(v, '耳标号');
                           },
                         )
                       )
@@ -232,7 +232,6 @@ class _StandardVerificationPageState extends ConsumerState<StandardVerificationP
                           options: enclosureList.value ?? [],
                         ),
                       )
-                      
                     ],
                   ),
                 ),

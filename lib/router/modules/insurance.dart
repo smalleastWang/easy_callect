@@ -1,6 +1,5 @@
 
 
-import 'package:easy_collect/enums/register.dart';
 import 'package:easy_collect/enums/route.dart';
 import 'package:easy_collect/views/insurance/CountRegister.dart';
 import 'package:easy_collect/views/insurance/OrderList.dart';

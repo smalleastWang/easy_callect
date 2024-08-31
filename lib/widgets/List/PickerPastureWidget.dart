@@ -6,6 +6,7 @@ import 'package:easy_collect/utils/dialog.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 enum ActionType {
   province(1, '请选择省份'),
@@ -101,6 +102,7 @@ class _PickerPastureWidgetState extends State<PickerPastureWidget> {
           showConfirmModalBottomSheet(
             context: context,
             title: '请选择牧场',
+            modalPadding: const EdgeInsets.symmetric(horizontal: 0),
             contentBuilder: (BuildContext context) {
               return StatefulBuilder(builder: (context, setBottomSheetState) {
                 ActionType actionType = tabs[actionIndex].type;
@@ -109,40 +111,44 @@ class _PickerPastureWidgetState extends State<PickerPastureWidget> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            ...tabs.mapIndexed((index, e) {
-                              return GestureDetector(
-                                onTap: () {
-                                  setBottomSheetState(() {
-                                    actionIndex = index;
-                                  });
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        e.name ?? e.type.label,
-                                        style: TextStyle(color: actionType == e.type ? MyColors.primaryColor : null, fontSize: 15),
-                                      ),
-                                      const Icon(Icons.keyboard_arrow_down_rounded)
-                                    ],
-                                  )
-                                ),
-                              );
-                            }),
-                          ],
-                        )
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 6),
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              ...tabs.mapIndexed((index, e) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    setBottomSheetState(() {
+                                      actionIndex = index;
+                                    });
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          e.name ?? e.type.label,
+                                          style: TextStyle(color: actionType == e.type ? MyColors.primaryColor : null, fontSize: 15),
+                                        ),
+                                        const Icon(Icons.keyboard_arrow_down_rounded)
+                                      ],
+                                    )
+                                  ),
+                                );
+                              }),
+                            ],
+                          )
+                        ),
                       ),
-                      const SizedBox(height: 5),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: tabs[actionIndex].options?.map((e) {
                           return GestureDetector(
+                            behavior: HitTestBehavior.opaque,
                             onTap: () {
                               if (tabs[actionIndex].id != null && tabs[actionIndex].id == e.id) {
                                 setBottomSheetState(() {
@@ -170,9 +176,26 @@ class _PickerPastureWidgetState extends State<PickerPastureWidget> {
                                 tabs[actionIndex].options = findOptionsById(widget.options, e.id);
                               }
                             },
-                            child: Text(
-                              e.name,
-                              style: TextStyle(color: e.id == tabs[actionIndex].id ? MyColors.primaryColor : null)
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                              decoration: BoxDecoration(
+                                color: e.id == tabs[actionIndex].id ? MyColors.primaryColor.withOpacity(0.08) : null,
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    e.name,
+                                    style: TextStyle(
+                                      
+                                      color: e.id == tabs[actionIndex].id ? MyColors.primaryColor : null,
+                                      fontSize: 14,
+                                      height: 2
+                                    )
+                                  ),
+                                  if (e.id == tabs[actionIndex].id) SvgPicture.asset('assets/icon/svg/confirm.svg', width: 25, color: MyColors.primaryColor)
+                                ],
+                              ),
                             ),
                           );
                         }).toList() ?? []

@@ -7,6 +7,7 @@ import 'package:easy_collect/enums/register.dart';
 import 'package:easy_collect/models/register/PigRegister.dart';
 import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/utils/dialog.dart';
+import 'package:easy_collect/utils/regExp.dart';
 import 'package:easy_collect/widgets/Button/BlockButton.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
 import 'package:easy_collect/widgets/Form/PickerImageField.dart';
@@ -16,7 +17,6 @@ import 'package:easy_collect/widgets/Register/RegisterType.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -193,7 +193,7 @@ class _SurveyComparedPigPageState extends ConsumerState<SurveyComparedPigPage> {
                             hintText: '请输入猪耳耳标号(不支持中文)'
                           ),
                           validator: (v) {
-                            return v!.trim().isNotEmpty ? null : "耳标号不能为空";
+                            return RegExpValidator.numner(v, '耳标号');
                           },
                         )
                       )
