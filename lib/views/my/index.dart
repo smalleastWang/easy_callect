@@ -101,13 +101,9 @@ class _MyWidgetState extends State<MyWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
-          constraints: BoxConstraints(
-            maxHeight: screenHeight - 90,
-          ),
           decoration: const BoxDecoration(
             color: Color(0xffF1F5F9),
           ),
@@ -137,19 +133,20 @@ class _MyWidgetState extends State<MyWidget> {
                         title: '基本信息',
                         onTap: () => _navigateTo(RouteEnum.userInfo.path),
                       ),
-                      // CellWidget(
-                      //   assetIcon: "assets/icon/my/download.png",
-                      //   title: '资料下载',
-                      //   onTap: () => _navigateTo(RouteEnum.downLoad.path),
-                      // ),
-                      // const CellWidget(
-                      //   assetIcon: "assets/icon/my/help.png",
-                      //   title: '帮助手册',
-                      // ),
-                      // const CellWidget(
-                      //   assetIcon: "assets/icon/my/call.png",
-                      //   title: '联系我们',
-                      // ),
+                      CellWidget(
+                        assetIcon: "assets/icon/my/download.png",
+                        title: '资料下载',
+                        onTap: () => _navigateTo(RouteEnum.downLoad.path),
+                      ),
+                      CellWidget(
+                        assetIcon: "assets/icon/my/help.png",
+                        title: '帮助手册',
+                        onTap: () => _navigateTo(RouteEnum.downLoad.path),
+                      ),
+                      const CellWidget(
+                        assetIcon: "assets/icon/my/call.png",
+                        title: '联系我们',
+                      ),
                       CellWidget(
                         assetIcon: "assets/icon/my/logout.png",
                         title: '退出登录',
@@ -166,28 +163,3 @@ class _MyWidgetState extends State<MyWidget> {
     );
   }
 }
-
-// class _MyHeaderWidget extends StatelessWidget {
-//   final String version;
-//   const _MyHeaderWidget({required this.version});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       alignment: Alignment.center,
-//       margin: const EdgeInsets.only(bottom: 20),
-//       child: Column(
-//         children: [
-//           const Padding(
-//             padding: EdgeInsets.only(top: 28, bottom: 10),
-//             child: Image(
-//               width: 100,
-//               image: AssetImage("assets/images/logo02.png"),
-//             ),
-//           ),
-//           Text(version),
-//         ],
-//       ),
-//     );
-//   }
-// }
