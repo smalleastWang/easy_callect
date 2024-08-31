@@ -182,7 +182,8 @@ class DetFFI {
     dataBean.paramPath = paramPath;
     _isolateManagerFaceCamera = IsolateManager.create(handleDetectFace);
     await _isolateManagerFaceCamera!.start();
-    bool flag = await _isolateManagerFaceCamera!.compute(dataBean);
+    dynamic flag = await _isolateManagerFaceCamera!.compute(dataBean);
+    if (flag is List) return true;
     return flag;
   }
 

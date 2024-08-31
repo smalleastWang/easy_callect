@@ -8,9 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:easy_collect/utils/camera/Config.dart';
 import 'package:easy_collect/utils/camera/DetectFFI.dart';
+import 'package:go_router/go_router.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import 'dart:ui' as ui;
-
 
 class CameraMlVision extends StatefulWidget {
   final WidgetBuilder? loadingBuilder;
@@ -20,15 +20,14 @@ class CameraMlVision extends StatefulWidget {
   final Function? onDispose;
   final EnumTaskMode mTaskMode;
 
-  const CameraMlVision({
-    super.key,
-    this.loadingBuilder,
-    this.errorBuilder,
-    this.cameraLensDirection = CameraLensDirection.back,
-    this.resolution,
-    this.onDispose,
-    required this.mTaskMode
-  });
+  const CameraMlVision(
+      {super.key,
+      this.loadingBuilder,
+      this.errorBuilder,
+      this.cameraLensDirection = CameraLensDirection.back,
+      this.resolution,
+      this.onDispose,
+      required this.mTaskMode});
 
   @override
   CameraMlVisionState createState() => CameraMlVisionState();
@@ -48,11 +47,12 @@ class CameraMlVisionState extends State<CameraMlVision>
   ui.Image? mOverlayImage;
   int fps = 0;
   DetectionObject? _mDetectionObject;
+  bool isDetected = false;
 
   @override
   void initState() {
     if (mOverlayImage == null) {
-      loadImage(   getOverlayPath(widget.mTaskMode));
+      loadImage(getOverlayPath(widget.mTaskMode));
     }
     super.initState();
     WidgetsBinding.instance.addObserver(this);
@@ -193,9 +193,11 @@ class CameraMlVisionState extends State<CameraMlVision>
 
   Future<void> _initialize() async {
     final cameras = await availableCameras();
-    var idx = cameras.indexWhere((c) => c.lensDirection == CameraLensDirection.back);
+    var idx =
+        cameras.indexWhere((c) => c.lensDirection == CameraLensDirection.back);
     if (idx < 0) {
-      EasyLoading.showToast('未检测到相机', toastPosition: EasyLoadingToastPosition.top);
+      EasyLoading.showToast('未检测到相机',
+          toastPosition: EasyLoadingToastPosition.top);
       return;
     }
 
@@ -203,7 +205,8 @@ class CameraMlVisionState extends State<CameraMlVision>
       final deviceInfo = DeviceInfoPlugin();
       final androidInfo = await deviceInfo.androidInfo;
       if (androidInfo.version.sdkInt < 21) {
-        EasyLoading.showToast('Camera plugin doesn\'t support android under version 21',
+        EasyLoading.showToast(
+            'Camera plugin doesn\'t support android under version 21',
             toastPosition: EasyLoadingToastPosition.top);
         if (mounted) {
           setState(() {
@@ -289,15 +292,14 @@ class CameraMlVisionState extends State<CameraMlVision>
 
     var cameraPreview = _isStreaming
         ? CameraPreview(
-      _cameraController!,
-    ) : _getPicture();
+            _cameraController!,
+          )
+        : _getPicture();
 
-    cameraPreview = Stack(
-      fit: StackFit.passthrough,
-      children: [
-        cameraPreview,
-        (cameraController?.value.isInitialized ?? false)
-            ? AspectRatio(
+    cameraPreview = Stack(fit: StackFit.passthrough, children: [
+      cameraPreview,
+      if (cameraController?.value.isInitialized == true)
+        AspectRatio(
           aspectRatio: _isLandscape()
               ? cameraController!.value.aspectRatio
               : (1 / cameraController!.value.aspectRatio),
@@ -306,13 +308,32 @@ class CameraMlVisionState extends State<CameraMlVision>
                 objectRect: _mDetectionObject,
                 imageOverlay: mOverlayImage,
                 mSize: Size(cameraController!.value.previewSize!.height,
-                    cameraController!.value.previewSize!.width)
-            ),
+                    cameraController!.value.previewSize!.width)),
           ),
+        ),
+        if (isDetected) Positioned(
+          left: 0,
+          right: 0,
+          bottom: 60,
+          child: Center(
+            child: InkWell(
+              onTap: () async {
+                await stop();
+                context.pop(_lastImage);
+              },
+              child: Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(100),
+                  color: Colors.white,
+                  border: Border.all(width: 4, color: Colors.grey.shade600.withOpacity(0.8)),
+                ),
+              ),
+            ),
+          )
         )
-            : Container(),
-      ]
-    );
+    ]);
 
     return VisibilityDetector(
       onVisibilityChanged: (VisibilityInfo info) {
@@ -335,7 +356,7 @@ class CameraMlVisionState extends State<CameraMlVision>
     return (cameraController?.value.isRecordingVideo ?? false)
         ? cameraController?.value.recordingOrientation
         : (cameraController?.value.lockedCaptureOrientation ??
-        cameraController?.value.deviceOrientation);
+            cameraController?.value.deviceOrientation);
   }
 
   bool _isLandscape() {
@@ -350,26 +371,30 @@ class CameraMlVisionState extends State<CameraMlVision>
       Stopwatch stopwatch = Stopwatch();
       stopwatch.start(); // 开始计时
       debugPrint("test ${cameraImage.format.group.toString()}");
-      await DetFFI.getInstance().detectFaceCamera(cameraImage).then((value){
+      await DetFFI.getInstance().detectFaceCamera(cameraImage).then((value) {
         stopwatch.stop(); // 停止计时
         debugPrint('执行时间: ${stopwatch.elapsedMilliseconds} 毫秒');
-        if(value.isNotEmpty){
+        setState(() {
+          isDetected = value.isNotEmpty;
+        });
+        if (value.isNotEmpty) {
           DetObject object = value[0];
+
           setState(() {
-            if(_mDetectionObject == null){
-              _mDetectionObject = DetectionObject(prob: object.prob, rect: object.rect);
-            }
-            else{
+            if (_mDetectionObject == null) {
+              _mDetectionObject =
+                  DetectionObject(prob: object.prob, rect: object.rect);
+            } else {
               _mDetectionObject!.rect = object.rect;
               _mDetectionObject!.prob = object.prob;
             }
           });
-        }
-        else{
+        } else {
           setState(() {
             _mDetectionObject = null;
           });
-          EasyLoading.showToast('未检测到目标', toastPosition: EasyLoadingToastPosition.top);
+          EasyLoading.showToast('未检测到目标',
+              toastPosition: EasyLoadingToastPosition.top);
         }
         _alreadyCheckingImage = false;
         fps = 0;
