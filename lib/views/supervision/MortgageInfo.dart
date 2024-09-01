@@ -20,7 +20,7 @@ class MortgageInfoPage extends ConsumerStatefulWidget {
   const MortgageInfoPage({super.key});
 
   @override
-  _MortgageInfoPageState createState() => _MortgageInfoPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _MortgageInfoPageState();
 }
 
 class _MortgageInfoPageState extends ConsumerState<MortgageInfoPage> {
@@ -84,7 +84,7 @@ class _MortgageInfoPageState extends ConsumerState<MortgageInfoPage> {
     );
   }
 
-  Widget _buildContent(BuildContext context, Monitoring data) {
+  Widget _buildContent(BuildContext context, Monitoring? data) {
     if (data == null) {
       return _buildNoDataWidget();
     }

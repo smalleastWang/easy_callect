@@ -12,7 +12,7 @@ class DownloadPage extends ConsumerStatefulWidget {
   const DownloadPage({super.key, required this.state});
 
   @override
-  _DownloadPageState createState() => _DownloadPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _DownloadPageState();
 }
 
 class _DownloadPageState extends ConsumerState<DownloadPage> {
@@ -134,7 +134,7 @@ class DownloadItem extends StatefulWidget {
   });
 
   @override
-  _DownloadItemState createState() => _DownloadItemState();
+  State<DownloadItem> createState() => _DownloadItemState();
 }
 
 class _DownloadItemState extends State<DownloadItem> {

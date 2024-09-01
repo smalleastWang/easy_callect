@@ -20,7 +20,7 @@ class InsureInfoPage extends ConsumerStatefulWidget {
   const InsureInfoPage({super.key});
 
   @override
-  _InsureInfoPageState createState() => _InsureInfoPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _InsureInfoPageState();
 }
 
 class _InsureInfoPageState extends ConsumerState<InsureInfoPage> {
@@ -84,7 +84,7 @@ class _InsureInfoPageState extends ConsumerState<InsureInfoPage> {
     );
   }
 
-  Widget _buildContent(BuildContext context, Monitoring data) {
+  Widget _buildContent(BuildContext context, Monitoring? data) {
     if (data == null) {
       return _buildNoDataWidget();
     }

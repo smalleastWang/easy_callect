@@ -32,7 +32,6 @@ class InventoryPage extends ConsumerStatefulWidget {
   const InventoryPage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   ConsumerState<ConsumerStatefulWidget> createState() => _InventoryPageState();
 }
 

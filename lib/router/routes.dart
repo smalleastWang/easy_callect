@@ -2,7 +2,6 @@
 import 'package:easy_collect/enums/Route.dart';
 import 'package:easy_collect/enums/StorageKey.dart';
 import 'package:easy_collect/utils/camera/BaseCamerax.dart';
-import 'package:easy_collect/utils/camera/Config.dart';
 import 'package:easy_collect/router/modules/finance.dart';
 import 'package:easy_collect/router/modules/insurance.dart';
 import 'package:easy_collect/router/modules/precisionBreeding.dart';
