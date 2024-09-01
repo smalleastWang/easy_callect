@@ -98,3 +98,10 @@ Future<List<Bank>> bankList(BankListRef ref, Map<String, dynamic> params) async 
   }
   return list;
 }
+
+/// 文件列表
+@riverpod
+Future<List<dynamic>> fileList(FileListRef ref, Map<String, dynamic> params) async {
+  List<dynamic> files = await HttpUtils.get('/biz/bizfile/files', params: params);
+  return files;
+}
