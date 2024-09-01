@@ -4,6 +4,7 @@ import 'package:easy_collect/enums/Route.dart';
 import 'package:easy_collect/enums/index.dart';
 import 'package:easy_collect/enums/register.dart';
 import 'package:easy_collect/models/register/index.dart';
+import 'package:easy_collect/utils/camera/Config.dart';
 import 'package:easy_collect/utils/regExp.dart';
 import 'package:easy_collect/widgets/Button/BlockButton.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
@@ -32,6 +33,10 @@ class _CountRegisterPageState extends ConsumerState<CountRegisterPage> {
   final TextEditingController _numController = TextEditingController();
   final PickerEditingController _enclosureController = PickerEditingController();
   PickerImageController _imgsController = PickerImageController();
+  PickerImageController _videoController = PickerImageController();
+
+  GlobalKey<PickerImageFieldState> imgsWidgetState = GlobalKey<PickerImageFieldState>();
+  GlobalKey<PickerImageFieldState> videoWidgetState = GlobalKey<PickerImageFieldState>();
 
   bool submitLoading = false;
   String countMedia = CountMediaEnum.img.value;
@@ -41,10 +46,28 @@ class _CountRegisterPageState extends ConsumerState<CountRegisterPage> {
     super.initState();
   }
   _changeRegisterMedia(value) {
+    imgsWidgetState.currentState?.clearPickImages();
+    videoWidgetState.currentState?.clearPickImages();
     setState(() {
       countMedia = value;
       _imgsController = PickerImageController();
+      _videoController = PickerImageController();
     });
+  }
+
+  List<Widget> get _getImgWidget {
+    // 单个注册-牛脸注册
+    if (countMedia == CountMediaEnum.img.value) {
+      return [
+        PickerImageField(key: imgsWidgetState, controller: _imgsController, maxNum: 20, label: '图片', mTaskMode: EnumTaskMode.countImgsInventory),
+      ];
+    } else if (countMedia == CountMediaEnum.video.value) {
+      return [
+        PickerImageField(key: videoWidgetState, controller: _videoController, maxNum: 20, label: '视频', mTaskMode: EnumTaskMode.countVideoInventory),
+      ];
+    }
+    
+    return [const SizedBox.shrink()];
   }
 
   EnclosureModel? findNode(List<EnclosureModel> options) {
@@ -159,6 +182,9 @@ class _CountRegisterPageState extends ConsumerState<CountRegisterPage> {
                   ),
                 ),
                 RegisterTypeWidget<String>(defaultValue: countMedia, options: enumsStrValToOptions(CountMediaEnum.values), onChange: _changeRegisterMedia),
+
+
+                ..._getImgWidget,
                 
                 PickerImageField(controller: _imgsController, maxNum: 1, label: CountMediaEnum.getLabel(countMedia), uploadApi: RegisterApi.scanAmountUpload),
 

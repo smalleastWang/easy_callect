@@ -60,6 +60,7 @@ class HttpRequest {
     bool showLoading = true, // 加载过程
     bool showErrorMessage = true, // 是否弹出借口报错
     bool isformData = false,
+    required bool isSourceData,
   }) async {
     // 动态添加header头
     Map<String, dynamic> headers = <String, dynamic>{};
@@ -83,6 +84,9 @@ class HttpRequest {
       );
       if (path.contains("doLogout")) {
         EasyLoading.showToast('退出登录成功');
+      }
+      if (isSourceData) {
+        return response.data;
       }
       if (response.data['code'] == 200) {
         return response.data?['data'];

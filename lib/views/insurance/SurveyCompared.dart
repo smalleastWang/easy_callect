@@ -4,6 +4,7 @@ import 'package:easy_collect/enums/Route.dart';
 import 'package:easy_collect/enums/index.dart';
 import 'package:easy_collect/enums/register.dart';
 import 'package:easy_collect/models/register/index.dart';
+import 'package:easy_collect/utils/camera/Config.dart';
 import 'package:easy_collect/utils/regExp.dart';
 import 'package:easy_collect/widgets/Button/BlockButton.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
@@ -31,44 +32,46 @@ class _SurveyComparedPageState extends ConsumerState<SurveyComparedPage> {
   final GlobalKey _formKey = GlobalKey<FormState>();
   final TextEditingController _numController = TextEditingController();
   final PickerEditingController _enclosureController = PickerEditingController();
-  PickerImageController _faceImgsController = PickerImageController();
-  PickerImageController _bodyImgsController = PickerImageController();
+
   PickerImageController _dronesController = PickerImageController();
+  PickerImageController _videoController = PickerImageController();
+
+  GlobalKey<PickerImageFieldState> dronesWidgetState = GlobalKey<PickerImageFieldState>();
+  GlobalKey<PickerImageFieldState> videoWidgetState = GlobalKey<PickerImageFieldState>();
 
   bool submitLoading = false;
-  int registerType = RegisterTypeEnum.single.value;
   int registerMedia = RegisterMediaEnum.drones.value;
 
   @override
   void initState() {
     super.initState();
   }
-  _changeRegisterType(value) {
-    setState(() {
-      registerType = value;
-      _faceImgsController = PickerImageController();
-      _bodyImgsController = PickerImageController();
-      _dronesController = PickerImageController();
-    });
-  }
   Widget get _getRegisterCnt {
     onChange(value) {
+      dronesWidgetState.currentState?.clearPickImages();
+      videoWidgetState.currentState?.clearPickImages();
       setState(() {
         registerMedia = value;
-        _faceImgsController = PickerImageController();
-        _bodyImgsController = PickerImageController();
         _dronesController = PickerImageController();
+        _videoController = PickerImageController();
       });
     }
-    if (registerType == RegisterTypeEnum.multiple.value) {
-      return RegisterTypeWidget<int>(
-        label: '注册方式',
-        options: enumsToOptions(SurveyMediaEnum.values),
-        onChange: onChange,
-        defaultValue: SurveyMediaEnum.drones.value
-      );
+    return RegisterTypeWidget<int>(
+      label: '注册方式',
+      options: enumsToOptions(SurveyMediaEnum.values),
+      onChange: onChange,
+      defaultValue: SurveyMediaEnum.drones.value
+    );
+  }
+
+  List<Widget> get _getImgWidget {
+    // 批量注册-无人机
+    if (registerMedia == SurveyMediaEnum.drones.value) {
+      return [PickerImageField(key: dronesWidgetState, controller: _dronesController, maxNum: 20, label: '航拍图', uploadApi: RegisterApi.uavUpload, registerMedia: registerMedia, mTaskMode: EnumTaskMode.cowDronesIdentify)];
+    } else if (registerMedia == SurveyMediaEnum.video.value) {
+      return [PickerImageField(key: videoWidgetState, controller: _videoController, maxNum: 20, label: '视频', registerMedia: registerMedia, mTaskMode: EnumTaskMode.cowVideoIdentify)];
     }
-    return const SizedBox.shrink();
+    return [const SizedBox.shrink()];
   }
 
   EnclosureModel? findNode(List<EnclosureModel> options) {
@@ -110,43 +113,30 @@ class _SurveyComparedPageState extends ConsumerState<SurveyComparedPage> {
           houseId: houseData.id,
           pastureId: houseData.parentId,
           resourceType: ResourceTypeEnum.discern.value,
-          single: registerType,
+          single: RegisterTypeEnum.multiple.value,
           imgs: _dronesController.value!.map((e) => e.value).toList()
         ));
         context.pop();
         return;
-      }
       // 视频
-      if ('surveyType' == SurveyTypeEnum.single.value) {
-      }
-      // 视频
-      if ('surveyType' == SurveyTypeEnum.multiple.value) {
+      } else if (registerMedia == RegisterMediaEnum.video.value) {
+        RegisterApi.videoSurvey(UavRegisterQueryModel(
+          batch: 0,
+          houseId: houseData.id,
+          pastureId: houseData.parentId,
+          resourceType: ResourceTypeEnum.discern.value,
+          single: RegisterTypeEnum.multiple.value,
+          imgs: _videoController.value!.map((e) => e.value).toList(),
+          urlType: 2
+        ));
+        context.pop();
+        return;
       }
     } finally {
       setState(() {
         submitLoading = false;
       });
     }
-    
-  }
-
-  List<Widget> get _getImgWidget {
-    // 单个注册-牛脸注册
-    if (registerType == RegisterTypeEnum.single.value && registerMedia == RegisterMediaEnum.face.value) {
-      return [PickerImageField(controller: _faceImgsController, maxNum: 1, label: '请上传牛脸图片')];
-    }
-    // 单个注册-牛背注册
-    if (registerType == RegisterTypeEnum.single.value && registerMedia == RegisterMediaEnum.back.value) {
-      return [
-        PickerImageField(controller: _bodyImgsController, maxNum: 1, label: '请上传牛背图片'),
-        PickerImageField(controller: _faceImgsController, maxNum: 1, label: '请上传牛脸图片'),
-      ];
-    }
-    // 批量注册-无人机
-    if (registerMedia == RegisterMediaEnum.drones.value) {
-      return [PickerImageField(controller: _dronesController, maxNum: registerType == RegisterTypeEnum.single.value ? 1 : 9,label: '航拍图', uploadApi: RegisterApi.uavUpload)];
-    }
-    return [const SizedBox.shrink()];
   }
 
   @override
@@ -215,10 +205,7 @@ class _SurveyComparedPageState extends ConsumerState<SurveyComparedPage> {
                     ],
                   ),
                 ),
-                RegisterTypeWidget<int>(defaultValue: registerType, options: enumsToOptions(RegisterTypeEnum.values), onChange: _changeRegisterType),
                 _getRegisterCnt,
-
-                
                 ..._getImgWidget,
 
                 const SizedBox(height: 50),

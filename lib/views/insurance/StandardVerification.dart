@@ -35,6 +35,12 @@ class _StandardVerificationPageState extends ConsumerState<StandardVerificationP
   PickerImageController _faceImgsController = PickerImageController();
   PickerImageController _bodyImgsController = PickerImageController();
   PickerImageController _dronesController = PickerImageController();
+  PickerImageController _videoController = PickerImageController();
+
+  GlobalKey<PickerImageFieldState> faceWidgetState = GlobalKey<PickerImageFieldState>();
+  GlobalKey<PickerImageFieldState> bodyWidgetState = GlobalKey<PickerImageFieldState>();
+  GlobalKey<PickerImageFieldState> dronesWidgetState = GlobalKey<PickerImageFieldState>();
+  GlobalKey<PickerImageFieldState> videoWidgetState = GlobalKey<PickerImageFieldState>();
 
   bool submitLoading = false;
   int registerType = RegisterTypeEnum.single.value;
@@ -47,20 +53,17 @@ class _StandardVerificationPageState extends ConsumerState<StandardVerificationP
   _changeRegisterType(value) {
     setState(() {
       registerType = value;
-      _faceImgsController = PickerImageController();
-      _bodyImgsController = PickerImageController();
-      _dronesController = PickerImageController();
     });
+    clearPickImages();
   }
   Widget get _getRegisterCnt {
-    onChange(value) {
+    onChange(value) async {
       setState(() {
         registerMedia = value;
-        _faceImgsController = PickerImageController();
-        _bodyImgsController = PickerImageController();
-        _dronesController = PickerImageController();
       });
+      clearPickImages();
     }
+    
     if (registerType == RegisterTypeEnum.single.value) {
       return RegisterTypeWidget<int>(
         label: '注册方式',
@@ -78,6 +81,19 @@ class _StandardVerificationPageState extends ConsumerState<StandardVerificationP
     }
     return const SizedBox.shrink();
   }
+
+  clearPickImages() {
+      faceWidgetState.currentState?.clearPickImages();
+      bodyWidgetState.currentState?.clearPickImages();
+      dronesWidgetState.currentState?.clearPickImages();
+      videoWidgetState.currentState?.clearPickImages();
+      setState(() {
+        _faceImgsController = PickerImageController();
+        _bodyImgsController = PickerImageController();
+        _dronesController = PickerImageController();
+        _videoController = PickerImageController();
+      });
+    }
 
   EnclosureModel? findNode(List<EnclosureModel> options) {
     for (var node in options) {
@@ -133,9 +149,21 @@ class _StandardVerificationPageState extends ConsumerState<StandardVerificationP
         ));
         context.pop();
         return;
-      }
+      // 视频注册
+      } else if (registerMedia == RegisterMediaEnum.video.value) {
+        RegisterApi.videoRegister(UavRegisterQueryModel(
+          batch: 0,
+          houseId: houseData.id,
+          pastureId: houseData.parentId,
+          resourceType: ResourceTypeEnum.register.value,
+          single: registerType,
+          imgs: _videoController.value!.map((e) => e.value).toList(),
+          urlType: 2,
+        ));
+        context.pop();
+        return;
       // 牛脸注册
-      if (registerMedia == RegisterMediaEnum.face.value) {
+      } else if (registerMedia == RegisterMediaEnum.face.value) {
         if (_faceImgsController.value == null || _faceImgsController.value!.isEmpty) return EasyLoading.showError('请上传牛脸图片');
         if (_faceImgsController.value!.length < 4) return EasyLoading.showError('请上传4张以上牛脸图片');
         params.faceImgs = _faceImgsController.value!.map((e) => e.value).toList();
@@ -165,20 +193,24 @@ class _StandardVerificationPageState extends ConsumerState<StandardVerificationP
     // 单个注册-牛脸注册
     if (registerType == RegisterTypeEnum.single.value && registerMedia == RegisterMediaEnum.face.value) {
       return [
-        PickerImageField(controller: _faceImgsController, maxNum: 20, label: '牛脸图片', mTaskMode: EnumTaskMode.cowFaceRegister),
-        PickerImageField(controller: _bodyImgsController, maxNum: 20, label: '牛背图片', mTaskMode: EnumTaskMode.cowBodyRegister)
+        PickerImageField(key: faceWidgetState, controller: _faceImgsController, maxNum: 20, label: '牛脸图片', mTaskMode: EnumTaskMode.cowFaceRegister, ),
+        PickerImageField(key: bodyWidgetState, controller: _bodyImgsController, maxNum: 20, label: '牛背图片', mTaskMode: EnumTaskMode.cowBodyRegister)
       ];
     }
     // 单个注册-牛背注册
     if (registerType == RegisterTypeEnum.single.value && registerMedia == RegisterMediaEnum.back.value) {
       return [
-        PickerImageField(controller: _bodyImgsController, maxNum: 20, label: '牛背图片', mTaskMode: EnumTaskMode.cowBodyRegister),
-        PickerImageField(controller: _faceImgsController, maxNum: 20, label: '牛脸图片', mTaskMode: EnumTaskMode.cowFaceRegister),
+        PickerImageField(key: bodyWidgetState, controller: _bodyImgsController, maxNum: 20, label: '牛背图片', mTaskMode: EnumTaskMode.cowBodyRegister),
+        PickerImageField(key: faceWidgetState, controller: _faceImgsController, maxNum: 20, label: '牛脸图片', mTaskMode: EnumTaskMode.cowFaceRegister),
       ];
     }
     // 批量注册-无人机
     if (registerMedia == RegisterMediaEnum.drones.value) {
-      return [PickerImageField(controller: _dronesController, maxNum: registerType == RegisterTypeEnum.single.value ? 1 : 9, label: '航拍图', uploadApi: RegisterApi.uavUpload, registerMedia: registerMedia)];
+      return [PickerImageField(key: dronesWidgetState, controller: _dronesController, maxNum: 20, label: '航拍图', uploadApi: RegisterApi.uavUpload, registerMedia: registerMedia, mTaskMode: EnumTaskMode.cowDronesRegister)];
+    }
+    // 批量注册-视频
+    if (registerMedia == RegisterMediaEnum.video.value) {
+      return [PickerImageField(key: videoWidgetState, controller: _videoController, maxNum: 20, label: '视频', registerMedia: registerMedia, mTaskMode: EnumTaskMode.cowVideoRegister)];
     }
     return [const SizedBox.shrink()];
   }

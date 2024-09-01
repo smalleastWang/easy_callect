@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import 'package:easy_collect/models/PageVo.dart';
 import 'package:easy_collect/models/insurance/InsuranceApplicant.dart';
@@ -18,8 +22,8 @@ class RegisterApi {
     await HttpUtils.post('/out/v1/registerCattleAPP', params: params.toJson());
   }
   // 上传无人机图片
-  static Future<String> uavUpload(XFile flie) async {
-    FormData formData = FormData.fromMap({'file': await MultipartFile.fromFile(flie.path, filename: flie.name)});
+  static Future<String> uavUpload(XFile file) async {
+    FormData formData = FormData.fromMap({'file': await MultipartFile.fromFile(file.path, filename: file.name)});
     return await HttpUtils.post('/biz/uav/upload', params: formData, isformData: true);
   }
   // 无人机注册
@@ -27,17 +31,53 @@ class RegisterApi {
     await HttpUtils.post('/biz/uav/form', params: params);
   }
   // 视频上传
-  static Future<void> videoUpload(XFile flie) async {
-    FormData formData = FormData.fromMap({'file': await MultipartFile.fromFile(flie.path, filename: flie.name)});
-    await HttpUtils.post('/video/upload/file', params: formData, isformData: true);
-  }
-  // 视频分片上传
-  static Future<void> videoMultipartUpload(XFile flie) async {
-    FormData formData = FormData.fromMap({'file': await MultipartFile.fromFile(flie.path, filename: flie.name)});
-    await HttpUtils.post('/video/multipart/complete', params: formData, isformData: true);
+  static Future<UploadVideoVo> videoUpload(XFile file) async {
+    File nFile = File(file.path);
+    if (nFile.lengthSync() < 10 * 1024 * 1024) {
+      FormData formData = FormData.fromMap({'file': await MultipartFile.fromFile(file.path, filename: file.name)});
+      Map<String, dynamic> data = await HttpUtils.post('/video/upload/file', params: formData, isformData: true, isSourceData: true);
+      return UploadVideoVo.fromJson(data);
+    } else {
+      	// 分片数量
+      var sFile = await nFile.open();
+      try {
+        int fileLength = sFile.lengthSync();
+        int chunkSize = 5 * 1024 * 1024; // 分片大小 5M
+        int chunkNum = (fileLength / chunkSize).ceil();
+        int x = 0; // 已经上传的长度
+        Map<String, dynamic> data = await HttpUtils.post('/video/multipart/create', params: {
+          'chunkSize': chunkNum,
+          'fileName': md5.convert(utf8.encode(file.name)).toString()
+        }, isSourceData: true);
+        while (x < fileLength) {
+          // 是否是最后一片了
+          bool isLast = fileLength - x >= chunkSize ? false : true;
+          // 获取当前这一片的长度，最后一片可能没有设定的分片大小那么长，
+          // 想象一根 56cm 长的绳子，一次只取 10cm
+          // 最后一次则只能取 56 - 50 = 6cm
+          int len = isLast ? fileLength - x : chunkSize;
+          // 获取一片
+          List<int> postData = sFile.readSync(len).toList();
+          
+          // 上传分片
+          FormData formData = FormData.fromMap({'file': MultipartFile.fromBytes(postData, filename: file.name)});
+          await HttpUtils.post('/video/upload/file', params: formData, isformData: true, isSourceData: true);
+          // 这里假设已经上传成功
+          x += len; // 记录已经取出来的长度
+        }
+        dynamic result = await HttpUtils.post('/video/multipart/complete', params: {
+          'chunkSize': chunkNum,
+          'fileName': md5.convert(utf8.encode(file.name)).toString(),
+          'uploadId': data['uploadId']
+        }, isSourceData: true);
+        return UploadVideoVo.fromJson(result);
+      } finally {
+        sFile.close();
+      }
+    }    
   }
   // 视频-注册
-  static Future<void> videoRsegister(UavRegisterQueryModel params) async {
+  static Future<void> videoRegister(UavRegisterQueryModel params) async {
     await HttpUtils.post('/video/register', params: params);
   }
   // 视频-查勘
@@ -46,8 +86,8 @@ class RegisterApi {
   }
 
   // 计数盘点文件上传
-  static Future<String> scanAmountUpload(XFile flie) async {
-    FormData formData = FormData.fromMap({'file': await MultipartFile.fromFile(flie.path, filename: flie.name)});
+  static Future<String> scanAmountUpload(XFile file) async {
+    FormData formData = FormData.fromMap({'file': await MultipartFile.fromFile(file.path, filename: file.name)});
     return await HttpUtils.post('biz/scanAmount/upload', params: formData, isformData: true);
   }
   // 计数盘点
