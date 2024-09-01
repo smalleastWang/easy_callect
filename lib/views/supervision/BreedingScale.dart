@@ -18,8 +18,7 @@ class BreedingScalePage extends ConsumerStatefulWidget {
   const BreedingScalePage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
-  _BreedingScalePageState createState() => _BreedingScalePageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _BreedingScalePageState();
 }
 
 class _BreedingScalePageState extends ConsumerState<BreedingScalePage> {
@@ -73,7 +72,7 @@ class _BreedingScalePageState extends ConsumerState<BreedingScalePage> {
             const SizedBox(height: 16.0),
             Expanded(
               child: mortgageInfo.when(
-                data: (data) {
+                data: (Monitoring? data) {
                   if (data == null) {
                     return const Center(child: Text('未获取到抵押信息'));
                   }

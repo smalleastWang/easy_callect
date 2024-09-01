@@ -12,7 +12,6 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:photo_view/photo_view_gallery.dart';
 
 class FileInfo {
   Uint8List? bytes;

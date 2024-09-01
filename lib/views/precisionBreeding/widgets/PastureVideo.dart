@@ -7,7 +7,6 @@ import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/utils/dialog.dart';
 import 'package:easy_collect/widgets/List/PickerPastureWidget.dart';
 import 'package:fijkplayer/fijkplayer.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:video_player/video_player.dart';

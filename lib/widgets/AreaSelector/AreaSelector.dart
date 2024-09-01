@@ -14,8 +14,7 @@ class AreaSelector extends ConsumerStatefulWidget {
   });
 
   @override
-  // ignore: library_private_types_in_public_api
-  _AreaSelectorState createState() => _AreaSelectorState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _AreaSelectorState();
 }
 
 class _AreaSelectorState extends ConsumerState<AreaSelector> {

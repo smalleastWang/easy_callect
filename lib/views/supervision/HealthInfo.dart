@@ -20,7 +20,7 @@ class HealthInfoPage extends ConsumerStatefulWidget {
   const HealthInfoPage({super.key});
 
   @override
-  _HealthInfoPageState createState() => _HealthInfoPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _HealthInfoPageState();
 }
 
 class _HealthInfoPageState extends ConsumerState<HealthInfoPage> {
@@ -84,7 +84,7 @@ class _HealthInfoPageState extends ConsumerState<HealthInfoPage> {
     );
   }
 
-  Widget _buildContent(BuildContext context, Monitoring data) {
+  Widget _buildContent(BuildContext context, Monitoring? data) {
     if (data == null) {
       return _buildNoDataWidget();
     }
