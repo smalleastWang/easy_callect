@@ -100,7 +100,7 @@ class _CountRegisterPageState extends ConsumerState<CountRegisterPage> {
       if (_imgsController.value == null || _imgsController.value!.isEmpty) return EasyLoading.showError('请上传图片');
       params['input'] = _imgsController.value!.map((e) => e.value).first;
       await RegisterApi.countInventory(params);
-      context.pop();
+      context.go(RouteEnum.inventory.fullpath);
       
     } finally {
       setState(() {
