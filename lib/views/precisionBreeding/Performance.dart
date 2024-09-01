@@ -117,13 +117,13 @@ class PerformanceItem extends StatelessWidget {
             borderRadius: BorderRadius.circular(5),
           ),
           child: Text(
-            rowData["buildingName"],
+            rowData["buildingName"] ?? '未知牧场',
             style: const TextStyle(color: Colors.white),
           ),
         ),
         const SizedBox(width: 10),
         Text(
-          rowData["animalNo"],
+          rowData["animalNo"] ?? '未知牛耳标',
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const Spacer(),
@@ -152,8 +152,8 @@ class PerformanceItem extends StatelessWidget {
   ) {
     return Row(
       children: [
-        Expanded(child: _buildInfoRow(context, label1, value1, rowData["algorithmCode"], dataType1)),
-        Expanded(child: _buildInfoRow(context, label2, value2, rowData["algorithmCode"], dataType2)),
+        Expanded(child: _buildInfoRow(context, label1, value1 ?? '-', rowData["algorithmCode"], dataType1)),
+        Expanded(child: _buildInfoRow(context, label2, value2 ?? '-', rowData["algorithmCode"], dataType2)),
       ],
     );
   }
@@ -172,7 +172,7 @@ class PerformanceItem extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.only(left: 20.0),
                 child: Text(
-                  value,
+                  value.toString(), // 确保将值转换为字符串
                   style: const TextStyle(color: Color(0xFF666666)),
                 ),
               ),
