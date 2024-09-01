@@ -10,6 +10,7 @@ import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/widgets/List/index.dart';
 import 'package:easy_collect/api/milksidentify.dart';
 import 'package:go_router/go_router.dart';
+import 'package:photo_view/photo_view.dart';
 
 class MilksidentifyPage extends ConsumerStatefulWidget {
   const MilksidentifyPage({super.key});
@@ -98,6 +99,56 @@ class MilksidentifyItem extends StatelessWidget {
 
   const MilksidentifyItem({super.key, required this.rowData, required this.onEdit});
 
+  void _showFullScreenImage(BuildContext context, String imageUrl) {
+    showGeneralDialog(
+      context: context,
+      barrierLabel: "Image",
+      barrierDismissible: true,
+      barrierColor: Colors.black.withOpacity(0.5),
+      transitionDuration: const Duration(milliseconds: 300),
+      pageBuilder: (context, anim1, anim2) {
+        return SafeArea(
+          child: Scaffold(
+            backgroundColor: Colors.black,
+            body: Stack(
+              children: [
+                Center(
+                  child: PhotoView(
+                    imageProvider: NetworkImage(imageUrl),
+                    backgroundDecoration: const BoxDecoration(
+                      color: Colors.black,
+                    ),
+                    minScale: PhotoViewComputedScale.contained,
+                    maxScale: PhotoViewComputedScale.covered * 2,
+                  ),
+                ),
+                Positioned(
+                  top: 20,
+                  right: 20,
+                  child: GestureDetector(
+                    onTap: () => Navigator.of(context).pop(),
+                    child: Container(
+                      padding: const EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white.withOpacity(0.7),
+                      ),
+                      child: const Icon(
+                        Icons.close,
+                        size: 24,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -148,7 +199,7 @@ class MilksidentifyItem extends StatelessWidget {
             const SizedBox(width: 10),
             OutlineActionButton(
               text: '详情',
-              onPressed: () => {},
+              onPressed: () => _showFullScreenImage(context, rowData["img"]),
             ),
           ],
         )
