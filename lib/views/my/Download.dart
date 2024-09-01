@@ -26,6 +26,7 @@ class _DownloadPageState extends ConsumerState<DownloadPage> {
 
   AsyncValue<List<dynamic>> fileList = const AsyncValue.loading();
   final Set<String> _downloadedFiles = {};
+  bool isPreviewing = false;
 
   @override
   void initState() {
@@ -35,23 +36,28 @@ class _DownloadPageState extends ConsumerState<DownloadPage> {
     _fetchFileList();
   }
 
-  Future<File> createFileOfPdfUrl(url) async {
+  Future<File> createFileOfPdfUrl(String url) async {
+    final filename = url.substring(url.lastIndexOf("/") + 1);
+    var dir = await getApplicationDocumentsDirectory();
+    File file = File("${dir.path}/$filename");
+
+    // 检查文件是否已经存在
+    if (await file.exists()) {
+      return file;
+    }
+
+    // 如果文件不存在，则从网络下载
     Completer<File> completer = Completer();
     print("Start download file from internet!");
     try {
-      final filename = url.substring(url.lastIndexOf("/") + 1);
       var request = await HttpClient().getUrl(Uri.parse(url));
       var response = await request.close();
       var bytes = await consolidateHttpClientResponseBytes(response);
-      var dir = await getApplicationDocumentsDirectory();
-      print("Download files");
-      print("${dir.path}/$filename");
-      File file = File("${dir.path}/$filename");
 
       await file.writeAsBytes(bytes, flush: true);
       completer.complete(file);
     } catch (e) {
-      throw Exception('Error parsing asset file!');
+      throw Exception('Error downloading or saving file!');
     }
 
     return completer.future;
@@ -66,9 +72,10 @@ class _DownloadPageState extends ConsumerState<DownloadPage> {
           setState(() {
             fileList = AsyncValue.data(data);
           });
+          // 开始预加载文件
+          _preloadFiles(data);
         }
       } else {
-        // 可以在这里处理 data 为空的情况
         print('No files found.');
       }
     }).catchError((error) {
@@ -84,15 +91,42 @@ class _DownloadPageState extends ConsumerState<DownloadPage> {
 
   // 打开 PDF 预览页面
   void _onFilePreview(String filePath) async {
-   createFileOfPdfUrl(filePath).then((f) {
-      String remotePDFpath = f.path;
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => PdfPreviewPage(path: remotePDFpath),
-        ),
-      );
+    setState(() {
+      isPreviewing = true;
     });
+
+    try {
+      final file = await createFileOfPdfUrl(filePath);
+      if (file.existsSync()) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PdfPreviewPage(path: file.path),
+          ),
+        ).then((_) {
+          setState(() {
+            isPreviewing = false;
+          });
+        });
+      } else {
+        throw Exception('File not found');
+      }
+    } catch (e) {
+      setState(() {
+        isPreviewing = false;
+      });
+      print('Preview error: $e');
+    }
+  }
+
+  void _preloadFiles(List<dynamic> files) {
+    for (var file in files) {
+      createFileOfPdfUrl(file['filePath']).then((_) {
+        print('Preloaded ${file["fileName"]}');
+      }).catchError((e) {
+        print('Error preloading file: $e');
+      });
+    }
   }
 
   @override
@@ -145,6 +179,7 @@ class _DownloadPageState extends ConsumerState<DownloadPage> {
               isDownloaded: _downloadedFiles.contains(file["fileName"]),
               onDownload: () => _onFileDownloaded(file["fileName"]),
               onPreview: fileType == 'help' ? () => _onFilePreview(file["filePath"]) : null,
+              isPreviewing: isPreviewing,
             ),
             const Divider(
               color: Color(0xFFE9E8E8),
@@ -165,6 +200,7 @@ class DownloadItem extends StatefulWidget {
   final String fileSize;
   final String filePath;
   final bool isDownloaded;
+  final bool isPreviewing;
   final VoidCallback onDownload;
   final VoidCallback? onPreview;
 
@@ -174,6 +210,7 @@ class DownloadItem extends StatefulWidget {
     required this.fileSize,
     required this.filePath,
     required this.isDownloaded,
+    required this.isPreviewing,
     required this.onDownload,
     this.onPreview,
   });
@@ -241,39 +278,38 @@ class _DownloadItemState extends State<DownloadItem> {
                   minHeight: 6,
                 ),
               ),
+            if (isDownloadComplete)
+              const Text('下载完成', style: TextStyle(color: Colors.green, fontSize: 13)),
           ],
         ),
-        trailing: isDownloading
-            ? const Text(
-                '下载中',
-                style: TextStyle(color: Color(0xFF297DFF), fontSize: 14, fontWeight: FontWeight.bold),
-              )
-            : isDownloadComplete
-                ? const Text(
-                    '下载完成', // 下载完成后显示“下载完成”
-                    style: TextStyle(color: Color(0xFF297DFF), fontSize: 14, fontWeight: FontWeight.bold),
-                  )
-                : Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (widget.onPreview != null)
-                        GestureDetector(
-                          onTap: widget.onPreview,
-                          child: const Text(
-                            '预览',
-                            style: TextStyle(color: Color(0xFF297DFF), fontSize: 14, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      const SizedBox(width: 10),
-                      GestureDetector(
-                        onTap: startDownload,
-                        child: const Text(
-                          '下载',
-                          style: TextStyle(color: Color(0xFF297DFF), fontSize: 14, fontWeight: FontWeight.bold),
-                        ),
+        trailing: widget.isPreviewing
+            ? const CircularProgressIndicator()
+            : Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (widget.onPreview != null)
+                    GestureDetector(
+                      onTap: widget.onPreview,
+                      child: const Text(
+                        '预览',
+                        style: TextStyle(color: Color(0xFF0EA4FF), fontSize: 14),
                       ),
-                    ],
+                    ),
+                  const SizedBox(width: 10),
+                  GestureDetector(
+                    onTap: isDownloading || widget.isDownloaded ? null : startDownload,
+                    child: Text(
+                      isDownloadComplete || widget.isDownloaded ? '已下载' : '下载',
+                      style: TextStyle(
+                        color: isDownloading || widget.isDownloaded
+                            ? const Color(0xFF999999)
+                            : const Color(0xFF0EA4FF),
+                        fontSize: 14,
+                      ),
+                    ),
                   ),
+                ],
+              ),
       ),
     );
   }
