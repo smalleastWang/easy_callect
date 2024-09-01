@@ -1,4 +1,9 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:dio/dio.dart';
+import 'package:easy_collect/views/my/PdfPreviePage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -18,10 +23,8 @@ class DownloadPage extends ConsumerStatefulWidget {
 class _DownloadPageState extends ConsumerState<DownloadPage> {
   late GoRouterState state;
   String? fileType;
-  
-  // 保存文件列表数据
+
   AsyncValue<List<dynamic>> fileList = const AsyncValue.loading();
-  // 保存已下载的文件名
   final Set<String> _downloadedFiles = {};
 
   @override
@@ -32,22 +35,63 @@ class _DownloadPageState extends ConsumerState<DownloadPage> {
     _fetchFileList();
   }
 
-  // 获取文件列表
+  Future<File> createFileOfPdfUrl(url) async {
+    Completer<File> completer = Completer();
+    print("Start download file from internet!");
+    try {
+      final filename = url.substring(url.lastIndexOf("/") + 1);
+      var request = await HttpClient().getUrl(Uri.parse(url));
+      var response = await request.close();
+      var bytes = await consolidateHttpClientResponseBytes(response);
+      var dir = await getApplicationDocumentsDirectory();
+      print("Download files");
+      print("${dir.path}/$filename");
+      File file = File("${dir.path}/$filename");
+
+      await file.writeAsBytes(bytes, flush: true);
+      completer.complete(file);
+    } catch (e) {
+      throw Exception('Error parsing asset file!');
+    }
+
+    return completer.future;
+  }
+
   void _fetchFileList() {
     final provider = fileListProvider({"code": fileType});
     ref.read(provider.future).then((data) {
-      setState(() {
-        fileList = AsyncValue.data(data);
-      });
+      if (data.isNotEmpty) {
+        data[0]['filePath'] = 'http://icon.artdong.online/%E3%80%90%E6%9C%A8%E5%AD%90%E6%95%99%E8%82%B2%E5%85%B1%E4%BA%AB%E3%80%91%E5%A6%82%E4%BD%95%E8%AF%B4%EF%BC%8C%E9%9D%92%E6%98%A5%E6%9C%9F%E7%94%B7%E5%AD%A9%E6%89%8D%E4%BC%9A%E5%90%AC.pdf';
+        if (mounted) {
+          setState(() {
+            fileList = AsyncValue.data(data);
+          });
+        }
+      } else {
+        // 可以在这里处理 data 为空的情况
+        print('No files found.');
+      }
     }).catchError((error) {
       print('Error fetching file list: $error');
     });
   }
 
-  // 更新已下载文件的状态
   void _onFileDownloaded(String fileName) {
     setState(() {
       _downloadedFiles.add(fileName);
+    });
+  }
+
+  // 打开 PDF 预览页面
+  void _onFilePreview(String filePath) async {
+   createFileOfPdfUrl(filePath).then((f) {
+      String remotePDFpath = f.path;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PdfPreviewPage(path: remotePDFpath),
+        ),
+      );
     });
   }
 
@@ -87,7 +131,6 @@ class _DownloadPageState extends ConsumerState<DownloadPage> {
     );
   }
 
-  // 构建文件列表
   Widget _buildFileList(BuildContext context, List<dynamic> files) {
     return ListView.builder(
       itemCount: files.length,
@@ -101,8 +144,8 @@ class _DownloadPageState extends ConsumerState<DownloadPage> {
               filePath: file["filePath"],
               isDownloaded: _downloadedFiles.contains(file["fileName"]),
               onDownload: () => _onFileDownloaded(file["fileName"]),
+              onPreview: fileType == 'help' ? () => _onFilePreview(file["filePath"]) : null,
             ),
-            // if (index < files.length - 1)
             const Divider(
               color: Color(0xFFE9E8E8),
               height: 0.5,
@@ -123,6 +166,7 @@ class DownloadItem extends StatefulWidget {
   final String filePath;
   final bool isDownloaded;
   final VoidCallback onDownload;
+  final VoidCallback? onPreview;
 
   const DownloadItem({
     super.key,
@@ -131,6 +175,7 @@ class DownloadItem extends StatefulWidget {
     required this.filePath,
     required this.isDownloaded,
     required this.onDownload,
+    this.onPreview,
   });
 
   @override
@@ -140,8 +185,8 @@ class DownloadItem extends StatefulWidget {
 class _DownloadItemState extends State<DownloadItem> {
   bool isDownloading = false;
   double downloadProgress = 0.0;
+  bool isDownloadComplete = false; // 添加状态变量
 
-  // 开始下载文件
   Future<void> startDownload() async {
     setState(() {
       isDownloading = true;
@@ -166,6 +211,7 @@ class _DownloadItemState extends State<DownloadItem> {
       setState(() {
         isDownloading = false;
         downloadProgress = 1.0;
+        isDownloadComplete = true; // 下载完成，更新状态变量
       });
 
       widget.onDownload();
@@ -202,13 +248,32 @@ class _DownloadItemState extends State<DownloadItem> {
                 '下载中',
                 style: TextStyle(color: Color(0xFF297DFF), fontSize: 14, fontWeight: FontWeight.bold),
               )
-            : GestureDetector(
-                onTap: startDownload,
-                child: const Text(
-                  '下载',
-                  style: TextStyle(color: Color(0xFF297DFF), fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-              ),
+            : isDownloadComplete
+                ? const Text(
+                    '下载完成', // 下载完成后显示“下载完成”
+                    style: TextStyle(color: Color(0xFF297DFF), fontSize: 14, fontWeight: FontWeight.bold),
+                  )
+                : Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (widget.onPreview != null)
+                        GestureDetector(
+                          onTap: widget.onPreview,
+                          child: const Text(
+                            '预览',
+                            style: TextStyle(color: Color(0xFF297DFF), fontSize: 14, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      const SizedBox(width: 10),
+                      GestureDetector(
+                        onTap: startDownload,
+                        child: const Text(
+                          '下载',
+                          style: TextStyle(color: Color(0xFF297DFF), fontSize: 14, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
       ),
     );
   }
