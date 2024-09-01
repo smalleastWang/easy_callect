@@ -42,7 +42,7 @@ enum RouteEnum {
   inventorySetTime('setTime', '设置盘点时间', '/precisionBreeding/inventory/setTime'),
   inventorySetUploadTime('setUploadTime', '设置上传时间', '/precisionBreeding/inventory/setUploadTime'),
   inventoryHistoryData('historyData', '历史数据', '/precisionBreeding/inventory/historyData'),
-  performance('performance', '性能测定', '/precisionBreeding/performance'),
+  performance('performance', '体征信息', '/precisionBreeding/performance'),
   weight('weight', '智能估重', '/precisionBreeding/weight'),
   behavior('behavior', '行为分析', '/precisionBreeding/behavior'),
   health('health', '健康状态', '/precisionBreeding/health'),
