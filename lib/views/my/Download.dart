@@ -67,7 +67,7 @@ class _DownloadPageState extends ConsumerState<DownloadPage> {
     final provider = fileListProvider({"code": fileType});
     ref.read(provider.future).then((data) {
       if (data.isNotEmpty) {
-        data[0]['filePath'] = 'http://icon.artdong.online/%E3%80%90%E6%9C%A8%E5%AD%90%E6%95%99%E8%82%B2%E5%85%B1%E4%BA%AB%E3%80%91%E5%A6%82%E4%BD%95%E8%AF%B4%EF%BC%8C%E9%9D%92%E6%98%A5%E6%9C%9F%E7%94%B7%E5%AD%A9%E6%89%8D%E4%BC%9A%E5%90%AC.pdf';
+        // data[0]['filePath'] = 'http://icon.artdong.online/%E3%80%90%E6%9C%A8%E5%AD%90%E6%95%99%E8%82%B2%E5%85%B1%E4%BA%AB%E3%80%91%E5%A6%82%E4%BD%95%E8%AF%B4%EF%BC%8C%E9%9D%92%E6%98%A5%E6%9C%9F%E7%94%B7%E5%AD%A9%E6%89%8D%E4%BC%9A%E5%90%AC.pdf';
         if (mounted) {
           setState(() {
             fileList = AsyncValue.data(data);
