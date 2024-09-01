@@ -178,7 +178,7 @@ class _StandardVerificationPageState extends ConsumerState<StandardVerificationP
     }
     // 批量注册-无人机
     if (registerMedia == RegisterMediaEnum.drones.value) {
-      return [PickerImageField(controller: _dronesController, maxNum: registerType == RegisterTypeEnum.single.value ? 1 : 9, label: '航拍图', uploadApi: RegisterApi.uavUpload), registerMedia: registerMedia];
+      return [PickerImageField(controller: _dronesController, maxNum: registerType == RegisterTypeEnum.single.value ? 1 : 9, label: '航拍图', uploadApi: RegisterApi.uavUpload, registerMedia: registerMedia)];
     }
     return [const SizedBox.shrink()];
   }
