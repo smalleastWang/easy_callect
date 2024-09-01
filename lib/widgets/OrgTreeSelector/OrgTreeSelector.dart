@@ -63,7 +63,7 @@ class OrgTreeSelectorState extends ConsumerState<OrgTreeSelector> {
 
       provinces = flatAreas.where((area) => area.parentId == '0').toList();
       cities = flatAreas.where((area) => area.parentId != '0' && provinces.any((province) => province.id == area.parentId)).toList();
-      orgs = flatAreas.where((area) => area.parentId != null && cities.any((city) => city.id == area.parentId)).toList();
+      orgs = flatAreas.where((area) => cities.any((city) => city.id == area.parentId)).toList();
     });
   }
 

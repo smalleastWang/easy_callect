@@ -2,15 +2,14 @@
 import 'package:easy_collect/api/insurance.dart';
 import 'package:easy_collect/api/pigRegister.dart';
 import 'package:easy_collect/enums/Route.dart';
-import 'package:easy_collect/enums/register.dart';
 import 'package:easy_collect/models/register/PigRegister.dart';
 import 'package:easy_collect/models/register/index.dart';
+import 'package:easy_collect/utils/camera/Config.dart';
 import 'package:easy_collect/utils/regExp.dart';
 import 'package:easy_collect/widgets/Button/BlockButton.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
 import 'package:easy_collect/widgets/Form/PickerImageField.dart';
 import 'package:easy_collect/widgets/List/PickerPastureWidget.dart';
-import 'package:easy_collect/widgets/Register/RegisterType.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,30 +31,13 @@ class _StandardVerificationPigPageState extends ConsumerState<StandardVerificati
   final GlobalKey _formKey = GlobalKey<FormState>();
   final TextEditingController _numController = TextEditingController();
   final PickerEditingController _enclosureController = PickerEditingController();
-  PickerImageController _faceImgsController = PickerImageController();
-  PickerImageController _bodyImgsController = PickerImageController();
+  final PickerImageController _bodyImgsController = PickerImageController();
 
   bool submitLoading = false;
-  int registerMedia = RegisterMediaEnum.face.value;
 
   @override
   void initState() {
     super.initState();
-  }
-  Widget get _getRegisterCnt {
-    onChange(value) {
-      setState(() {
-        registerMedia = value;
-        _faceImgsController = PickerImageController();
-        _bodyImgsController = PickerImageController();
-      });
-    }
-    return RegisterTypeWidget<int>(
-      label: '注册方式',
-      options: PigRegisterMediaEnum.getOptions(RegisterTypeEnum.single),
-      onChange: onChange,
-      defaultValue: RegisterMediaEnum.face.value
-    );
   }
 
   EnclosureModel? findNode(List<EnclosureModel> options) {
@@ -95,17 +77,12 @@ class _StandardVerificationPigPageState extends ConsumerState<StandardVerificati
         pigNo: _numController.text,
         houseId: houseData.id,
         pastureId: houseData.parentId,
-        // faceImgs: _imageController.value!.map((e) => e.value).toList()
       );
-      // 猪脸注册
-      if (registerMedia == RegisterMediaEnum.face.value) {
-        if (_faceImgsController.value == null || _faceImgsController.value!.isEmpty) return EasyLoading.showError('请上传猪脸图片');
-        params.faceImgs = _faceImgsController.value!.map((e) => e.value).toList();
-        // 猪背注册
-      } else if (registerMedia == RegisterMediaEnum.back.value) {
-        if (_bodyImgsController.value == null || _bodyImgsController.value!.isEmpty) return EasyLoading.showError('请上传猪脸图片');
-        params.bodyImgs = _bodyImgsController.value!.map((e) => e.value).toList();
-      }
+
+      // 猪背注册
+      if (_bodyImgsController.value == null || _bodyImgsController.value!.isEmpty) return EasyLoading.showError('请上传猪脸图片');
+      if (_bodyImgsController.value!.length < 4) return EasyLoading.showError('请上传4张以上的猪背图片');
+      params.bodyImgs = _bodyImgsController.value!.map((e) => e.value).toList();
       await registerPigAppApi(params);
       context.pop();
     } finally {
@@ -114,21 +91,6 @@ class _StandardVerificationPigPageState extends ConsumerState<StandardVerificati
       });
     }
     
-  }
-
-  List<Widget> get _getImgWidget {
-    // 单个注册-猪脸注册
-    if (registerMedia == RegisterMediaEnum.face.value) {
-      return [PickerImageField(controller: _faceImgsController, maxNum: 1, label: '猪脸图片')];
-    }
-    // 单个注册-猪背注册
-    if (registerMedia == RegisterMediaEnum.back.value) {
-      return [
-        PickerImageField(controller: _bodyImgsController, maxNum: 1, label: '猪背图片'),
-        PickerImageField(controller: _faceImgsController, maxNum: 1, label: '猪脸图片'),
-      ];
-    }
-    return [const SizedBox.shrink()];
   }
 
   @override
@@ -169,7 +131,6 @@ class _StandardVerificationPigPageState extends ConsumerState<StandardVerificati
                           },
                         )
                       )
-                      
                     ],
                   ),
                 ),
@@ -193,13 +154,11 @@ class _StandardVerificationPigPageState extends ConsumerState<StandardVerificati
                           options: enclosureList.value ?? [],
                         ),
                       )
-                      
                     ],
                   ),
                 ),
-                _getRegisterCnt,
-                ..._getImgWidget,
-
+                // _getRegisterCnt,
+                PickerImageField(controller: _bodyImgsController, maxNum: 20, label: '猪背图片', mTaskMode: EnumTaskMode.pigBodyRegister),
                 const SizedBox(height: 50),
                 BlockButton(
                   onPressed: submitLoading ? null : () => _handleSubmit(enclosureList.value ?? []),

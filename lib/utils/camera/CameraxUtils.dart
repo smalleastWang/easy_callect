@@ -187,5 +187,6 @@ String getOverlayPath(EnumTaskMode taskMode) {
       return "assets/images/pig_body_register.png";
     case EnumTaskMode.pigBodyIdentify:
     return "assets/images/pig_body_identify.png";
+    default: return "assets/images/cow_face_register.png";
   }
 }

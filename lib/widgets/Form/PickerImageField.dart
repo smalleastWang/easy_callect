@@ -1,8 +1,11 @@
 
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:chewie/chewie.dart';
+import 'package:easy_collect/api/insurance.dart';
 import 'package:easy_collect/enums/register.dart';
 import 'package:easy_collect/enums/route.dart';
+import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/utils/camera/Config.dart';
 import 'package:easy_collect/utils/camera/DetectFFI.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
@@ -12,12 +15,21 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:video_player/video_player.dart';
+
+enum PickFileType {
+  base64Image,
+  base64Video,
+  urlImage,
+  urlVideo,
+}
 
 class FileInfo {
   Uint8List? bytes;
   String value;
   String? text;
-  FileInfo({this.text, required this.value, this.bytes});
+  PickFileType type;
+  FileInfo({this.text, required this.value, this.bytes, required this.type});
 }
 typedef UploadApi = Future<String> Function(XFile flie);
 
@@ -25,20 +37,19 @@ class PickerImageField extends StatefulWidget {
   final UploadApi? uploadApi;
   final int maxNum;
   final String? label;
-  final bool multiple;
   final Function(List<FileInfo> files)? onChange;
   final PickerImageController controller;
   final EnumTaskMode mTaskMode;
   final int? registerMedia;
-  const PickerImageField({super.key, this.maxNum = 9, this.onChange, required this.controller, this.multiple = false, this.label, this.uploadApi,  this.mTaskMode = EnumTaskMode.cowFaceRegister, this.registerMedia});
+  const PickerImageField({super.key, this.maxNum = 9, this.onChange, required this.controller, this.label, this.uploadApi,  this.mTaskMode = EnumTaskMode.cowFaceRegister, this.registerMedia});
 
   @override
-  State<PickerImageField> createState() => _PickerImageFieldState();
+  State<PickerImageField> createState() => PickerImageFieldState();
 }
 
-class _PickerImageFieldState extends State<PickerImageField> {
+class PickerImageFieldState extends State<PickerImageField> {
 
-  final List<FileInfo> _pickImages = [];
+  List<FileInfo> _pickImages = [];
 
   @override
   initState() {
@@ -66,8 +77,15 @@ class _PickerImageFieldState extends State<PickerImageField> {
       return Stack(
         clipBehavior: Clip.none,
         children: [
-          if (file.bytes == null) Image.network(file.value, width: 80, height: 80, fit: BoxFit.cover,)
-          else Image.memory(file.bytes!, fit: BoxFit.cover, width: 80, height: 80),
+          if (file.type == PickFileType.urlImage) Image.network(file.value, width: 80, height: 80, fit: BoxFit.cover)
+          else if (file.type == PickFileType.base64Image && file.bytes != null) Image.memory(file.bytes!, width: 80, height: 80, fit: BoxFit.cover)
+          else if (file.type == PickFileType.urlVideo) SizedBox(
+            width: 120,
+            child: AspectRatio(
+              aspectRatio: 1,
+              child: Chewie(controller: ChewieController(videoPlayerController: VideoPlayerController.networkUrl(Uri.parse(file.value)), autoInitialize: true, allowFullScreen: false, allowMuting: false)),
+            ),
+          ),
           Positioned(
             top: -4,
             right: -4,
@@ -108,32 +126,50 @@ class _PickerImageFieldState extends State<PickerImageField> {
     }
     return result;
   }
-  void _handlePickImage([ImageSource? source]) async {
+  void _handlePickImage(ImageSource source) async {
     final picker = ImagePicker();
     List<XFile> pickedFiles = [];
-    if (widget.multiple || source == null) {
-      List<XFile> pickfiles = await picker.pickMultiImage();
-      pickedFiles.addAll(pickfiles);
-    } else if (source == ImageSource.camera) {
-      XFile? cameraFile = await context.push<XFile>(RouteEnum.cameraRegister.path, extra: {'mTaskMode': widget.mTaskMode});
-      if (cameraFile != null) pickedFiles.add(cameraFile);
+    if (source == ImageSource.camera) {
+      if (widget.registerMedia == RegisterMediaEnum.video.value) {
+        XFile? pickerVideo = await picker.pickVideo(source: source);
+        if (pickerVideo != null) pickedFiles.add(pickerVideo);
+      } else {
+        XFile? cameraFile = await context.push<XFile>(RouteEnum.cameraRegister.path, extra: {'mTaskMode': widget.mTaskMode});
+        if (cameraFile != null) pickedFiles.add(cameraFile);
+      }
     } else if (source == ImageSource.gallery) {
-      XFile? pickfile = await picker.pickImage(source: source);
-      if (pickfile != null) pickedFiles.add(pickfile);
+      if (widget.registerMedia == RegisterMediaEnum.video.value) {
+        XFile? pickerVideo = await picker.pickVideo(source: source);
+        if (pickerVideo != null) pickedFiles.add(pickerVideo);
+      } else {
+        XFile? pickfile = await picker.pickImage(source: source);
+        if (pickfile != null) pickedFiles.add(pickfile);
+      }
     }
 
     for (XFile pickedFile in pickedFiles) {
       if (widget.uploadApi == null) {
-        final bytes = await pickedFile.readAsBytes();
-        final FileInfo fileInfo = FileInfo(value: base64Encode(bytes), text: pickedFile.name, bytes: bytes);
+        Uint8List? bytes;
+        String fileValue = '';
+        FileInfo fileInfo;
+        // 视频
+        if (widget.registerMedia == RegisterMediaEnum.video.value) {
+          UploadVideoVo data = await RegisterApi.videoUpload(pickedFile);
+          fileValue = data.url;
+          fileInfo = FileInfo(value: fileValue, text: pickedFile.name, type: PickFileType.urlVideo);
+        // 图片
+        } else {
+          bytes = await pickedFile.readAsBytes();
+          fileValue = base64Encode(bytes);
+          fileInfo = FileInfo(value: fileValue, text: pickedFile.name, type: PickFileType.base64Image);
+        }
         setState(() {
           _pickImages.add(fileInfo);
         });
       } else {
-        // String url = await RegisterApi.uavUpload(pickedFile);
         String url = await widget.uploadApi!(pickedFile);
         setState(() {
-          _pickImages.add(FileInfo(value: url, text: pickedFile.name));
+          _pickImages.add(FileInfo(value: url, text: pickedFile.name, type: PickFileType.urlImage));
         });
       }
     }
@@ -143,11 +179,13 @@ class _PickerImageFieldState extends State<PickerImageField> {
     widget.controller.value = _pickImages;
   }
 
+  clearPickImages() {
+    setState(() {
+      _pickImages = [];
+    });
+  }
+
   _handleAction() {
-    if (widget.multiple) {
-      _handlePickImage();
-      return;
-    }
     showCupertinoModalPopup<ImageSource>(
       context: context,
       builder: (BuildContext context) {
@@ -155,16 +193,16 @@ class _PickerImageFieldState extends State<PickerImageField> {
           actions: [
             CupertinoActionSheetAction(
               onPressed: () => context.pop(ImageSource.gallery),
-              child: const Text("相册")
+              child: const Text('相册')
             ),
             if (widget.registerMedia != RegisterMediaEnum.drones.value) CupertinoActionSheetAction(
               onPressed: () => context.pop(ImageSource.camera),
-              child: const Text("拍照")
-            )
+              child: Text(widget.registerMedia == RegisterMediaEnum.video.value ? '拍视频' : '拍照')
+            ),
           ],
           cancelButton: CupertinoActionSheetAction(
             onPressed: () => context.pop(),
-            child: const Text("取消")
+            child: const Text('取消')
           ),
         );
       }

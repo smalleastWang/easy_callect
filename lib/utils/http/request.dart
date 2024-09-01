@@ -10,6 +10,7 @@ class HttpUtils {
     Map<String, dynamic>? params,
     bool showLoading = false,
     bool showErrorMessage = true,
+    bool isSourceData = false
   }) {
     return httpRequest.request(
       path: path,
@@ -17,6 +18,7 @@ class HttpUtils {
       queryParameters: params,
       showLoading: showLoading,
       showErrorMessage: showErrorMessage,
+      isSourceData: isSourceData
     );
   }
 
@@ -26,7 +28,8 @@ class HttpUtils {
     dynamic query, 
     bool showLoading = true,
     bool showErrorMessage = true,
-    bool isformData = false
+    bool isformData = false,
+    bool isSourceData = false
   }) {
     return httpRequest.request(
       path: path,
@@ -36,6 +39,7 @@ class HttpUtils {
       showLoading: showLoading,
       showErrorMessage: showErrorMessage,
       isformData: isformData,
+      isSourceData: isSourceData
     );
   }
 }

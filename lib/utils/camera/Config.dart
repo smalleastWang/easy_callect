@@ -5,6 +5,12 @@ enum EnumTaskMode{
   cowFaceIdentify,
   cowBodyRegister,
   cowBodyIdentify,
+  cowDronesRegister,
+  cowDronesIdentify,
+  cowVideoRegister,
+  cowVideoIdentify,
   pigBodyRegister,
   pigBodyIdentify,
+  countImgsInventory,
+  countVideoInventory
 }
