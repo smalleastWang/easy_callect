@@ -15,3 +15,12 @@ Future<PageVoModel> milksidentifyPage(MilksidentifyPageRef ref, Map<String, dyna
   }
   return data;
 }
+
+// 新增/编辑在位识别
+Future<void> addMilksidentify(Map<String, dynamic> params) async {
+  if(params['id'] != null) {
+      await HttpUtils.post('/biz/milksidentify/edit', params: params);
+      return;
+  }
+  await HttpUtils.post('/biz/milksidentify/add', params: params);
+}

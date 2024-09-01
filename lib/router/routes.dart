@@ -25,6 +25,7 @@ import 'package:easy_collect/views/my/BillDetail.dart';
 import 'package:easy_collect/views/my/PackageScreen.dart';
 import 'package:easy_collect/views/my/UserInfo.dart';
 import 'package:easy_collect/views/my/Download.dart';
+import 'package:easy_collect/views/precisionBreeding/EditMilksidentify.dart';
 import 'package:easy_collect/views/precisionBreeding/PerformanceDetail.dart';
 import 'package:go_router/go_router.dart';
 
@@ -148,6 +149,12 @@ final List<GoRoute> routes = [
     path: RouteEnum.editEmail.path,
      builder: (context, state) {
       return EditEmailPage(state: state);
+    },
+  ),
+  GoRoute(
+    path: RouteEnum.editMilksidentify.path,
+     builder: (context, state) {
+      return EditMilksidentifyPage(state: state);
     },
   ),
   

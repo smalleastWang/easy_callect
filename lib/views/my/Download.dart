@@ -1,4 +1,9 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:dio/dio.dart';
+import 'package:easy_collect/views/my/PdfPreviePage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -18,11 +23,10 @@ class DownloadPage extends ConsumerStatefulWidget {
 class _DownloadPageState extends ConsumerState<DownloadPage> {
   late GoRouterState state;
   String? fileType;
-  
-  // 保存文件列表数据
+
   AsyncValue<List<dynamic>> fileList = const AsyncValue.loading();
-  // 保存已下载的文件名
   final Set<String> _downloadedFiles = {};
+  bool isPreviewing = false;
 
   @override
   void initState() {
@@ -32,30 +36,104 @@ class _DownloadPageState extends ConsumerState<DownloadPage> {
     _fetchFileList();
   }
 
-  // 获取文件列表
+  Future<File> createFileOfPdfUrl(String url) async {
+    final filename = url.substring(url.lastIndexOf("/") + 1);
+    var dir = await getApplicationDocumentsDirectory();
+    File file = File("${dir.path}/$filename");
+
+    // 检查文件是否已经存在
+    if (await file.exists()) {
+      return file;
+    }
+
+    // 如果文件不存在，则从网络下载
+    Completer<File> completer = Completer();
+    print("Start download file from internet!");
+    try {
+      var request = await HttpClient().getUrl(Uri.parse(url));
+      var response = await request.close();
+      var bytes = await consolidateHttpClientResponseBytes(response);
+
+      await file.writeAsBytes(bytes, flush: true);
+      completer.complete(file);
+    } catch (e) {
+      throw Exception('Error downloading or saving file!');
+    }
+
+    return completer.future;
+  }
+
   void _fetchFileList() {
     final provider = fileListProvider({"code": fileType});
     ref.read(provider.future).then((data) {
-      setState(() {
-        fileList = AsyncValue.data(data);
-      });
+      if (data.isNotEmpty) {
+        // data[0]['filePath'] = 'http://icon.artdong.online/%E3%80%90%E6%9C%A8%E5%AD%90%E6%95%99%E8%82%B2%E5%85%B1%E4%BA%AB%E3%80%91%E5%A6%82%E4%BD%95%E8%AF%B4%EF%BC%8C%E9%9D%92%E6%98%A5%E6%9C%9F%E7%94%B7%E5%AD%A9%E6%89%8D%E4%BC%9A%E5%90%AC.pdf';
+        if (mounted) {
+          setState(() {
+            fileList = AsyncValue.data(data);
+          });
+          // 开始预加载文件
+          _preloadFiles(data);
+        }
+      } else {
+        print('No files found.');
+      }
     }).catchError((error) {
       print('Error fetching file list: $error');
     });
   }
 
-  // 更新已下载文件的状态
   void _onFileDownloaded(String fileName) {
     setState(() {
       _downloadedFiles.add(fileName);
     });
   }
 
+  // 打开 PDF 预览页面
+  void _onFilePreview(String filePath) async {
+    setState(() {
+      isPreviewing = true;
+    });
+
+    try {
+      final file = await createFileOfPdfUrl(filePath);
+      if (file.existsSync()) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PdfPreviewPage(path: file.path),
+          ),
+        ).then((_) {
+          setState(() {
+            isPreviewing = false;
+          });
+        });
+      } else {
+        throw Exception('File not found');
+      }
+    } catch (e) {
+      setState(() {
+        isPreviewing = false;
+      });
+      print('Preview error: $e');
+    }
+  }
+
+  void _preloadFiles(List<dynamic> files) {
+    for (var file in files) {
+      createFileOfPdfUrl(file['filePath']).then((_) {
+        print('Preloaded ${file["fileName"]}');
+      }).catchError((e) {
+        print('Error preloading file: $e');
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('资料下载'),
+        title: fileType == 'help' ? const Text('帮助手册') : const Text('资料下载'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -87,7 +165,6 @@ class _DownloadPageState extends ConsumerState<DownloadPage> {
     );
   }
 
-  // 构建文件列表
   Widget _buildFileList(BuildContext context, List<dynamic> files) {
     return ListView.builder(
       itemCount: files.length,
@@ -101,8 +178,9 @@ class _DownloadPageState extends ConsumerState<DownloadPage> {
               filePath: file["filePath"],
               isDownloaded: _downloadedFiles.contains(file["fileName"]),
               onDownload: () => _onFileDownloaded(file["fileName"]),
+              onPreview: fileType == 'help' ? () => _onFilePreview(file["filePath"]) : null,
+              isPreviewing: isPreviewing,
             ),
-            // if (index < files.length - 1)
             const Divider(
               color: Color(0xFFE9E8E8),
               height: 0.5,
@@ -122,7 +200,9 @@ class DownloadItem extends StatefulWidget {
   final String fileSize;
   final String filePath;
   final bool isDownloaded;
+  final bool isPreviewing;
   final VoidCallback onDownload;
+  final VoidCallback? onPreview;
 
   const DownloadItem({
     super.key,
@@ -130,7 +210,9 @@ class DownloadItem extends StatefulWidget {
     required this.fileSize,
     required this.filePath,
     required this.isDownloaded,
+    required this.isPreviewing,
     required this.onDownload,
+    this.onPreview,
   });
 
   @override
@@ -140,8 +222,8 @@ class DownloadItem extends StatefulWidget {
 class _DownloadItemState extends State<DownloadItem> {
   bool isDownloading = false;
   double downloadProgress = 0.0;
+  bool isDownloadComplete = false; // 添加状态变量
 
-  // 开始下载文件
   Future<void> startDownload() async {
     setState(() {
       isDownloading = true;
@@ -166,6 +248,7 @@ class _DownloadItemState extends State<DownloadItem> {
       setState(() {
         isDownloading = false;
         downloadProgress = 1.0;
+        isDownloadComplete = true; // 下载完成，更新状态变量
       });
 
       widget.onDownload();
@@ -195,19 +278,37 @@ class _DownloadItemState extends State<DownloadItem> {
                   minHeight: 6,
                 ),
               ),
+            if (isDownloadComplete)
+              const Text('下载完成', style: TextStyle(color: Colors.green, fontSize: 13)),
           ],
         ),
-        trailing: isDownloading
-            ? const Text(
-                '下载中',
-                style: TextStyle(color: Color(0xFF297DFF), fontSize: 14, fontWeight: FontWeight.bold),
-              )
-            : GestureDetector(
-                onTap: startDownload,
-                child: const Text(
-                  '下载',
-                  style: TextStyle(color: Color(0xFF297DFF), fontSize: 14, fontWeight: FontWeight.bold),
-                ),
+        trailing: widget.isPreviewing
+            ? const CircularProgressIndicator()
+            : Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (widget.onPreview != null)
+                    GestureDetector(
+                      onTap: widget.onPreview,
+                      child: const Text(
+                        '预览',
+                        style: TextStyle(color: Color(0xFF0EA4FF), fontSize: 14),
+                      ),
+                    ),
+                  const SizedBox(width: 10),
+                  GestureDetector(
+                    onTap: isDownloading || widget.isDownloaded ? null : startDownload,
+                    child: Text(
+                      isDownloadComplete || widget.isDownloaded ? '已下载' : '下载',
+                      style: TextStyle(
+                        color: isDownloading || widget.isDownloaded
+                            ? const Color(0xFF999999)
+                            : const Color(0xFF0EA4FF),
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ],
               ),
       ),
     );
