@@ -311,7 +311,7 @@ class CameraMlVisionState extends State<CameraMlVision>
                     cameraController!.value.previewSize!.width)),
           ),
         ),
-        if (isDetected) Positioned(
+         Positioned(
           left: 0,
           right: 0,
           bottom: 60,
@@ -326,8 +326,8 @@ class CameraMlVisionState extends State<CameraMlVision>
                 height: 80,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(100),
-                  color: Colors.white,
-                  border: Border.all(width: 4, color: Colors.grey.shade600.withOpacity(0.8)),
+                  color: Colors.red,
+                  border: Border.all(width: 28, color: Colors.white),
                 ),
               ),
             ),

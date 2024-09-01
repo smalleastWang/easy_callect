@@ -29,6 +29,7 @@ class FileInfo {
   String value;
   String? text;
   PickFileType type;
+
   FileInfo({this.text, required this.value, this.bytes, required this.type});
 }
 typedef UploadApi = Future<String> Function(XFile flie);
@@ -133,6 +134,9 @@ class PickerImageFieldState extends State<PickerImageField> {
       if (widget.registerMedia == RegisterMediaEnum.video.value) {
         XFile? pickerVideo = await picker.pickVideo(source: source);
         if (pickerVideo != null) pickedFiles.add(pickerVideo);
+      } else if (widget.registerMedia == RegisterMediaEnum.img.value) {
+        XFile? pickerImg = await picker.pickImage(source: source);
+        if (pickerImg != null) pickedFiles.add(pickerImg);
       } else {
         XFile? cameraFile = await context.push<XFile>(RouteEnum.cameraRegister.path, extra: {'mTaskMode': widget.mTaskMode});
         if (cameraFile != null) pickedFiles.add(cameraFile);
@@ -157,7 +161,6 @@ class PickerImageFieldState extends State<PickerImageField> {
           UploadVideoVo data = await RegisterApi.videoUpload(pickedFile);
           fileValue = data.url;
           fileInfo = FileInfo(value: fileValue, text: pickedFile.name, type: PickFileType.urlVideo);
-        // 图片
         } else {
           bytes = await pickedFile.readAsBytes();
           fileValue = base64Encode(bytes);

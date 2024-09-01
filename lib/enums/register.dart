@@ -44,7 +44,7 @@ enum RegisterMediaEnum implements EnumOption {
   face(1, '牛脸注册', RegisterTypeEnum.single),
   back(2, '牛背注册', RegisterTypeEnum.single),
   drones(3, '无人机'),
-  // img(4, '图片'),
+  img(4, '图片'),
   video(5, '视频', RegisterTypeEnum.multiple);
   // stream(6, '视频流');
   final int value;
@@ -129,16 +129,31 @@ enum SurveyMediaEnum implements EnumOption {
 }
 
 enum CountMediaEnum implements EnumStrOption {
-  img('cattle-img', '图像盘点'),
-  video('cattle-video', '视频盘点');
-  // stream('cattle-stream', '牛视频流');
-  // pigImg('pig-img', '猪图片'),
-  // pigVideo('pig-video', '猪视频'),
-  // pigStream('pig-stream', '猪视频流');
+  img('cattle-img', '图像盘点', ),
+  video('cattle-video', '视频盘点'),
+  stream('cattle-stream', '牛视频流'),
+  pigImg('pig-img', '猪图片'),
+  pigVideo('pig-video', '猪视频'),
+  pigStream('pig-stream', '猪视频流');
   final String value;
   final String label;
 
   const CountMediaEnum(this.value, this.label);
+
+  @override
+  OptionModel<String> toOptionModel() {
+    return OptionModel(value: value, label: label);
+  }
+  static String getLabel(String value) => CountMediaEnum.values.firstWhere((i) => i.value == value).label;
+}
+
+enum CountRegisterMediaEnum implements EnumStrOption {
+  img('cattle-img', '图像盘点', ),
+  video('cattle-video', '视频盘点');
+  final String value;
+  final String label;
+
+  const CountRegisterMediaEnum(this.value, this.label);
 
   @override
   OptionModel<String> toOptionModel() {

@@ -39,7 +39,7 @@ class _CountRegisterPageState extends ConsumerState<CountRegisterPage> {
   GlobalKey<PickerImageFieldState> videoWidgetState = GlobalKey<PickerImageFieldState>();
 
   bool submitLoading = false;
-  String countMedia = CountMediaEnum.img.value;
+  String countMedia = CountRegisterMediaEnum.img.value;
 
   @override
   void initState() {
@@ -56,14 +56,13 @@ class _CountRegisterPageState extends ConsumerState<CountRegisterPage> {
   }
 
   List<Widget> get _getImgWidget {
-    // 单个注册-牛脸注册
-    if (countMedia == CountMediaEnum.img.value) {
+    if (countMedia == CountRegisterMediaEnum.img.value) {
       return [
-        PickerImageField(key: imgsWidgetState, controller: _imgsController, maxNum: 20, label: '图片', mTaskMode: EnumTaskMode.countImgsInventory),
+        PickerImageField(key: imgsWidgetState, controller: _imgsController, maxNum: 1, label: '图片', registerMedia: RegisterMediaEnum.img.value, uploadApi: RegisterApi.scanAmountUpload),
       ];
-    } else if (countMedia == CountMediaEnum.video.value) {
+    } else if (countMedia == CountRegisterMediaEnum.video.value) {
       return [
-        PickerImageField(key: videoWidgetState, controller: _videoController, maxNum: 20, label: '视频', mTaskMode: EnumTaskMode.countVideoInventory),
+        PickerImageField(key: videoWidgetState, controller: _videoController, maxNum: 20, label: '视频', registerMedia: RegisterMediaEnum.video.value),
       ];
     }
     
@@ -96,23 +95,18 @@ class _CountRegisterPageState extends ConsumerState<CountRegisterPage> {
       });
 
       Map<String, dynamic> params = {
-        'model': countMedia
+        'model': countMedia,
       };
-      // 图片盘点
-      if (countMedia == CountMediaEnum.img.value) {
-        if (_imgsController.value == null || _imgsController.value!.isEmpty) return EasyLoading.showError('请上传图片');
-        params['input'] = _imgsController.value!.map((e) => e.value).first;
-        await RegisterApi.countInventory(params);
-        context.pop();
-        return;
-      }
+      if (_imgsController.value == null || _imgsController.value!.isEmpty) return EasyLoading.showError('请上传图片');
+      params['input'] = _imgsController.value!.map((e) => e.value).first;
+      await RegisterApi.countInventory(params);
+      context.pop();
       
     } finally {
       setState(() {
         submitLoading = false;
       });
     }
-    
   }
 
   @override
@@ -181,12 +175,8 @@ class _CountRegisterPageState extends ConsumerState<CountRegisterPage> {
                     ],
                   ),
                 ),
-                RegisterTypeWidget<String>(defaultValue: countMedia, options: enumsStrValToOptions(CountMediaEnum.values), onChange: _changeRegisterMedia),
-
-
+                RegisterTypeWidget<String>(defaultValue: countMedia, options: enumsStrValToOptions(CountRegisterMediaEnum.values), onChange: _changeRegisterMedia),
                 ..._getImgWidget,
-                
-                PickerImageField(controller: _imgsController, maxNum: 1, label: CountMediaEnum.getLabel(countMedia), uploadApi: RegisterApi.scanAmountUpload),
 
                 const SizedBox(height: 50),
                 BlockButton(
