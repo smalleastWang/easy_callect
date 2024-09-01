@@ -99,7 +99,7 @@ class _DownloadPageState extends ConsumerState<DownloadPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('资料下载'),
+        title: fileType == 'help' ? const Text('帮助手册') : const Text('资料下载'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
