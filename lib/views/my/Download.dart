@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
-
+import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter/services.dart';
 import 'package:dio/dio.dart';
 import 'package:easy_collect/views/my/PdfPreviePage.dart';
 import 'package:flutter/foundation.dart';
@@ -11,15 +12,29 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_collect/api/common.dart';
 
+void refreshMediaScanner(String filePath) {
+  const platform = MethodChannel('com.easycollect.easy_collect/mediaprovider');
+  platform.invokeMethod('scanMedia', {"path": filePath});
+}
+
+void requestStoragePermission() async {
+  var status = await Permission.storage.status;
+  if (!status.isGranted) {
+    await Permission.storage.request();
+  }
+}
+
 Future<String> getDocumentPath(String fileName) async {
   Directory? directory;
 
   if (Platform.isAndroid) {
-    directory = await getExternalStorageDirectory();
-    if (directory != null) {
-      // 保存到 Android 的文档文件夹
-      directory = Directory('${directory.path}/Documents');
-    }
+    // directory = await getExternalStorageDirectory();
+    // 保存到 Android 的下载文件夹
+    directory = Directory('/storage/emulated/0/Download');
+    // if (directory != null) {
+    //   // 保存到 Android 的文档文件夹
+    //   directory = Directory('${directory.path}/Documents');
+    // }
   } else if (Platform.isIOS) {
     directory = await getDownloadsDirectory();
   }
@@ -284,6 +299,7 @@ class _DownloadItemState extends State<DownloadItem> {
   bool isDownloadComplete = false; // 添加状态变量
 
   Future<void> startDownload() async {
+    requestStoragePermission();
     setState(() {
       isDownloading = true;
       downloadProgress = 0.0;
@@ -302,7 +318,7 @@ class _DownloadItemState extends State<DownloadItem> {
           });
         },
       );
-
+      refreshMediaScanner(widget.filePath);
       setState(() {
         isDownloading = false;
         downloadProgress = 1.0;
