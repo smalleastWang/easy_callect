@@ -14,8 +14,8 @@ class ModuleWidget extends StatelessWidget {
       ),
       body: Container(
         color: const Color(0xffF1F5F9), // 设置页面背景色
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6), // 设置整个页面距离两边12px, 上下6px
         child: ListView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6), // 设置整个页面距离两边12px, 上下6px
           itemCount: moduleList.length,
           itemBuilder: (context, index) {
             final module = moduleList[index];
