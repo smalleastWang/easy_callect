@@ -30,8 +30,15 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    _unameFocusNode.requestFocus();
+    // _unameFocusNode.requestFocus();
     _loadSavedCredentials();  // 加载保存的用户名和密码
+
+    /// WidgetsBinding 它能监听到第一帧绘制完成，第一帧绘制完成标志着已经Build完成
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ///获取输入框焦点
+      FocusScope.of(context).requestFocus(_unameFocusNode);
+    });
+
   }
 
   // 加载保存的用户名和密码
@@ -109,7 +116,6 @@ class _LoginPageState extends State<LoginPage> {
                       child: Listener(
                         onPointerDown: (e) => FocusScope.of(context).requestFocus(_unameFocusNode),
                         child: TextFormField(
-                          autofocus: true,
                           focusNode: _unameFocusNode,
                           controller: _unameController,
                           decoration: const InputDecoration(

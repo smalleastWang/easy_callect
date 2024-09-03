@@ -1,12 +1,10 @@
-import 'dart:convert';
 import 'dart:io';
-
-import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import 'package:easy_collect/models/PageVo.dart';
 import 'package:easy_collect/models/insurance/InsuranceApplicant.dart';
 import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/utils/http/request.dart';
+import 'package:easy_collect/utils/tool/common.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -28,7 +26,9 @@ class RegisterApi {
   }
   // 无人机注册
   static Future<void> uavForm(UavRegisterQueryModel params) async {
-    await HttpUtils.post('/biz/uav/form', params: params);
+    Map<String, dynamic> query = params.toJson();
+    query['imgs'] = params.imgs.map((i) => i).join(',');
+    await HttpUtils.post('/biz/uav/form', params: query);
   }
   // 视频上传
   static Future<UploadVideoVo> videoUpload(XFile file) async {
@@ -41,13 +41,14 @@ class RegisterApi {
       	// 分片数量
       var sFile = await nFile.open();
       try {
+        String md5FileName = getMd5FileName(file.name);
         int fileLength = sFile.lengthSync();
         int chunkSize = 5 * 1024 * 1024; // 分片大小 5M
         int chunkNum = (fileLength / chunkSize).ceil();
         int x = 0; // 已经上传的长度
         Map<String, dynamic> data = await HttpUtils.post('/video/multipart/create', params: {
           'chunkSize': chunkNum,
-          'fileName': md5.convert(utf8.encode(file.name)).toString()
+          'fileName': md5FileName
         }, isSourceData: true);
         while (x < fileLength) {
           // 是否是最后一片了
@@ -65,9 +66,11 @@ class RegisterApi {
           // 这里假设已经上传成功
           x += len; // 记录已经取出来的长度
         }
-        dynamic result = await HttpUtils.post('/video/multipart/complete', params: {
+
+        Map<String, dynamic> result = await HttpUtils.post('/video/multipart/complete', params: {
           'chunkSize': chunkNum,
-          'fileName': md5.convert(utf8.encode(file.name)).toString(),
+          'fileName': md5FileName,
+          'fileSize': fileLength,
           'uploadId': data['uploadId']
         }, isSourceData: true);
         return UploadVideoVo.fromJson(result);

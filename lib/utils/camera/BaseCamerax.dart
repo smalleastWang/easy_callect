@@ -311,7 +311,7 @@ class CameraMlVisionState extends State<CameraMlVision>
                     cameraController!.value.previewSize!.width)),
           ),
         ),
-         Positioned(
+        if (isDetected) Positioned(
           left: 0,
           right: 0,
           bottom: 60,

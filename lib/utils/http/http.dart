@@ -45,9 +45,9 @@ class HttpRequest {
     dio.interceptors.add(ErrorInterceptor());
     dio.interceptors.add(AuthInterceptor(tokenDio: tokenDio));
     dio.interceptors.add(PrettyDioLogger(
-        requestHeader: true,
+        // requestHeader: true,
         requestBody: true,
-        responseHeader: true,
+        // responseHeader: true,
         responseBody: true, maxWidth: 100));
   }
 

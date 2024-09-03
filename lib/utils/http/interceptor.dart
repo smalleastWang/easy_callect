@@ -52,6 +52,7 @@ class AuthInterceptor extends QueuedInterceptor {
       options.headers['Token'] = token;
     } else {
       routeKey.currentContext?.go(RouteEnum.login.path);
+      throw Exception('Token为空，跳转到登录');
     }
     super.onRequest(options, handler);
   }

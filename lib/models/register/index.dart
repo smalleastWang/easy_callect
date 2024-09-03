@@ -47,6 +47,7 @@ class UavRegisterQueryModel {
   List<String> imgs;
   // 1图片、2视频
   int? urlType;
+  String? taskId;
   
   UavRegisterQueryModel({
     required this.batch,
@@ -55,7 +56,9 @@ class UavRegisterQueryModel {
     required this.resourceType,
     required this.single,
     required this.imgs,
+
     this.urlType,
+    this.taskId,
   });
 
   factory UavRegisterQueryModel.fromJson(Map<String, dynamic> json) => _$UavRegisterQueryModelFromJson(json);
@@ -87,16 +90,16 @@ class EnclosureModel {
 
 @JsonSerializable()
 class UploadVideoVo {
-  String bucket;
-  String realName;
+  String? bucket;
+  String? realName;
   int size;
-  String uploadName;
+  String? uploadName;
   String url;
   UploadVideoVo({
-    required this.bucket,
-    required this.realName,
+    this.bucket,
+    this.realName,
     required this.size,
-    required this.uploadName,
+    this.uploadName,
     required this.url,
   });
 

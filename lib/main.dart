@@ -5,6 +5,7 @@ import 'package:easy_collect/models/PageVo.dart';
 import 'package:easy_collect/models/message/JPushRegistration.dart';
 import 'package:easy_collect/models/user/UserInfo.dart';
 import 'package:easy_collect/router/index.dart';
+import 'package:easy_collect/utils/camera/DetectFFI.dart';
 import 'package:easy_collect/utils/colors.dart';
 import 'package:easy_collect/utils/global.dart';
 import 'package:easy_collect/utils/storage.dart';
@@ -44,6 +45,16 @@ class _MyAppState extends ConsumerState<MyApp> {
   void initState() {
     super.initState();
     initPlatformState();
+    // 初始化牛识别插件
+    iniDet();
+  }
+  iniDet() async {
+    final detFFIRes = await DetFFI.getInstance().init();
+    if(!detFFIRes) {
+      EasyLoading.showToast('初始化失败', toastPosition: EasyLoadingToastPosition.top);
+    } else {
+      // EasyLoading.showToast('初始化成功', toastPosition: EasyLoadingToastPosition.top);
+    }
   }
   Future<void> initPlatformState() async {
     String? platformVersion;

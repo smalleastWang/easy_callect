@@ -53,21 +53,6 @@ class PickerImageFieldState extends State<PickerImageField> {
   List<FileInfo> _pickImages = [];
 
   @override
-  initState() {
-    iniDet();
-    super.initState();
-  }
-
-  iniDet() async {
-    final detFFIRes = await DetFFI.getInstance().init();
-    if(!detFFIRes) {
-      EasyLoading.showToast('初始化失败', toastPosition: EasyLoadingToastPosition.top);
-    } else {
-      EasyLoading.showToast('初始化成功', toastPosition: EasyLoadingToastPosition.top);
-    }
-  }
-
-  @override
   void dispose() {
     DetFFI.getInstance().clear();
     super.dispose();
@@ -75,40 +60,45 @@ class PickerImageFieldState extends State<PickerImageField> {
 
   List<Widget> get _pickImagesWidget {
     List<Widget> imageWidget = _pickImages.map((FileInfo file) {
-      return Stack(
-        clipBehavior: Clip.none,
-        children: [
-          if (file.type == PickFileType.urlImage) Image.network(file.value, width: 80, height: 80, fit: BoxFit.cover)
-          else if (file.type == PickFileType.base64Image && file.bytes != null) Image.memory(file.bytes!, width: 80, height: 80, fit: BoxFit.cover)
-          else if (file.type == PickFileType.urlVideo) SizedBox(
-            width: 120,
-            child: AspectRatio(
-              aspectRatio: 1,
-              child: Chewie(controller: ChewieController(videoPlayerController: VideoPlayerController.networkUrl(Uri.parse(file.value)), autoInitialize: true, allowFullScreen: false, allowMuting: false)),
-            ),
-          ),
-          Positioned(
-            top: -4,
-            right: -4,
-            child: GestureDetector(
-              onTap: () {
-                setState(() {
-                  _pickImages.remove(file);
-                });
-              },
-              behavior: HitTestBehavior.translucent,
-              child: Container(
-                padding: const EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                  color: Colors.grey.withOpacity(0.9),
-                  borderRadius: BorderRadius.circular(100),
-                  border: Border.all(width: 1, color: Colors.white)
-                ),
-                child: SvgPicture.asset('assets/icon/common/close.svg', width: 10,color: Colors.white),
+      return SizedBox(
+        width: 80,
+        height: 80,
+        child: Stack(
+          fit: StackFit.expand,
+          clipBehavior: Clip.none,
+          children: [
+            if (file.type == PickFileType.urlImage) Image.network(file.value, fit: BoxFit.cover)
+            else if (file.type == PickFileType.base64Image && file.bytes != null) Image.memory(file.bytes!, fit: BoxFit.cover)
+            else if (file.type == PickFileType.urlVideo) SizedBox(
+              width: double.infinity,
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: Chewie(controller: ChewieController(videoPlayerController: VideoPlayerController.networkUrl(Uri.parse(file.value)), autoInitialize: true, allowFullScreen: false, allowMuting: false)),
               ),
+            ),
+            Positioned(
+              top: -4,
+              right: -4,
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _pickImages.remove(file);
+                  });
+                },
+                behavior: HitTestBehavior.translucent,
+                child: Container(
+                  padding: const EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withOpacity(0.9),
+                    borderRadius: BorderRadius.circular(100),
+                    border: Border.all(width: 1, color: Colors.white)
+                  ),
+                  child: SvgPicture.asset('assets/icon/common/close.svg', width: 10,color: Colors.white),
+                ),
+              )
             )
-          )
-        ],
+          ],
+        )
       );
     }).toList();
     List<Widget> result = [...imageWidget];
@@ -164,7 +154,7 @@ class PickerImageFieldState extends State<PickerImageField> {
         } else {
           bytes = await pickedFile.readAsBytes();
           fileValue = base64Encode(bytes);
-          fileInfo = FileInfo(value: fileValue, text: pickedFile.name, type: PickFileType.base64Image);
+          fileInfo = FileInfo(value: fileValue, text: pickedFile.name, type: PickFileType.base64Image, bytes: bytes);
         }
         setState(() {
           _pickImages.add(fileInfo);
@@ -234,9 +224,7 @@ class PickerImageFieldState extends State<PickerImageField> {
                 spacing: 13,
                 runSpacing: 8,
                 alignment: WrapAlignment.start,
-                children: [
-                  ..._pickImagesWidget,
-                ],
+                children: _pickImagesWidget,
               ),
             )
           )

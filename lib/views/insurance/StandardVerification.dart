@@ -1,4 +1,6 @@
 
+import 'dart:math';
+
 import 'package:easy_collect/api/insurance.dart';
 import 'package:easy_collect/enums/Route.dart';
 import 'package:easy_collect/enums/index.dart';
@@ -6,6 +8,7 @@ import 'package:easy_collect/enums/register.dart';
 import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/utils/camera/Config.dart';
 import 'package:easy_collect/utils/regExp.dart';
+import 'package:easy_collect/utils/tool/common.dart';
 import 'package:easy_collect/widgets/Button/BlockButton.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
 import 'package:easy_collect/widgets/Form/PickerImageField.dart';
@@ -138,15 +141,16 @@ class _StandardVerificationPageState extends ConsumerState<StandardVerificationP
       // 无人机注册
       if (registerMedia == RegisterMediaEnum.drones.value) {
         if (_dronesController.value == null || _dronesController.value!.isEmpty) return EasyLoading.showError('请上传牛脸图片');
-        params.faceImgs = _dronesController.value!.map((e) => e.value).toList();
-        await RegisterApi.uavForm(UavRegisterQueryModel(
+        UavRegisterQueryModel uavParmas = UavRegisterQueryModel(
           batch: 0,
           houseId: houseData.id,
           pastureId: houseData.parentId,
           resourceType: ResourceTypeEnum.register.value,
           single: registerType,
-          imgs: _dronesController.value!.map((e) => e.value).toList()
-        ));
+          imgs: _dronesController.value!.map((e) => e.value).toList(),
+          taskId: getRandomString(32)
+        );
+        await RegisterApi.uavForm(uavParmas);
         context.pop();
         return;
       // 视频注册
