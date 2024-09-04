@@ -79,31 +79,25 @@ class _DownloadPageState extends ConsumerState<DownloadPage> {
     _fetchFileList();
   }
 
-  Future<File> createFileOfPdfUrl(String url) async {
+  Future<File> createTempFileOfPdfUrl(String url) async {
+    final directory = await getTemporaryDirectory();
     final filename = url.substring(url.lastIndexOf("/") + 1);
-    final filePath = await getDocumentPath(filename);
+    final filePath = '${directory.path}/$filename';
     File file = File(filePath);
 
-    // 检查文件是否已经存在
-    if (await file.exists()) {
-      return file;
-    }
-
     // 如果文件不存在，则从网络下载
-    Completer<File> completer = Completer();
-    print("Start download file from internet!");
-    try {
-      var request = await HttpClient().getUrl(Uri.parse(url));
-      var response = await request.close();
-      var bytes = await consolidateHttpClientResponseBytes(response);
-
-      await file.writeAsBytes(bytes, flush: true);
-      completer.complete(file);
-    } catch (e) {
-      throw Exception('Error downloading or saving file!');
+    if (!(await file.exists())) {
+      try {
+        var request = await HttpClient().getUrl(Uri.parse(url));
+        var response = await request.close();
+        var bytes = await consolidateHttpClientResponseBytes(response);
+        await file.writeAsBytes(bytes, flush: true);
+      } catch (e) {
+        throw Exception('Error downloading or saving file!');
+      }
     }
 
-    return completer.future;
+    return file;
   }
 
   void _fetchFileList() {
@@ -174,33 +168,35 @@ class _DownloadPageState extends ConsumerState<DownloadPage> {
       isPreviewing = true;
     });
 
+    File? tempFile;
     try {
-      final file = await createFileOfPdfUrl(filePath);
-      if (file.existsSync()) {
-        Navigator.push(
+      tempFile = await createTempFileOfPdfUrl(filePath);
+      if (tempFile.existsSync()) {
+        await Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => PdfPreviewPage(path: file.path),
+            builder: (context) => PdfPreviewPage(path: tempFile!.path),
           ),
-        ).then((_) {
-          setState(() {
-            isPreviewing = false;
-          });
-        });
+        );
       } else {
         throw Exception('File not found');
       }
     } catch (e) {
+      print('Preview error: $e');
+    } finally {
+      // 删除临时文件
       setState(() {
         isPreviewing = false;
       });
-      print('Preview error: $e');
+      if (tempFile != null && await tempFile.exists()) {
+        await tempFile.delete();
+      }
     }
   }
 
   void _preloadFiles(List<dynamic> files) {
     for (var file in files) {
-      createFileOfPdfUrl(file['filePath']).then((_) {
+      createTempFileOfPdfUrl(file['filePath']).then((_) {
         print('Preloaded ${file["fileName"]}');
       }).catchError((e) {
         print('Error preloading file: $e');
@@ -304,11 +300,23 @@ class _DownloadItemState extends State<DownloadItem> {
   bool isDownloadComplete = false; // 添加状态变量
 
   Future<void> startDownload() async {
-    bool isPermission =  await checkStoragePermission();
+    bool isPermission = await checkStoragePermission();
     if (!isPermission) {
       EasyLoading.showToast('请授权手机存储权限');
       return;
     }
+
+    final savePath = await getDocumentPath(widget.fileName);
+
+    // 检查文件是否已存在
+    final file = File(savePath);
+    if (await file.exists()) {
+      setState(() {
+        isDownloadComplete = true; // 更新状态变量为已下载完成
+      });
+      return;
+    }
+
     setState(() {
       isDownloading = true;
       downloadProgress = 0.0;
@@ -316,7 +324,6 @@ class _DownloadItemState extends State<DownloadItem> {
 
     try {
       final dio = Dio();
-      final savePath = await getDocumentPath(widget.fileName);
 
       await dio.download(
         widget.filePath,
@@ -327,7 +334,8 @@ class _DownloadItemState extends State<DownloadItem> {
           });
         },
       );
-      refreshMediaScanner(widget.filePath);
+
+      refreshMediaScanner(savePath);
       setState(() {
         isDownloading = false;
         downloadProgress = 1.0;
