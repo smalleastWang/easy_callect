@@ -1,17 +1,57 @@
 import 'dart:async';
 import 'dart:io';
-
-import 'package:easy_collect/utils/http/request.dart';
-import 'package:easy_collect/utils/tool/common.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter/services.dart';
+import 'package:dio/dio.dart';
 import 'package:easy_collect/views/my/PdfPreviePage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_collect/api/common.dart';
+
+void refreshMediaScanner(String filePath) {
+  const platform = MethodChannel('com.easycollect.easy_collect/mediaprovider');
+  platform.invokeMethod('scanMedia', {"path": filePath});
+}
+
+// 申请权限
+Future<bool> checkStoragePermission() async {
+  // 先对所在平台进行判断
+  bool isDenied = await Permission.storage.isDenied;
+  if (isDenied) {
+    PermissionStatus status = await Permission.storage.request();
+    if (status.isDenied) return false;
+  }
+  return true;
+}
+
+Future<String> getDocumentPath(String fileName) async {
+  Directory? directory;
+
+  if (Platform.isAndroid) {
+    // directory = await getExternalStorageDirectory();
+    // 保存到 Android 的下载文件夹
+    directory = Directory('/storage/emulated/0/Download');
+    // if (directory != null) {
+    //   // 保存到 Android 的文档文件夹
+    //   directory = Directory('${directory.path}/Documents');
+    // }
+  } else if (Platform.isIOS) {
+    directory = await getDownloadsDirectory();
+  }
+
+  // 如果目录不存在，创建它
+  if (directory != null && !(await directory.exists())) {
+    await directory.create(recursive: true);
+  }
+
+  // 返回完整的文件路径
+  return '${directory?.path}/$fileName';
+}
 
 // 资料下载页面
 class DownloadPage extends ConsumerStatefulWidget {
@@ -28,6 +68,7 @@ class _DownloadPageState extends ConsumerState<DownloadPage> {
 
   AsyncValue<List<dynamic>> fileList = const AsyncValue.loading();
   final Set<String> _downloadedFiles = {};
+  static const Set<String> supportedFormats = {'pdf'};
   bool isPreviewing = false;
 
   @override
@@ -40,8 +81,8 @@ class _DownloadPageState extends ConsumerState<DownloadPage> {
 
   Future<File> createFileOfPdfUrl(String url) async {
     final filename = url.substring(url.lastIndexOf("/") + 1);
-    var dir = await getApplicationDocumentsDirectory();
-    File file = File("${dir.path}/$filename");
+    final filePath = await getDocumentPath(filename);
+    File file = File(filePath);
 
     // 检查文件是否已经存在
     if (await file.exists()) {
@@ -69,7 +110,6 @@ class _DownloadPageState extends ConsumerState<DownloadPage> {
     final provider = fileListProvider({"code": fileType});
     ref.read(provider.future).then((data) {
       if (data.isNotEmpty) {
-        // data[0]['filePath'] = 'http://icon.artdong.online/%E3%80%90%E6%9C%A8%E5%AD%90%E6%95%99%E8%82%B2%E5%85%B1%E4%BA%AB%E3%80%91%E5%A6%82%E4%BD%95%E8%AF%B4%EF%BC%8C%E9%9D%92%E6%98%A5%E6%9C%9F%E7%94%B7%E5%AD%A9%E6%89%8D%E4%BC%9A%E5%90%AC.pdf';
         if (mounted) {
           setState(() {
             fileList = AsyncValue.data(data);
@@ -91,8 +131,45 @@ class _DownloadPageState extends ConsumerState<DownloadPage> {
     });
   }
 
+  // 显示文件格式不支持的提示
+  void _showUnsupportedFormatDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          backgroundColor: Colors.white, // Ensure AlertDialog background is white
+          // contentPadding: const EdgeInsets.all(0),
+          title: const Text('格式不支持'),
+          content: const Text('此文件格式不支持预览。'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                textStyle: const TextStyle(fontSize: 16),
+              ),
+              child: const Text('确定', style: TextStyle(color: Colors.blue)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   // 打开 PDF 预览页面
   void _onFilePreview(String filePath) async {
+    final fileExtension = filePath.split('.').last.toLowerCase();
+
+    if (!supportedFormats.contains(fileExtension)) {
+      _showUnsupportedFormatDialog();
+      return;
+    }
+
     setState(() {
       isPreviewing = true;
     });
@@ -238,20 +315,19 @@ class _DownloadItemState extends State<DownloadItem> {
     });
 
     try {
-      Directory docPath = await getApplicationDocumentsDirectory();
-      if (Platform.isAndroid) {
-        docPath = Directory("/storage/emulated/0/Download/");
-      }
-      await HttpUtils.download(
+      final dio = Dio();
+      final savePath = await getDocumentPath(widget.fileName);
+
+      await dio.download(
         widget.filePath,
-        '${docPath.path}/${widget.fileName}',
+        savePath,
         onReceiveProgress: (received, total) {
           setState(() {
             downloadProgress = received / total;
           });
         },
       );
-
+      refreshMediaScanner(widget.filePath);
       setState(() {
         isDownloading = false;
         downloadProgress = 1.0;
@@ -310,7 +386,7 @@ class _DownloadItemState extends State<DownloadItem> {
                       style: TextStyle(
                         color: isDownloading || widget.isDownloaded
                             ? const Color(0xFF999999)
-                            : const Color(0xFF0EA4FF),
+                            : const Color(0xFF297DFF),
                         fontSize: 14,
                       ),
                     ),

@@ -59,14 +59,3 @@ String getRandomString(int length) {
   Random random = Random();
   return String.fromCharCodes(Iterable.generate(length, (_) => characters.codeUnitAt(random.nextInt(characters.length))));
 }
-
-// 申请权限
-Future<bool> checkStoragePermission() async {
-  // 先对所在平台进行判断
-  bool isDenied = await Permission.storage.isDenied;
-  if (isDenied) {
-    PermissionStatus status = await Permission.storage.request();
-    if (status.isDenied) return false;
-  }
-  return true;
-}

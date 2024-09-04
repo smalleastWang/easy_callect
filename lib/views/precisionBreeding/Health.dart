@@ -49,7 +49,7 @@ class _HealthPageState extends ConsumerState<HealthPage> {
                     provider: healthPageProvider,
                     filterList: [
                       DropDownMenuModel(name: '牛耳标', layerLink: LayerLink(), fieldName: 'no', widget: WidgetType.input),
-                      DropDownMenuModel(name: '检测类型', list:  enumsStrValToOptions(PostureType.values, true, false), layerLink: LayerLink(), fieldName: 'posture'),
+                      DropDownMenuModel(name: '检测类型', list:  enumsStrValToOptions(PostureType.values, true, false), layerLink: LayerLink(), fieldName: 'health'),
                       DropDownMenuModel(name: '检测时间', layerLink: LayerLink(), fieldName: 'startDate,endDate', widget: WidgetType.dateRangePicker),
                     ],
                     builder: (rowData) {

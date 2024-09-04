@@ -102,6 +102,7 @@ class _MyWidgetState extends State<MyWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xffF1F5F9), // 设置背景颜色
       body: SingleChildScrollView(
         child: Container(
           decoration: const BoxDecoration(
