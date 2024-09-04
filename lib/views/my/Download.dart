@@ -392,7 +392,7 @@ class _DownloadItemState extends State<DownloadItem> {
                     child: Text(
                       isDownloadComplete || widget.isDownloaded ? '已下载' : '下载',
                       style: TextStyle(
-                        color: isDownloading || widget.isDownloaded
+                        color: isDownloading || widget.isDownloaded || isDownloadComplete
                             ? const Color(0xFF999999)
                             : const Color(0xFF297DFF),
                         fontSize: 14,
