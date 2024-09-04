@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
+import 'package:permission_handler/permission_handler.dart';
 
 List<T> listMapToModel<T>(List<dynamic> listMap, Function jsonF) {
   List<T> list = [];
@@ -57,4 +58,15 @@ String getRandomString(int length) {
   const characters = '+-*=?AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz';
   Random random = Random();
   return String.fromCharCodes(Iterable.generate(length, (_) => characters.codeUnitAt(random.nextInt(characters.length))));
+}
+
+// 申请权限
+Future<bool> checkStoragePermission() async {
+  // 先对所在平台进行判断
+  bool isDenied = await Permission.storage.isDenied;
+  if (isDenied) {
+    PermissionStatus status = await Permission.storage.request();
+    if (status.isDenied) return false;
+  }
+  return true;
 }

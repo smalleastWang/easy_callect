@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dio/dio.dart';
+import 'package:easy_collect/utils/http/request.dart';
+import 'package:easy_collect/utils/tool/common.dart';
 import 'package:easy_collect/views/my/PdfPreviePage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:path_provider/path_provider.dart';
@@ -225,19 +227,24 @@ class _DownloadItemState extends State<DownloadItem> {
   bool isDownloadComplete = false; // 添加状态变量
 
   Future<void> startDownload() async {
+    bool isPermission =  await checkStoragePermission();
+    if (!isPermission) {
+      EasyLoading.showToast('请授权手机存储权限');
+      return;
+    }
     setState(() {
       isDownloading = true;
       downloadProgress = 0.0;
     });
 
     try {
-      final dio = Dio();
-      final dir = await getApplicationDocumentsDirectory();
-      final savePath = '${dir.path}/${widget.fileName}';
-
-      await dio.download(
+      Directory docPath = await getApplicationDocumentsDirectory();
+      if (Platform.isAndroid) {
+        docPath = Directory("/storage/emulated/0/Download/");
+      }
+      await HttpUtils.download(
         widget.filePath,
-        savePath,
+        '${docPath.path}/${widget.fileName}',
         onReceiveProgress: (received, total) {
           setState(() {
             downloadProgress = received / total;

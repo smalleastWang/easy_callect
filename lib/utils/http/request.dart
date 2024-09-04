@@ -1,3 +1,5 @@
+import 'package:dio/dio.dart';
+
 import 'http.dart';
 
 /// 调用底层的request，重新提供get，post等方便方法
@@ -42,4 +44,27 @@ class HttpUtils {
       isSourceData: isSourceData
     );
   }
+  /// 下载
+  static Future download(String path, String savePath, {
+      ProgressCallback? onReceiveProgress,
+      Map<String, dynamic>? queryParameters,
+      CancelToken? cancelToken,
+      bool deleteOnError = true,
+      String lengthHeader = Headers.contentLengthHeader,
+      Object? data,
+      Options? options,
+    }) {
+    return httpRequest.download(
+      path,
+      savePath, 
+      onReceiveProgress: onReceiveProgress,
+      queryParameters: queryParameters,
+      cancelToken: cancelToken,
+      deleteOnError: deleteOnError,
+      lengthHeader: lengthHeader,
+      data: data,
+      options: options,
+    );
+  }
+  
 }

@@ -112,4 +112,39 @@ class HttpRequest {
     if (T is String) return '' as T;
     return null as T;
   }
+
+  Future<T> download<T>(
+    String path, // 接口地址
+    String savePath, // 保存地址
+    {
+      ProgressCallback? onReceiveProgress,
+      Map<String, dynamic>? queryParameters,
+      CancelToken? cancelToken,
+      bool deleteOnError = true,
+      String lengthHeader = Headers.contentLengthHeader,
+      Object? data,
+      Options? options,
+    }
+  ) async {
+    try {
+      Response response = await HttpRequest.dio.download(
+        path,
+        savePath,
+        onReceiveProgress: onReceiveProgress,
+        queryParameters: queryParameters,
+        cancelToken: cancelToken,
+        deleteOnError: deleteOnError,
+        lengthHeader: lengthHeader,
+        data: data,
+        options: options,
+      );
+      return response.data;
+    } on DioException catch (error) {
+      if (error.message != null) {
+        EasyLoading.showToast(error.message!);
+      }
+    }
+    return null as T;
+  }
+
 }

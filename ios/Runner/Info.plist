@@ -57,5 +57,12 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+
+	<key>NSCameraUsageDescription</key>
+	<string>此应用需要使用您的相机</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>此应用需要使用您的位置信息</string>
+	<key>NSFileProviderDomain</key>
+	<string>此应用需要使用您的手机存储</string>
 </dict>
 </plist>

@@ -1,6 +1,4 @@
 
-import 'dart:math';
-
 import 'package:easy_collect/api/insurance.dart';
 import 'package:easy_collect/enums/Route.dart';
 import 'package:easy_collect/enums/index.dart';
