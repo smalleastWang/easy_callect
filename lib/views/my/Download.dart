@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter/services.dart';
 import 'package:dio/dio.dart';
 import 'package:easy_collect/views/my/PdfPreviePage.dart';
 import 'package:flutter/foundation.dart';
@@ -12,10 +11,20 @@ import 'package:go_router/go_router.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_collect/api/common.dart';
+import 'package:android_intent_plus/android_intent.dart';
 
 void refreshMediaScanner(String filePath) {
-  const platform = MethodChannel('com.easycollect.easy_collect/mediaprovider');
-  platform.invokeMethod('scanMedia', {"path": filePath});
+  if (Platform.isAndroid) {
+    // 仅在 Android 上执行
+    final intent = AndroidIntent(
+      action: 'android.intent.action.MEDIA_SCANNER_SCAN_FILE',
+      data: Uri.file(filePath).toString(),
+    );
+    intent.launch();
+  } else if (Platform.isIOS) {
+    // iOS 不需要手动刷新媒体库，系统会自动处理
+    print('No need to refresh media scanner on iOS');
+  }
 }
 
 // 申请权限
@@ -308,13 +317,10 @@ class _DownloadItemState extends State<DownloadItem> {
 
     final savePath = await getDocumentPath(widget.fileName);
 
-    // 检查文件是否已存在
+    // 检查文件是否已存在并删除
     final file = File(savePath);
     if (await file.exists()) {
-      setState(() {
-        isDownloadComplete = true; // 更新状态变量为已下载完成
-      });
-      return;
+      await file.delete();  // 删除已存在的文件
     }
 
     setState(() {
@@ -334,7 +340,6 @@ class _DownloadItemState extends State<DownloadItem> {
           });
         },
       );
-
       refreshMediaScanner(savePath);
       setState(() {
         isDownloading = false;
