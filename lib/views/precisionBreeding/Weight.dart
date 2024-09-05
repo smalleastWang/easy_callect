@@ -39,6 +39,7 @@ class _WeightPageState extends ConsumerState<WeightPage> {
                 data: (data) {
                   return ListWidget<WeightPageFamily>(
                     pasture: PastureModel(
+                      isShed: true,
                       field: 'orgId',
                       options: data,
                     ),

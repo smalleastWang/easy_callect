@@ -5,7 +5,6 @@ import 'dart:math';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
-import 'package:permission_handler/permission_handler.dart';
 
 List<T> listMapToModel<T>(List<dynamic> listMap, Function jsonF) {
   List<T> list = [];

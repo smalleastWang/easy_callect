@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:collection/collection.dart';
 import 'package:easy_collect/models/PageVo.dart';
@@ -18,9 +19,10 @@ typedef Api<T> = Future<PageVoModel> Function(Map<String, dynamic> params);
 typedef Builder = Widget Function(Map<String, dynamic> data);
 
 class PastureModel {
+  bool? isShed;
   String field;
   List<EnclosureModel> options;
-  PastureModel({required this.field, this.options = const []});
+  PastureModel({required this.field, this.options = const [], this.isShed});
 }
 
 ///
@@ -195,6 +197,7 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
       child: PickerPastureWidget(
+        isShed: widget.pasture!.isShed ?? false,
         options: widget.pasture!.options,
         onChange: (values) {
           _enclosureController.value = values;
