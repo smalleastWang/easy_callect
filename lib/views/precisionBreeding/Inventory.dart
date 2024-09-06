@@ -7,6 +7,7 @@ import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
 import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/utils/OverlayManager.dart';
 import 'package:easy_collect/views/precisionBreeding/data.dart';
+import 'package:easy_collect/views/precisionBreeding/inventory/InventoryCntDetail.dart';
 import 'package:easy_collect/widgets/Button/PrimaryActionButton.dart';
 import 'package:easy_collect/widgets/List/ListCard.dart';
 import 'package:easy_collect/widgets/List/ListCardTitleCell.dart';
@@ -235,13 +236,31 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
                   Text(data['buildingName'], style: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.w500)),
                 ],
               ),
+              hasDetail: false,
             ),
             ListCardCell(label: '盘点类型', value: data['typeName']),
             ListCardCell(label: '盘点数量', value: data['actualNum']),
             ListCardCell(label: '上次盘点数量', value: data['lastNum']),
             ListCardCell(label: '盘点人', value: data['createUser']),
             ListCardCell(label: '上次盘点时间', value: data['lastTime']),
-            ListCardCellTime(label: '盘点时间', value: data['checkTime'])
+            ListCardCell(label: '盘点时间', value: data['checkTime']),
+            // ListCardCellTime(label: '盘点时间', value: data['checkTime']),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                PrimaryActionButton(text: '详情', onPressed: () => {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => InventoryCntDetailPage(buildingId: data['buildingId'], taskId: data['inventoryId']),
+                    ),
+                  )
+                }),
+                const SizedBox(width: 10),
+                OutlineActionButton(text: '手工盘点', onPressed: () => {}),
+              ],
+            )
           ],
         );
       },
