@@ -18,7 +18,7 @@ typedef Api<T> = Future<PageVoModel> Function(Map<String, dynamic> params);
 typedef Builder = Widget Function(Map<String, dynamic> data);
 
 class PastureModel {
-  ActionType? selectLast;
+  SelectLast? selectLast;
   String field;
   List<EnclosureModel> options;
   PastureModel({required this.field, this.options = const [], this.selectLast});
@@ -196,7 +196,7 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
       child: PickerPastureWidget(
-        selectLast: widget.pasture!.selectLast ?? ActionType.pasture,
+        selectLast: widget.pasture!.selectLast ?? SelectLast.pasture,
         options: widget.pasture!.options,
         onChange: (values) {
           _enclosureController.value = values;
