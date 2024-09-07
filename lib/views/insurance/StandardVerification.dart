@@ -274,7 +274,7 @@ class _StandardVerificationPageState extends ConsumerState<StandardVerificationP
                       ),
                       Expanded(
                         child: PickerPastureWidget(
-                          isShed: true,
+                          selectLast: SelectLast.shed,
                           controller: _enclosureController,
                           options: enclosureList.value ?? [],
                         ),

@@ -165,7 +165,7 @@ class _CountRegisterPageState extends ConsumerState<CountRegisterPage> {
                       ),
                       Expanded(
                         child: PickerPastureWidget(
-                          isShed: true,
+                          selectLast: SelectLast.shed,
                           controller: _enclosureController,
                           options: enclosureList.value ?? [],
                         ),

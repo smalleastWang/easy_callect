@@ -142,7 +142,7 @@ class _PastureVideoState extends ConsumerState<PastureVideo> {
               width: 300,
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
               child: PickerPastureWidget(
-                isShed: true,
+                selectLast: SelectLast.shed,
                 options: weightInfoTree.value ?? [],
                 onChange: _getCameraList
               ),

@@ -4,6 +4,7 @@ import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
 import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/utils/OverlayManager.dart';
 import 'package:easy_collect/widgets/List/ListCard.dart';
+import 'package:easy_collect/widgets/List/PickerPastureWidget.dart';
 import 'package:easy_collect/widgets/List/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -39,7 +40,7 @@ class _WeightPageState extends ConsumerState<WeightPage> {
                 data: (data) {
                   return ListWidget<WeightPageFamily>(
                     pasture: PastureModel(
-                      isShed: true,
+                      selectLast: SelectLast.shed,
                       field: 'orgId',
                       options: data,
                     ),

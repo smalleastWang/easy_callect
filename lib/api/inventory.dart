@@ -32,7 +32,7 @@ Future<PageVoModel> cntInventoryInfoPage(CntInventoryInfoPageRef ref, Map<String
 /// 计数盘点明细
 @riverpod
 Future<List<dynamic>> inventoryCntDetail(InventoryCntDetailRef ref, Map<String, dynamic> params) async {
-  List<dynamic> inventoryCntDetailList = await HttpUtils.post('/biz/inventoryCnt/detail', params: params);
+  List<dynamic> inventoryCntDetailList = await HttpUtils.post('/biz/inventoryCnt/detail', params: params, showLoading: false);
   return inventoryCntDetailList;
 }
 

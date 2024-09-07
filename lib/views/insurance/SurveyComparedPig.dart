@@ -216,7 +216,7 @@ class _SurveyComparedPigPageState extends ConsumerState<SurveyComparedPigPage> {
                       ),
                       Expanded(
                         child: PickerPastureWidget(
-                          isShed: true,
+                          selectLast: SelectLast.shed,
                           controller: _enclosureController,
                           options: enclosureList.value ?? [],
                         ),

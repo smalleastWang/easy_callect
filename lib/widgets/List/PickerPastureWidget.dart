@@ -17,7 +17,12 @@ enum ActionType {
   final String label;
 
   const ActionType(this.value, this.label);
+}
 
+enum SelectLast {
+  pasture,
+  shed,
+  both
 }
 
 class PickModel {
@@ -30,10 +35,10 @@ class PickModel {
 
 class PickerPastureWidget extends StatefulWidget {
   final List<EnclosureModel> options;
-  final bool isShed;
+  final SelectLast selectLast;
   final Function? onChange;
   final PickerEditingController? controller;
-  const PickerPastureWidget({super.key, required this.options, this.isShed = false, this.onChange, this.controller});
+  const PickerPastureWidget({super.key, required this.options, this.selectLast = SelectLast.pasture, this.onChange, this.controller});
 
   @override
   State<PickerPastureWidget> createState() => _PickerPastureWidgetState();
@@ -48,7 +53,7 @@ class _PickerPastureWidgetState extends State<PickerPastureWidget> {
   @override
   void initState() {
     for (var element in ActionType.values) {
-      if (!widget.isShed && element == ActionType.shed) {
+      if (widget.selectLast == SelectLast.pasture && element == ActionType.shed) {
         return;
       }
       if (element == ActionType.province) {
@@ -84,9 +89,9 @@ class _PickerPastureWidgetState extends State<PickerPastureWidget> {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: widget.isShed ?  const EdgeInsets.symmetric(vertical: 8) : const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+      padding: widget.selectLast == SelectLast.shed ?  const EdgeInsets.symmetric(vertical: 8) : const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
       decoration: BoxDecoration(
-        color: widget.isShed ? Colors.transparent : const Color(0xFFF5F7F9),
+        color: widget.selectLast == SelectLast.shed ? Colors.transparent : const Color(0xFFF5F7F9),
         borderRadius: BorderRadius.circular(6)
       ),
       child: GestureDetector(
@@ -210,12 +215,12 @@ class _PickerPastureWidgetState extends State<PickerPastureWidget> {
               });
             },
             onConfirm: () {
-              if (widget.isShed  && tabs.where((element) => element.id == null).isNotEmpty) {
+              if (widget.selectLast == SelectLast.shed  && tabs.where((element) => element.id == null).isNotEmpty) {
                 EasyLoading.showError('请选至最后一级');
                 return;
               }
               List<String> values = tabs.where((e) => e.id != null).map((e) => e.id!).toList();
-              if (widget.isShed  && !lastIsBld(widget.options, values.last)) {
+              if (widget.selectLast == SelectLast.shed  && !lastIsBld(widget.options, values.last)) {
                 EasyLoading.showError('改选项最后一级不是圈舍');
                 return;
               }
