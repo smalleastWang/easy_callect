@@ -207,64 +207,87 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
   }
   //计数盘点
   Widget _buildCntInventoryInfoPage(AsyncValue<List<EnclosureModel>> weightInfoTree) {
-    return ListWidget<CntInventoryInfoPageFamily>(
-      key: cntWidgetKey,
-      filterList: [
-        DropDownMenuModel(name: '选择状态', list: enumsStrValToOptions(InventoryStatus.values, true, false), layerLink: LayerLink(), fieldName: 'state'),
-        DropDownMenuModel(name: '选择盘点时间', layerLink: LayerLink(), fieldName: 'first,last', widget: WidgetType.dateRangePicker),
-      ],
-      pasture: PastureModel(
-        field: 'orgId',
-        options: weightInfoTree.value ?? []
-      ),
-      provider: cntInventoryInfoPageProvider,
-      builder: (data) {
-        return Column(
-          children: [
-            ListCardTitle(
-              title: Row(
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(right: 5),
-                    padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFCCD2E1),
-                      borderRadius: BorderRadius.circular(3)
-                    ),
-                    child: Text(InventoryStatus.getLabel(data['state'].toString()), style: const TextStyle(color: Colors.white)),
-                  ),
-                  Text(data['buildingName'], style: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.w500)),
-                ],
-              ),
-              hasDetail: false,
+    return Column(
+      children: [
+        Expanded(
+          child: ListWidget<CntInventoryInfoPageFamily>(
+            key: cntWidgetKey,
+            filterList: [
+              DropDownMenuModel(name: '选择状态', list: enumsStrValToOptions(InventoryStatus.values, true, false), layerLink: LayerLink(), fieldName: 'state'),
+              DropDownMenuModel(name: '选择盘点时间', layerLink: LayerLink(), fieldName: 'first,last', widget: WidgetType.dateRangePicker),
+            ],
+            pasture: PastureModel(
+              field: 'orgId',
+              options: weightInfoTree.value ?? []
             ),
-            ListCardCell(label: '盘点类型', value: data['typeName']),
-            ListCardCell(label: '盘点数量', value: data['actualNum']),
-            ListCardCell(label: '上次盘点数量', value: data['lastNum']),
-            ListCardCell(label: '盘点人', value: data['createUser']),
-            ListCardCell(label: '上次盘点时间', value: data['lastTime']),
-            ListCardCell(label: '盘点时间', value: data['checkTime']),
-            // ListCardCellTime(label: '盘点时间', value: data['checkTime']),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                PrimaryActionButton(text: '详情', onPressed: () => {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => InventoryCntDetailPage(buildingId: data['buildingId'], taskId: data['inventoryId']),
+            provider: cntInventoryInfoPageProvider,
+            builder: (data) {
+              return Column(
+                children: [
+                  ListCardTitle(
+                    title: Row(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(right: 5),
+                          padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFCCD2E1),
+                            borderRadius: BorderRadius.circular(3)
+                          ),
+                          child: Text(InventoryStatus.getLabel(data['state'].toString()), style: const TextStyle(color: Colors.white)),
+                        ),
+                        Text(data['buildingName'], style: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.w500)),
+                      ],
                     ),
-                  )
-                }),
-                const SizedBox(width: 10),
-                OutlineActionButton(text: '手工盘点', onPressed: () => {}),
-              ],
-            )
-          ],
-        );
-      },
+                    hasDetail: true,
+                    onTap:() => {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => InventoryCntDetailPage(buildingId: data['buildingId'], taskId: data['inventoryId']),
+                        ),
+                      )
+                    },
+                  ),
+                  ListCardCell(label: '盘点类型', value: data['typeName']),
+                  ListCardCell(label: '盘点数量', value: data['actualNum']),
+                  ListCardCell(label: '上次盘点数量', value: data['lastNum']),
+                  ListCardCell(label: '盘点人', value: data['createUser']),
+                  ListCardCell(label: '上次盘点时间', value: data['lastTime']),
+                  ListCardCell(label: '盘点时间', value: data['checkTime']),
+                  const SizedBox(height: 8),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.start,
+                  //   children: [
+                  //     PrimaryActionButton(text: '详情', onPressed: () => {
+                  //       Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //           builder: (context) => InventoryCntDetailPage(buildingId: data['buildingId'], taskId: data['inventoryId']),
+                  //         ),
+                  //       )
+                  //     }),
+                  //     const SizedBox(width: 10),
+                  //     OutlineActionButton(text: '手工盘点', onPressed: () => {}),
+                  //   ],
+                  // )
+                ],
+              );
+            },
+          ),
+        ),
+        // 在页面底部添加手工盘点按钮
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: PrimaryActionButton(
+            text: '手工盘点',
+            onPressed: () {
+              // 手工盘点按钮的功能
+            },
+          ),
+        ),
+        // const ShedSelectorDialog()
+      ],
     );
-  }
-
+    }
 }
