@@ -131,10 +131,10 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
         String shedField = fields[1];
         String shedVal = _enclosureController.value![_enclosureController.value!.length - 2];
         params.addAll({pastureField: _enclosureController.value!.last, shedField: shedVal});
-        return null;
+      } else {
+        final pastureVal = _enclosureController.value!.last;
+        params.addAll({widget.pasture!.field: pastureVal});
       }
-      final pastureVal = _enclosureController.value!.last;
-      params.addAll({widget.pasture!.field: pastureVal});
     }
 
     // 保存当前的查询参数
