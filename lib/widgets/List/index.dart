@@ -19,6 +19,8 @@ typedef Builder = Widget Function(Map<String, dynamic> data);
 
 class PastureModel {
   SelectLast? selectLast;
+  // 查询的字段名 
+  // 如果 selectLast是 SelectLast.both 用,隔开 如：'orgId,bldId' 前面是牧场字段名 后面是圈舍字段名
   String field;
   List<EnclosureModel> options;
   PastureModel({required this.field, this.options = const [], this.selectLast});
@@ -59,6 +61,8 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
   // 定义刷新控制器
   final RefreshController _refreshController = RefreshController(initialRefresh: false);
   final PickerEditingController _enclosureController = PickerEditingController();
+
+  bool _pastureLastIsBld = false;
 
   @override
   void initState() {
@@ -121,7 +125,14 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
   AsyncValue<PageVoModel>? _fetchData([bool? isRefresh]) {
     // 加入筛选参数
     if (widget.pasture != null && _enclosureController.value != null) {
-      final pastureVal = _enclosureController.value![_enclosureController.value!.length - 1];
+      if (widget.pasture!.selectLast == SelectLast.both && _pastureLastIsBld && _enclosureController.value!.length >= 2) {
+        List fields = widget.pasture!.field.split(',');
+        String pastureField = fields[0];
+        String shedField = fields[1];
+        String shedVal = _enclosureController.value![_enclosureController.value!.length - 2];
+        params.addAll({pastureField: _enclosureController.value!.last, shedField: shedVal});
+      }
+      final pastureVal = _enclosureController.value!.last;
       params.addAll({widget.pasture!.field: pastureVal});
     }
 
@@ -198,7 +209,10 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
       child: PickerPastureWidget(
         selectLast: widget.pasture!.selectLast ?? SelectLast.pasture,
         options: widget.pasture!.options,
-        onChange: (values) {
+        onChange: (values, lastIsBld) {
+          setState(() {
+            _pastureLastIsBld = lastIsBld;
+          });
           _enclosureController.value = values;
           _getList(1);
         }

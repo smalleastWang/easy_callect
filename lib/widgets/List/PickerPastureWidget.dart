@@ -241,7 +241,7 @@ class _PickerPastureWidgetState extends State<PickerPastureWidget> {
                 text = tabs.map((e) => e.name).where((e) => e != null).join('/');
               });
               if (widget.onChange != null) {
-                widget.onChange!(values);
+                widget.onChange!(values, lastIsBld);
               }
               if (widget.controller != null) {
                 widget.controller!.value = values ;

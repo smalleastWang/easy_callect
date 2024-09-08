@@ -57,7 +57,7 @@ class _PerformancePageState extends ConsumerState<PerformancePage> {
                   return ListWidget<WeightInfoPageFamily>(
                     pasture: PastureModel(
                       selectLast: SelectLast.both,
-                      field: 'orgId',
+                      field: 'orgId,bldId',
                       options: data,
                     ),
                     provider: weightInfoPageProvider,
