@@ -1,5 +1,6 @@
 import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
 import 'package:easy_collect/utils/OverlayManager.dart';
+import 'package:easy_collect/widgets/List/PickerPastureWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_collect/api/precisionBreeding.dart';
@@ -55,6 +56,7 @@ class _PerformancePageState extends ConsumerState<PerformancePage> {
                 data: (data) {
                   return ListWidget<WeightInfoPageFamily>(
                     pasture: PastureModel(
+                      selectLast: SelectLast.both,
                       field: 'orgId',
                       options: data,
                     ),
@@ -117,7 +119,7 @@ class PerformanceItem extends StatelessWidget {
             borderRadius: BorderRadius.circular(5),
           ),
           child: Text(
-            rowData["buildingName"] ?? '未知牧场',
+            rowData["buildName"] ?? '未知圈舍',
             style: const TextStyle(color: Colors.white),
           ),
         ),
