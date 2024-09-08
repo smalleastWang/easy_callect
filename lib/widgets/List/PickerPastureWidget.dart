@@ -25,6 +25,19 @@ enum SelectLast {
   both
 }
 
+String mapSelectLastToText(SelectLast selectLast) {
+  switch (selectLast) {
+    case SelectLast.pasture:
+      return ActionType.pasture.label;
+    case SelectLast.shed:
+      return ActionType.shed.label;
+    case SelectLast.both:
+      return '请选择牧场/圈舍';
+    default:
+      return '请选择牧场';
+  }
+}
+
 class PickModel {
   String? id;
   String? name;
@@ -238,7 +251,7 @@ class _PickerPastureWidgetState extends State<PickerPastureWidget> {
           );
         },
         behavior: HitTestBehavior.opaque,
-        child: Text(text ?? '请选择牧场/圈舍', style: const TextStyle(fontSize: 16, color: Colors.black54)),
+        child: Text(text ?? mapSelectLastToText(widget.selectLast), style: const TextStyle(fontSize: 16, color: Colors.black54)),
       ),
     );
   }
