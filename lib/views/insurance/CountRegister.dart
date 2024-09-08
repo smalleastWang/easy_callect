@@ -29,7 +29,6 @@ class CountRegisterPage extends ConsumerStatefulWidget {
 
 class _CountRegisterPageState extends ConsumerState<CountRegisterPage> {
   final GlobalKey _formKey = GlobalKey<FormState>();
-  final TextEditingController _numController = TextEditingController();
   final PickerEditingController _enclosureController = PickerEditingController();
   PickerImageController _imgsController = PickerImageController();
   PickerImageController _videoController = PickerImageController();
@@ -81,12 +80,7 @@ class _CountRegisterPageState extends ConsumerState<CountRegisterPage> {
   }
 
   _handleSubmit(List<EnclosureModel> options) async {
-    if (_numController.text.isEmpty) return EasyLoading.showError('请选择输入牛编号');
-    if (_enclosureController.value == null) return EasyLoading.showError('请选择牧场和圈舍');
-    EnclosureModel? houseData = findNode(options);
-    if (houseData == null || houseData.nodeType != 'bld') {
-      return EasyLoading.showError('圈舍选择错误');
-    }
+    if (_enclosureController.value == null) return EasyLoading.showError('请选择牧场');
 
     try {
       setState(() {
@@ -95,6 +89,7 @@ class _CountRegisterPageState extends ConsumerState<CountRegisterPage> {
 
       Map<String, dynamic> params = {
         'model': countMedia,
+        'orgId': _enclosureController.value!.last
       };
       if (_imgsController.value == null || _imgsController.value!.isEmpty) return EasyLoading.showError('请上传图片');
       params['input'] = _imgsController.value!.map((e) => e.value).first;
@@ -122,35 +117,7 @@ class _CountRegisterPageState extends ConsumerState<CountRegisterPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Container(
-                  decoration: const BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(color: Color(0xFFE9E8E8))
-                    )
-                  ),
-                  child: Row(
-                    children: [
-                      const SizedBox(
-                        width: 80,
-                        child: Text('耳标号', style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w500)),
-                      ),
-                      Expanded(
-                        child: TextFormField(
-                          controller: _numController,
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                            hintText: '请输入牛耳耳标号(不支持中文)'
-                          ),
-                          validator: (v) {
-                            return RegExpValidator.numner(v, '耳标号');
-                          },
-                        )
-                      )
-                      
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 10),
+                
                 Container(
                   decoration: const BoxDecoration(
                     border: Border(
@@ -165,7 +132,7 @@ class _CountRegisterPageState extends ConsumerState<CountRegisterPage> {
                       ),
                       Expanded(
                         child: PickerPastureWidget(
-                          selectLast: SelectLast.shed,
+                          selectLast: SelectLast.pasture,
                           controller: _enclosureController,
                           options: enclosureList.value ?? [],
                         ),
@@ -180,7 +147,7 @@ class _CountRegisterPageState extends ConsumerState<CountRegisterPage> {
                 const SizedBox(height: 50),
                 BlockButton(
                   onPressed: submitLoading ? null : () => _handleSubmit(enclosureList.value ?? []),
-                  text: '注册'
+                  text: '盘点'
                 )
               ],
             ),

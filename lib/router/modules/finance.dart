@@ -1,9 +1,9 @@
 import 'package:easy_collect/enums/route.dart';
 import 'package:easy_collect/views/finance/CattleDiscern.dart';
 import 'package:easy_collect/views/finance/CattleRegiter.dart';
-import 'package:easy_collect/views/finance/FinanceCount.dart';
 import 'package:easy_collect/views/finance/FinanceVideo.dart';
 import 'package:easy_collect/views/finance/index.dart';
+import 'package:easy_collect/views/insurance/CountRegister.dart';
 import 'package:go_router/go_router.dart';
 
 // 养殖金融
@@ -19,7 +19,7 @@ final financeRoutes = GoRoute(
     // 计数盘点
     GoRoute(
       path: RouteEnum.financeCount.path,
-      builder: (context, state) => const FinanceCountPage(),
+      builder: (context, state) => const CountRegisterPage(),
     ),
     // 牛只识别
     GoRoute(

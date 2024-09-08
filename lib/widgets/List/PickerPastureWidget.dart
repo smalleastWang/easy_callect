@@ -233,6 +233,7 @@ class _PickerPastureWidgetState extends State<PickerPastureWidget> {
                 return;
               }
               List<String> values = tabs.where((e) => e.id != null).map((e) => e.id!).toList();
+              String a = values.last;
               if (widget.selectLast == SelectLast.shed  && !lastIsBld(widget.options, values.last)) {
                 EasyLoading.showError('改选项最后一级不是圈舍');
                 return;
@@ -241,7 +242,7 @@ class _PickerPastureWidgetState extends State<PickerPastureWidget> {
                 text = tabs.map((e) => e.name).where((e) => e != null).join('/');
               });
               if (widget.onChange != null) {
-                widget.onChange!(values, lastIsBld);
+                widget.onChange!(values, lastIsBld(widget.options, values.last));
               }
               if (widget.controller != null) {
                 widget.controller!.value = values ;
