@@ -130,7 +130,7 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
         String pastureField = fields[0];
         String shedField = fields[1];
         String shedVal = _enclosureController.value![_enclosureController.value!.length - 2];
-        params.addAll({pastureField: _enclosureController.value!.last, shedField: shedVal});
+        params.addAll({pastureField: shedVal, shedField: _enclosureController.value!.last});
       } else {
         final pastureVal = _enclosureController.value!.last;
         params.addAll({widget.pasture!.field: pastureVal});
