@@ -125,15 +125,21 @@ class ListWidgetState<T> extends ConsumerState<ListWidget> {
   AsyncValue<PageVoModel>? _fetchData([bool? isRefresh]) {
     // 加入筛选参数
     if (widget.pasture != null && _enclosureController.value != null) {
-      if (widget.pasture!.selectLast == SelectLast.both && _pastureLastIsBld && _enclosureController.value!.length >= 2) {
+      if (widget.pasture!.selectLast == SelectLast.both) {
         List fields = widget.pasture!.field.split(',');
         String pastureField = fields[0];
         String shedField = fields[1];
-        String shedVal = _enclosureController.value![_enclosureController.value!.length - 2];
-        params.addAll({pastureField: shedVal, shedField: _enclosureController.value!.last});
+        // 选到圈舍一级
+        if (_pastureLastIsBld && _enclosureController.value!.length >= 2) {
+          String shedVal = _enclosureController.value![_enclosureController.value!.length - 2];
+          params.addAll({pastureField: shedVal, shedField: _enclosureController.value!.last});
+        // 选到牧场一级
+        } else {
+          params.remove(shedField);
+          params.addAll({pastureField: _enclosureController.value!.last});
+        }
       } else {
-        final pastureVal = _enclosureController.value!.last;
-        params.addAll({widget.pasture!.field: pastureVal});
+        params.addAll({widget.pasture!.field: _enclosureController.value!.last});
       }
     }
 
