@@ -8,6 +8,7 @@ import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/utils/OverlayManager.dart';
 import 'package:easy_collect/views/precisionBreeding/data.dart';
 import 'package:easy_collect/views/precisionBreeding/inventory/InventoryCntDetail.dart';
+import 'package:easy_collect/views/precisionBreeding/inventory/manual.dart';
 import 'package:easy_collect/widgets/Button/PrimaryActionButton.dart';
 import 'package:easy_collect/widgets/List/ListCard.dart';
 import 'package:easy_collect/widgets/List/ListCardTitleCell.dart';
@@ -283,6 +284,12 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
             text: '手工盘点',
             onPressed: () {
               // 手工盘点按钮的功能
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) => const ManualPage(),
+              //   ),
+              // );
             },
           ),
         ),

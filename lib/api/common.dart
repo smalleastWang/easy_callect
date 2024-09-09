@@ -105,3 +105,10 @@ Future<List<dynamic>> fileList(FileListRef ref, Map<String, dynamic> params) asy
   List<dynamic> files = await HttpUtils.get('/biz/bizfile/files', params: params);
   return files;
 }
+
+/// 可用的圈舍，树结构
+@riverpod
+Future<List<dynamic>> buildingTreeOnline(BuildingTreeOnlineRef ref, Map<String, dynamic> params) async {
+  List<dynamic> buildingTree = await HttpUtils.get('/biz/buildings/buildingTreeOnline', params: params);
+  return buildingTree;
+}
