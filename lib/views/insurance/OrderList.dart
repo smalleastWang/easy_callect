@@ -53,8 +53,8 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
     super.dispose();
   }
 
-  void _navigateTo(String path) async {
-    bool? result = await context.push(path);
+  void _navigateTo(String path, [Map<String, dynamic>? rowData]) async {
+    bool? result = await context.push(path, extra: rowData);
     // 如果返回结果为true，则刷新列表
     if (result == true) {
       listWidgetKey.currentState?.refreshWithPreviousParams();
@@ -200,9 +200,9 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            PrimaryActionButton(text: '修改', onPressed: () => context.push(RouteEnum.editPolicy.fullpath, extra: data)),
+                            PrimaryActionButton(text: '修改', onPressed: () => _navigateTo(RouteEnum.editPolicy.fullpath, data)),
                             const SizedBox(width: 10),
-                            OutlineActionButton(text: '绑定', onPressed: () => context.push(RouteEnum.insuranceDetailAdd.fullpath, extra: data)),
+                            OutlineActionButton(text: '绑定', onPressed: () => _navigateTo(RouteEnum.insuranceDetailAdd.fullpath, data)),
                             const SizedBox(width: 10),
                             OutlineActionButton(text: '详情', onPressed: () {
                               context.push(RouteEnum.insuranceDetail.fullpath, extra: { 'id': data['id'] as String });
