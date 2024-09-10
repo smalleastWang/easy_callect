@@ -87,13 +87,13 @@ class HealthItem extends StatelessWidget {
                 borderRadius: BorderRadius.circular(5),
               ),
               child: Text(
-                rowData["postureName"],
+                rowData["postureName"] ?? '',
                 style: const TextStyle(color: Colors.white),
               ),
             ),
             const SizedBox(width: 10),
             Text(
-              rowData["no"],
+              rowData["no"] ?? '未上传牛耳标',
               style: const TextStyle(
                   fontSize: 16, fontWeight: FontWeight.bold),
             ),
