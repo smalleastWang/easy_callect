@@ -30,31 +30,17 @@ class _ManualPageState extends ConsumerState<ManualPage> {
     super.initState();
   }
 
-  EnclosureModel? findNode(List<EnclosureModel> options) {
-    for (var node in options) {
-      if (node.id == _enclosureController.value!.last) {
-        return node;
-      }
-      if (node.children != null) {
-        return findNode(node.children!);
-      }
-    }
-    return null;
-  }
-
   _handleSubmit(List<EnclosureModel> options) async {
     if (_enclosureController.value == null) return EasyLoading.showError('请选择圈舍');
-    EnclosureModel? houseData = findNode(options);
-    if (houseData == null) {
-      return EasyLoading.showError('圈舍选择错误');
-    }
-
+    List<String> idList = _enclosureController.value!;
+    print("pastureId: ${idList.last}");
+    
     try {
       setState(() {
         submitLoading = true;
       });
 
-      String pastureId = houseData.parentId;
+      String pastureId = idList.last;
       Map<String, dynamic> params = {"buildingIds": [pastureId]};
       await inventoryManual(params);
 
@@ -91,7 +77,7 @@ class _ManualPageState extends ConsumerState<ManualPage> {
                     children: [
                       const SizedBox(
                         width: 80,
-                        child: Text('牧场/圈舍：', style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w500)),
+                        child: Text('盘点圈舍：', style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w500)),
                       ),
                       Expanded(
                         child: PickerPastureWidget(
