@@ -218,13 +218,17 @@ class _PickerPastureWidgetState extends State<PickerPastureWidget> {
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text(
-                                          e.name,
-                                          style: TextStyle(
-                                            color: e.id == tabs[actionIndex].id
-                                                ? MyColors.primaryColor
-                                                : null,
-                                            fontSize: 14,
+                                        Expanded( // 添加 Expanded 包裹 Text 来确保文字在一行内显示
+                                          child: Text(
+                                            e.name,
+                                            style: TextStyle(
+                                              color: e.id == tabs[actionIndex].id
+                                                  ? MyColors.primaryColor
+                                                  : null,
+                                              fontSize: 14,
+                                            ),
+                                            maxLines: 1, // 限制为 1 行
+                                            overflow: TextOverflow.ellipsis, // 超出显示省略号
                                           ),
                                         ),
                                         if (e.id == tabs[actionIndex].id)
