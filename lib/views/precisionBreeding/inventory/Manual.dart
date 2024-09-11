@@ -1,11 +1,17 @@
-import 'package:easy_collect/api/common.dart';
-import 'package:easy_collect/api/precisionBreeding.dart';
+import 'package:easy_collect/api/insurance.dart';
+import 'package:easy_collect/api/inventory.dart';
 import 'package:easy_collect/models/register/index.dart';
+import 'package:easy_collect/widgets/Button/BlockButton.dart';
+import 'package:easy_collect/widgets/Form/PickerFormField.dart';
 import 'package:easy_collect/widgets/List/PickerPastureWidget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:easy_collect/widgets/List/index.dart';
+import 'package:go_router/go_router.dart';
 
+final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+/// 手工盘点
 class ManualPage extends ConsumerStatefulWidget {
   const ManualPage({super.key});
 
@@ -14,198 +20,99 @@ class ManualPage extends ConsumerStatefulWidget {
 }
 
 class _ManualPageState extends ConsumerState<ManualPage> {
-  final GlobalKey<ListWidgetState> listWidgetKey = GlobalKey<ListWidgetState>();
-  final TextEditingController _searchController = TextEditingController();
-  final FocusNode _focusSearchInputNode = FocusNode();
-  AsyncValue<List<dynamic>> dataList = const AsyncValue.loading();
+  final GlobalKey _formKey = GlobalKey<FormState>();
+  final PickerEditingController _enclosureController = PickerEditingController();
 
-  Map<String, dynamic> _createRequestParams() {
-    return {};
-  }
-
-  void _onSearch() {
-    _fetchList();
-  }
-
-  void _fetchList() {
-    final provider = buildingTreeOnlineProvider(_createRequestParams());
-    ref.read(provider.future).then((data) {
-      if (mounted) {
-        setState(() {
-          dataList = AsyncValue.data(data);
-        });
-      }
-    }).catchError((error) {
-      print('Error fetching data list: $error');
-    });
-  }
-
+  bool submitLoading = false;
 
   @override
   void initState() {
     super.initState();
-     _fetchList();
+  }
+
+  EnclosureModel? findNode(List<EnclosureModel> options) {
+    for (var node in options) {
+      if (node.id == _enclosureController.value!.last) {
+        return node;
+      }
+      if (node.children != null) {
+        return findNode(node.children!);
+      }
+    }
+    return null;
+  }
+
+  _handleSubmit(List<EnclosureModel> options) async {
+    if (_enclosureController.value == null) return EasyLoading.showError('请选择圈舍');
+    EnclosureModel? houseData = findNode(options);
+    if (houseData == null) {
+      return EasyLoading.showError('圈舍选择错误');
+    }
+
+    try {
+      setState(() {
+        submitLoading = true;
+      });
+
+      String pastureId = houseData.parentId;
+      Map<String, dynamic> params = {"buildingIds": [pastureId]};
+      await inventoryManual(params);
+
+      context.pop();
+    } finally {
+      setState(() {
+        submitLoading = false;
+      });
+    }
+    
   }
 
   @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
- @override
   Widget build(BuildContext context) {
-    final AsyncValue<List<EnclosureModel>> weightInfoTree =
-        ref.watch(weightInfoTreeProvider);
-    String selectedPasture = ''; // 保存当前选择的牧场ID
-
+    final AsyncValue<List<EnclosureModel>> enclosureList = ref.watch(buildingTreeOnlineListProvider);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('手工盘点'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ),
-      body: GestureDetector(
-        onTap: () {
-          _focusSearchInputNode.unfocus();
-        },
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-          color: const Color(0xFFFFFFFF),
-          child: Column(
-            children: [
-              // 添加牧场选择器
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                child: weightInfoTree.when(
-                  data: (options) => PickerPastureWidget(
-                    options: options,
-                    selectLast: SelectLast.pasture,
-                    onChange: (values, isBld) {
-                      selectedPasture = values;
-                      // _fetchList(values); // 根据选择重新请求数据
-                      print('选择的ID: $values, 是否为圈舍: $isBld');
-                    },
+      key: _scaffoldKey,
+      appBar: AppBar(title: const Text('手工盘点')),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(15),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(color: Color(0xFFE9E8E8))
+                    )
                   ),
-                  loading: () => const CircularProgressIndicator(),
-                  error: (err, _) => Text('加载牧场数据失败: $err'),
+                  child: Row(
+                    children: [
+                      const SizedBox(
+                        width: 80,
+                        child: Text('牧场/圈舍：', style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w500)),
+                      ),
+                      Expanded(
+                        child: PickerPastureWidget(
+                          selectLast: SelectLast.shed,
+                          controller: _enclosureController,
+                          options: enclosureList.value ?? [],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-
-              // 显示数据列表
-              Expanded(
-                child: dataList.when(
-                  data: (data) => data.isNotEmpty
-                      ? _buildDataList(context, data)
-                      : _buildNoDataWidget(),
-                  loading: () => const Center(child: CircularProgressIndicator()),
-                  error: (error, stack) => Center(child: Text('Error: $error')),
-                ),
-              ),
-            ],
+                const SizedBox(height: 50),
+                BlockButton(
+                  onPressed: submitLoading ? null : () => _handleSubmit(enclosureList.value ?? []),
+                  text: '盘点'
+                )
+              ],
+            ),
           ),
         ),
-      ),
+      )
     );
   }
-}
-
-
-Widget _buildDataList(BuildContext context, List<dynamic> dataList) {
-  return ListView.builder(
-    itemCount: dataList.length,
-    itemBuilder: (context, index) {
-      final rowData = dataList[index];
-      return Column(
-        children: [
-          ManualItem(
-            rowData: rowData,
-          ),
-          const Divider(
-            color: Color(0xFFE9E8E8),
-            height: 0.5,
-            indent: 12,
-            endIndent: 12,
-          ),
-        ],
-      );
-    },
-  );
-}
-
-class ManualItem extends StatelessWidget {
-  final Map<String, dynamic> rowData;
-
-  const ManualItem({
-    super.key,
-    required this.rowData,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildInfoRow('序号', rowData["id"]),
-        _buildInfoRow('圈舍名称', rowData["name"]),
-        _buildInfoRow('可用状态', rowData["disabled"] ? '不可用' : '可用'),
-      ],
-    );
-  }
-
-  Widget _buildInfoRow(String label, String? value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        children: [
-          Text(
-            '$label     ',
-            style: const TextStyle(color: Color(0xFF666666)),
-          ),
-          Expanded(
-            child: Text(
-              value == null || value.isEmpty ? '未知' : value,
-              style: const TextStyle(color: Color(0xFF666666)),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-Widget _buildNoDataWidget() {
-  return Container(
-    color: Colors.white,
-    width: double.infinity,
-    height: double.infinity,
-    child: Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset(
-            'assets/images/empty.png',
-            fit: BoxFit.contain,
-            width: double.infinity,
-            height: 200,
-          ),
-          Transform.translate(
-            offset: const Offset(0, -40),
-            child: const Text(
-              '没有查询到数据',
-              style: TextStyle(
-                fontSize: 16,
-                color: Color(0xFF666666),
-              ),
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
 }

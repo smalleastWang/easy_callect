@@ -29,11 +29,16 @@ Future<PageVoModel> cntInventoryInfoPage(CntInventoryInfoPageRef ref, Map<String
   return data;
 }
 
-/// 计数盘点明细
+// 计数盘点明细
 @riverpod
 Future<List<dynamic>> inventoryCntDetail(InventoryCntDetailRef ref, Map<String, dynamic> params) async {
   List<dynamic> inventoryCntDetailList = await HttpUtils.post('/biz/inventoryCnt/detail', params: params, showLoading: false);
   return inventoryCntDetailList;
+}
+
+// 手工盘点
+Future inventoryManual(Map<String, dynamic> params) async {
+  return HttpUtils.post('/biz/inventoryCnt/manual', params: params);
 }
 
 // 识别盘点

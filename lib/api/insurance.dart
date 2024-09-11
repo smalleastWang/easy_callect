@@ -110,6 +110,17 @@ Future<List<EnclosureModel>> enclosureList(EnclosureListRef ref) async {
   return list;
 }
 
+/// 在线牧场圈舍信息
+@riverpod
+Future<List<EnclosureModel>> buildingTreeOnlineList(BuildingTreeOnlineListRef ref) async {
+  List<dynamic> res = await HttpUtils.get('/biz/buildings/buildingTreeOnline');
+  List<EnclosureModel> list = [];
+  for (var item in res) {
+    list.add(EnclosureModel.fromJson(item));
+  }
+  return list;
+}
+
 /// 订单列表
 @riverpod
 Future<PageVoModel> orderList(OrderListRef ref, Map<String, dynamic> params) async {

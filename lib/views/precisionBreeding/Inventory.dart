@@ -284,16 +284,15 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
             text: '手工盘点',
             onPressed: () {
               // 手工盘点按钮的功能
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => const ManualPage(),
-              //   ),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ManualPage(),
+                ),
+              );
             },
           ),
         ),
-        // const ShedSelectorDialog()
       ],
     );
     }
