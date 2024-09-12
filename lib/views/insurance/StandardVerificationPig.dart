@@ -11,6 +11,7 @@ import 'package:easy_collect/widgets/Form/PickerFormField.dart';
 import 'package:easy_collect/widgets/Form/PickerImageField.dart';
 import 'package:easy_collect/widgets/List/PickerPastureWidget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -126,8 +127,11 @@ class _StandardVerificationPigPageState extends ConsumerState<StandardVerificati
                             border: InputBorder.none,
                             hintText: '请输入猪耳耳标号(不支持中文)'
                           ),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')), // 仅允许数字和英文字母
+                          ],
                           validator: (v) {
-                            return RegExpValidator.numner(v, '耳标号');
+                            return RegExpValidator.numberAndLetter(v, '耳标号');
                           },
                         )
                       )
