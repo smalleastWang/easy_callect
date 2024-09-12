@@ -58,7 +58,7 @@ class _BuildingPageState extends ConsumerState<BuildingPage> {
             Navigator.of(context).pop();
           },
         ),
-        title: const Text('圈舍信息'),
+        title: const Text('圈舍管理'),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),

@@ -10,7 +10,7 @@ enum RouteEnum {
   billList('/billList', '账单列表', '/billList'),
   billDetail('/billDetail', '账单详情', '/billDetail'),
   packageScreen('/packageScreen', '已购套餐信息', '/packageScreen'),
-  editBuilding('/editBuilding', '添加圈舍信息', '/editBuilding'),
+  editBuilding('/editBuilding', '添加圈舍', '/editBuilding'),
   performanceDetail('/performanceDetail', '体征详情', '/performanceDetail'),
   editAiBox('/editAiBox', '添加AI盒子', '/editAiBox'),
   animalMortgage('/animalMortgage', '抵押', '/common/animalMortgage'),
@@ -62,7 +62,7 @@ enum RouteEnum {
 
   common('/common', '管理员设置', '/common'),
   aibox('aibox', 'AI盒子', '/common/aibox'),
-  building('building', '圈舍信息', '/common/building'),
+  building('building', '圈舍管理', '/common/building'),
   camera('camera', '摄像头管理', '/common/camera'),
   animal('animal', '牛只信息', '/common/animal'),
   pigAnimal('pigAnimal', '猪只信息', '/common/pigAnimal'),
