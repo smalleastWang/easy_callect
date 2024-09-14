@@ -9,6 +9,8 @@ import 'package:flutter/services.dart';
 import 'package:easy_collect/utils/camera/Config.dart';
 import 'package:easy_collect/utils/camera/DetectFFI.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image/image.dart' as img;
+import 'package:path_provider/path_provider.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import 'dart:ui' as ui;
 
@@ -35,7 +37,7 @@ class CameraMlVision extends StatefulWidget {
 
 class CameraMlVisionState extends State<CameraMlVision>
     with WidgetsBindingObserver {
-  XFile? _lastImage;
+  final List<XFile> _pickImages = [];
   final _visibilityKey = UniqueKey();
   CameraController? _cameraController;
   ImageRotation? _rotation;
@@ -87,9 +89,41 @@ class CameraMlVisionState extends State<CameraMlVision>
     if (_cameraController != null) {
       await _stop(true);
       try {
+        // final image = await _cameraController!.takePicture();
+        // setState(() {
+        //   _pickImages.add(image);
+        // });
+      } on PlatformException catch (e) {
+        debugPrint('$e');
+      }
+    }
+  }
+
+  Future<void> photograph() async {
+    if (_cameraController != null) {
+      try {
         final image = await _cameraController!.takePicture();
+        img.Image? i = await img.decodeImageFile(image.path);
+        if (_mDetectionObject == null || i == null) return;
+        Rect rect = _mDetectionObject!.rect;
+
+        double xRate = i.width / cameraController!.value.previewSize!.height;
+        double yRate = i.height / cameraController!.value.previewSize!.width;
+
+        int x = (rect.left * xRate).toInt();
+        int y = (rect.top * yRate).toInt();
+        int width = (rect.width * xRate).toInt();
+        int height = (rect.height * yRate).toInt();
+
+        img.Image cropImg = img.copyCrop(i, x: x, y: y, width: width, height: height);
+
+        Uint8List cropBytes = Uint8List.fromList(img.encodePng(cropImg));
+
+        File file = File(image.path);
+        file.writeAsBytesSync(cropBytes);
+        XFile cropImgFile  = XFile(image.path, bytes: cropBytes);
         setState(() {
-          _lastImage = image;
+          _pickImages.add(cropImgFile);
         });
       } on PlatformException catch (e) {
         debugPrint('$e');
@@ -290,14 +324,8 @@ class CameraMlVisionState extends State<CameraMlVision>
           : widget.errorBuilder!(context, _cameraError);
     }
 
-    var cameraPreview = _isStreaming
-        ? CameraPreview(
-            _cameraController!,
-          )
-        : _getPicture();
-
-    cameraPreview = Stack(fit: StackFit.passthrough, children: [
-      cameraPreview,
+    Widget cameraPreviewBox = Stack(fit: StackFit.passthrough, children: [
+      _isStreaming ? CameraPreview(_cameraController!) : const SizedBox.shrink(),
       if (cameraController?.value.isInitialized == true)
         AspectRatio(
           aspectRatio: _isLandscape()
@@ -311,28 +339,72 @@ class CameraMlVisionState extends State<CameraMlVision>
                     cameraController!.value.previewSize!.width)),
           ),
         ),
-        if (isDetected) Positioned(
+        // 拍照按钮
+        Positioned(
           left: 0,
           right: 0,
-          bottom: 60,
-          child: Center(
-            child: InkWell(
-              onTap: () async {
-                await stop();
-                context.pop(_lastImage);
-              },
-              child: Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(100),
-                  color: Colors.red,
-                  border: Border.all(width: 28, color: Colors.white),
+          bottom: 80,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              const SizedBox(width: 80, height: 80),
+              isDetected ? InkWell(
+                onTap: () async {
+                  // await stop();
+                  photograph();
+                },
+                child: Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100),
+                    color: Colors.red,
+                    border: Border.all(width: 28, color: Colors.white),
+                  ),
                 ),
-              ),
-            ),
+              ) : const SizedBox.shrink(),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  foregroundColor: Theme.of(context).primaryColor.withOpacity(0.3),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(6.0), // 设置圆角半径为6.0
+                  ),
+                ),
+                onPressed: () async {
+                  if (_pickImages.length > 20) {
+                    EasyLoading.showToast('最多连续拍20张');
+                    return;
+                  }
+                  await stop();
+                  context.pop(_pickImages);
+                },
+                child: const Text('完成', style: TextStyle(color: Colors.white)),
+              )
+            ],
           )
+        ),
+        Positioned(
+          left: 10,
+          right: 10,
+          bottom: 0,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: _pickImages.map((XFile file) {
+                return Container(
+                  height: 80,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(6)
+                  ),
+                  margin: const EdgeInsets.only(right: 8),
+                  child: Image.file(File(file.path)),
+                );
+              }).toList()
+          ),
+          ) 
         )
+        
     ]);
 
     return VisibilityDetector(
@@ -348,7 +420,7 @@ class CameraMlVisionState extends State<CameraMlVision>
         }
       },
       key: _visibilityKey,
-      child: cameraPreview,
+      child: cameraPreviewBox,
     );
   }
 
@@ -409,12 +481,5 @@ class CameraMlVisionState extends State<CameraMlVision>
     } else {
       start();
     }
-  }
-
-  Widget _getPicture() {
-    if (_lastImage != null) {
-      return Image.file(File(_lastImage!.path));
-    }
-    return Container();
   }
 }

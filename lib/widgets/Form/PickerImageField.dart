@@ -127,8 +127,8 @@ class PickerImageFieldState extends State<PickerImageField> {
         XFile? pickerImg = await picker.pickImage(source: source);
         if (pickerImg != null) pickedFiles.add(pickerImg);
       } else {
-        XFile? cameraFile = await context.push<XFile>(RouteEnum.cameraRegister.path, extra: {'mTaskMode': widget.mTaskMode});
-        if (cameraFile != null) pickedFiles.add(cameraFile);
+        List<XFile>? cameraFile = await context.push(RouteEnum.cameraRegister.path, extra: {'mTaskMode': widget.mTaskMode});
+        if (cameraFile != null) pickedFiles.addAll(cameraFile);
       }
     } else if (source == ImageSource.gallery) {
       if (widget.registerMedia == RegisterMediaEnum.video.value) {

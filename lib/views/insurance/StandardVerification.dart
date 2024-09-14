@@ -238,6 +238,7 @@ class _StandardVerificationPageState extends ConsumerState<StandardVerificationP
                       bottom: BorderSide(color: Color(0xFFE9E8E8))
                     )
                   ),
+                  margin: const EdgeInsets.only(bottom: 10),
                   child: Row(
                     children: [
                       const SizedBox(
@@ -263,7 +264,6 @@ class _StandardVerificationPageState extends ConsumerState<StandardVerificationP
                     ],
                   ),
                 ),
-                const SizedBox(height: 10),
                 Container(
                   decoration: const BoxDecoration(
                     border: Border(

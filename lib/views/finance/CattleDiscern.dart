@@ -10,11 +10,13 @@ import 'package:easy_collect/utils/tool/common.dart';
 import 'package:easy_collect/widgets/Button/BlockButton.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
 import 'package:easy_collect/widgets/Form/PickerImageField.dart';
+import 'package:easy_collect/widgets/List/PickerPastureWidget.dart';
 import 'package:easy_collect/widgets/Register/EnclosurePicker.dart';
 import 'package:easy_collect/widgets/Register/RegisterType.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 
@@ -22,14 +24,14 @@ final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 ///
 /// 查勘对比
-class CattleDiscernPage extends StatefulWidget {
+class CattleDiscernPage extends ConsumerStatefulWidget {
   const CattleDiscernPage({super.key});
 
   @override
-  State<CattleDiscernPage> createState() => _CattleDiscernPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _CattleDiscernPageState();
 }
 
-class _CattleDiscernPageState extends State<CattleDiscernPage> {
+class _CattleDiscernPageState extends ConsumerState<CattleDiscernPage> {
   
   final GlobalKey _formKey = GlobalKey<FormState>();
   final TextEditingController _numController = TextEditingController();
@@ -93,6 +95,7 @@ class _CattleDiscernPageState extends State<CattleDiscernPage> {
 
   @override
   Widget build(BuildContext context) {
+    final AsyncValue<List<EnclosureModel>> enclosureList = ref.watch(enclosureListProvider);
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(title: Text(RouteEnum.cattleDiscern.title)),
@@ -104,26 +107,58 @@ class _CattleDiscernPageState extends State<CattleDiscernPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                TextFormField(
-                  controller: _numController,
-                  decoration: getInputDecoration(
-                    labelText: '耳标号',
-                    hintText: '请输入牛耳耳标号(不支持中文)',
+                Container(
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(color: Color(0xFFE9E8E8))
+                    )
                   ),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')), // 仅允许数字和英文字母
-                  ],
-                  validator: (v) {
-                    return RegExpValidator.numberAndLetter(v, '耳标号');
-                  },
+                  margin: const EdgeInsets.only(bottom: 10),
+                  child: Row(
+                    children: [
+                      const SizedBox(
+                        width: 80,
+                        child: Text('耳标号', style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w500)),
+                      ),
+                      Expanded(
+                        child: TextFormField(
+                          controller: _numController,
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            hintText: '请输入牛耳耳标号(不支持中文)'
+                          ),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')), // 仅允许数字和英文字母
+                          ],
+                          validator: (v) {
+                            return RegExpValidator.numberAndLetter(v, '耳标号');
+                          },
+                        )
+                      )
+                      
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 16),
-                EnclosurePickerWidget(
-                  scaffoldKey: _scaffoldKey,
-                  controller: _enclosureController,
-                  decoration: getInputDecoration(
-                    labelText: '牧场/圈舍',
-                    hintText: '请输入牛耳耳标号(不支持中文)',
+                Container(
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(color: Color(0xFFE9E8E8))
+                    )
+                  ),
+                  child: Row(
+                    children: [
+                      const SizedBox(
+                        width: 80,
+                        child: Text('牧场/圈舍', style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w500)),
+                      ),
+                      Expanded(
+                        child: PickerPastureWidget(
+                          selectLast: SelectLast.shed,
+                          controller: _enclosureController,
+                          options: enclosureList.value ?? [],
+                        ),
+                      )
+                    ],
                   ),
                 ),
                 RegisterTypeWidget<int>(defaultValue: registerType, options: enumsToOptions(RegisterTypeEnum.values), onChange: _changeRegisterType),
