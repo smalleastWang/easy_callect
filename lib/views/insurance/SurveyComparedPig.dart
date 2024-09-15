@@ -148,13 +148,13 @@ class _SurveyComparedPigPageState extends ConsumerState<SurveyComparedPigPage> {
   List<Widget> get _getImgWidget {
     // 单个注册-猪脸注册
     if (registerMedia == RegisterMediaEnum.face.value) {
-      return [PickerImageField(controller: _faceImgsController, maxNum: 1, label: '请上传猪脸图片')];
+      return [PickerImageField(controller: _faceImgsController, maxNum: 1, label: '请上传猪脸图片', registerMedia: registerMedia)];
     }
     // 单个注册-猪背注册
     if (registerMedia == RegisterMediaEnum.back.value) {
       return [
-        PickerImageField(controller: _bodyImgsController, maxNum: 1, label: '请上传猪背图片'),
-        PickerImageField(controller: _faceImgsController, maxNum: 1, label: '请上传猪脸图片'),
+        PickerImageField(controller: _bodyImgsController, maxNum: 1, label: '请上传猪背图片', registerMedia: registerMedia),
+        PickerImageField(controller: _faceImgsController, maxNum: 1, label: '请上传猪脸图片', registerMedia: registerMedia),
       ];
     }
     return [const SizedBox.shrink()];

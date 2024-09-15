@@ -31,7 +31,8 @@ class HttpUtils {
     bool showLoading = true,
     bool showErrorMessage = true,
     bool isformData = false,
-    bool isSourceData = false
+    bool isSourceData = false,
+    Duration? sendTimeout
   }) {
     return httpRequest.request(
       path: path,
@@ -41,7 +42,8 @@ class HttpUtils {
       showLoading: showLoading,
       showErrorMessage: showErrorMessage,
       isformData: isformData,
-      isSourceData: isSourceData
+      isSourceData: isSourceData,
+      sendTimeout: sendTimeout
     );
   }
   /// 下载

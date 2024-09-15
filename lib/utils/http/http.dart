@@ -48,7 +48,9 @@ class HttpRequest {
         // requestHeader: true,
         requestBody: true,
         // responseHeader: true,
-        responseBody: true, maxWidth: 100));
+        responseBody: true, maxWidth: 100
+      )
+    );
   }
 
   /// 封装request方法
@@ -61,6 +63,7 @@ class HttpRequest {
     bool showErrorMessage = true, // 是否弹出借口报错
     bool isformData = false,
     required bool isSourceData,
+    Duration? sendTimeout,
   }) async {
     // 动态添加header头
     Map<String, dynamic> headers = <String, dynamic>{};
@@ -70,6 +73,9 @@ class HttpRequest {
       method: method.value,
       headers: headers,
     );
+    if (sendTimeout != null) {
+      options.sendTimeout = sendTimeout;
+    }
     if (isformData) options.contentType = 'multipart/form-data';
 
     try {

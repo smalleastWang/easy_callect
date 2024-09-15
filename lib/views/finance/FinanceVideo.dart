@@ -6,12 +6,10 @@ import 'package:easy_collect/enums/register.dart';
 import 'package:easy_collect/mock.dart';
 import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/utils/regExp.dart';
-import 'package:easy_collect/utils/tool/common.dart';
 import 'package:easy_collect/widgets/Button/BlockButton.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
 import 'package:easy_collect/widgets/Form/PickerImageField.dart';
 import 'package:easy_collect/widgets/List/PickerPastureWidget.dart';
-import 'package:easy_collect/widgets/Register/EnclosurePicker.dart';
 import 'package:easy_collect/widgets/Register/RegisterType.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -163,7 +161,7 @@ class _FinanceVideoPageState extends ConsumerState<FinanceVideoPage> {
                 ),
                 RegisterTypeWidget<int>(defaultValue: registerType, options: enumsToOptions(RegisterTypeEnum.values), onChange: _changeRegisterType),
                 _getRegisterCnt,
-                PickerImageField(controller: _imageController, maxNum: 1),
+                PickerImageField(controller: _imageController, maxNum: 1, registerMedia: RegisterFaceEnum.face.value),
 
                 const SizedBox(height: 50),
                 BlockButton(

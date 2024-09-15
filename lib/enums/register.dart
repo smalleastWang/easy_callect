@@ -59,7 +59,7 @@ enum RegisterMediaEnum implements EnumOption {
     return OptionModel(value: value, label: label);
   }
 
-  static getOptions(RegisterTypeEnum type) => RegisterMediaEnum.values.where((i) => i.type == type || i.type == null).map((e) => e.toOptionModel()).toList();
+  static getOptions(RegisterTypeEnum type) => RegisterMediaEnum.values.where((i) => i.type == type).map((e) => e.toOptionModel()).toList();
 }
 
 

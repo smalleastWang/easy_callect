@@ -33,7 +33,7 @@ showMyModalBottomSheet({required BuildContext context, required WidgetBuilder co
                 ),
               ],
             ),
-            contentBuilder(context),
+            Expanded(child: contentBuilder(context)),
             SizedBox(height: MediaQuery.of(context).padding.bottom)
           ],
         ),

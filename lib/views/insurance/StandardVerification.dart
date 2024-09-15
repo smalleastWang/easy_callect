@@ -69,14 +69,22 @@ class _StandardVerificationPageState extends ConsumerState<StandardVerificationP
     if (registerType == RegisterTypeEnum.single.value) {
       return RegisterTypeWidget<int>(
         label: '注册方式',
-        options: RegisterMediaEnum.getOptions(RegisterTypeEnum.single),
+        options:  [
+          RegisterMediaEnum.face.toOptionModel(),
+          RegisterMediaEnum.back.toOptionModel(),
+          RegisterMediaEnum.drones.toOptionModel(),
+          RegisterMediaEnum.video.toOptionModel(),
+        ],
         onChange: onChange,
         defaultValue: RegisterMediaEnum.face.value
       );
     } else if (registerType == RegisterTypeEnum.multiple.value) {
       return RegisterTypeWidget<int>(
         label: '注册方式',
-        options: RegisterMediaEnum.getOptions(RegisterTypeEnum.multiple),
+        options: [
+          RegisterMediaEnum.drones.toOptionModel(),
+          RegisterMediaEnum.video.toOptionModel(),
+        ],
         onChange: onChange,
         defaultValue: RegisterMediaEnum.drones.value
       );
@@ -196,24 +204,24 @@ class _StandardVerificationPageState extends ConsumerState<StandardVerificationP
     // 单个注册-牛脸注册
     if (registerType == RegisterTypeEnum.single.value && registerMedia == RegisterMediaEnum.face.value) {
       return [
-        PickerImageField(key: faceWidgetState, controller: _faceImgsController, maxNum: 20, label: '牛脸图片', mTaskMode: EnumTaskMode.cowFaceRegister, ),
-        PickerImageField(key: bodyWidgetState, controller: _bodyImgsController, maxNum: 20, label: '牛背图片', mTaskMode: EnumTaskMode.cowBodyRegister)
+        PickerImageField(key: faceWidgetState, controller: _faceImgsController, maxNum: 20, label: '牛脸图片', mTaskMode: EnumTaskMode.cowFaceRegister, registerMedia: registerMedia),
+        PickerImageField(key: bodyWidgetState, controller: _bodyImgsController, maxNum: 20, label: '牛背图片', mTaskMode: EnumTaskMode.cowBodyRegister, registerMedia: registerMedia)
       ];
     }
     // 单个注册-牛背注册
     if (registerType == RegisterTypeEnum.single.value && registerMedia == RegisterMediaEnum.back.value) {
       return [
-        PickerImageField(key: bodyWidgetState, controller: _bodyImgsController, maxNum: 20, label: '牛背图片', mTaskMode: EnumTaskMode.cowBodyRegister),
-        PickerImageField(key: faceWidgetState, controller: _faceImgsController, maxNum: 20, label: '牛脸图片', mTaskMode: EnumTaskMode.cowFaceRegister),
+        PickerImageField(key: bodyWidgetState, controller: _bodyImgsController, maxNum: 20, label: '牛背图片', mTaskMode: EnumTaskMode.cowBodyRegister, registerMedia: registerMedia),
+        PickerImageField(key: faceWidgetState, controller: _faceImgsController, maxNum: 20, label: '牛脸图片', mTaskMode: EnumTaskMode.cowFaceRegister, registerMedia: registerMedia),
       ];
     }
     // 批量注册-无人机
     if (registerMedia == RegisterMediaEnum.drones.value) {
-      return [PickerImageField(key: dronesWidgetState, controller: _dronesController, maxNum: 20, label: '航拍图', uploadApi: RegisterApi.uavUpload, registerMedia: registerMedia, mTaskMode: EnumTaskMode.cowDronesRegister)];
+      return [PickerImageField(key: dronesWidgetState, controller: _dronesController, maxNum: registerType == RegisterTypeEnum.single.value ? 1 : 20, label: '航拍图', uploadApi: RegisterApi.uavUpload, registerMedia: registerMedia, mTaskMode: EnumTaskMode.cowDronesRegister)];
     }
     // 批量注册-视频
     if (registerMedia == RegisterMediaEnum.video.value) {
-      return [PickerImageField(key: videoWidgetState, controller: _videoController, maxNum: 20, label: '视频', registerMedia: registerMedia, mTaskMode: EnumTaskMode.cowVideoRegister)];
+      return [PickerImageField(key: videoWidgetState, controller: _videoController, maxNum: registerType == RegisterTypeEnum.single.value ? 1 : 20, label: '视频', registerMedia: registerMedia, mTaskMode: EnumTaskMode.cowVideoRegister)];
     }
     return [const SizedBox.shrink()];
   }

@@ -2,6 +2,7 @@
 import 'package:easy_collect/api/insurance.dart';
 import 'package:easy_collect/api/pigRegister.dart';
 import 'package:easy_collect/enums/Route.dart';
+import 'package:easy_collect/enums/register.dart';
 import 'package:easy_collect/models/register/PigRegister.dart';
 import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/utils/camera/Config.dart';
@@ -162,7 +163,7 @@ class _StandardVerificationPigPageState extends ConsumerState<StandardVerificati
                   ),
                 ),
                 // _getRegisterCnt,
-                PickerImageField(controller: _bodyImgsController, maxNum: 20, label: '猪背图片', mTaskMode: EnumTaskMode.pigBodyRegister),
+                PickerImageField(controller: _bodyImgsController, maxNum: 20, label: '猪背图片', mTaskMode: EnumTaskMode.pigBodyRegister, registerMedia: RegisterFaceEnum.back.value),
                 const SizedBox(height: 50),
                 BlockButton(
                   onPressed: submitLoading ? null : () => _handleSubmit(enclosureList.value ?? []),

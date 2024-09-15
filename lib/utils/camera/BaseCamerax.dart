@@ -10,7 +10,6 @@ import 'package:easy_collect/utils/camera/Config.dart';
 import 'package:easy_collect/utils/camera/DetectFFI.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image/image.dart' as img;
-import 'package:path_provider/path_provider.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import 'dart:ui' as ui;
 

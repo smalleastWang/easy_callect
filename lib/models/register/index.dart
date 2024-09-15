@@ -5,24 +5,26 @@ part 'index.g.dart';
 @JsonSerializable()
 class RegisterQueryModel {
   // 牛只编号
+  @JsonKey(disallowNullValue: true)
   String? cattleNo;
   // 猪编号
+  @JsonKey(disallowNullValue: true)
   String? pigNo;
   // 牧场id
   String pastureId;
   // 圈舍id
   String houseId;
   // 牛脸图片
-  List<String>? faceImgs;
+  List<String> faceImgs;
   // 牛身图片
-  List<String>? bodyImgs;
+  List<String> bodyImgs;
   RegisterQueryModel({
     this.cattleNo,
     required this.pastureId,
     required this.houseId,
     this.pigNo,
-    this.faceImgs,
-    this.bodyImgs,
+    this.faceImgs = const [],
+    this.bodyImgs = const [],
   });
 
   factory RegisterQueryModel.fromJson(Map<String, dynamic> json) => _$RegisterQueryModelFromJson(json);

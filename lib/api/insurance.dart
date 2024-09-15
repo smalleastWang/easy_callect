@@ -17,7 +17,7 @@ class RegisterApi {
   } 
   // 验标注册-注册牛
   static Future<void> cattleApp(RegisterQueryModel params) async {
-    await HttpUtils.post('/out/v1/registerCattleAPP', params: params.toJson());
+    await HttpUtils.post('/out/v1/registerCattleAPP', params: params.toJson(), sendTimeout: const Duration(minutes: 5));
   }
   // 上传无人机图片
   static Future<String> uavUpload(XFile file) async {
