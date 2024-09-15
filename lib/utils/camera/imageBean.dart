@@ -18,7 +18,15 @@ class CameraxDetectorBean extends DataBean {
   int? height;
   int? width;
 
-  CameraxDetectorBean();
+  CameraxDetectorBean({
+    this.cameraImage,
+    this.imageBgr,
+    this.statue = true,
+    this.modelPath,
+    this.paramPath,
+    this.height,
+    this.width
+  });
 
 // final ByteBuffer buffer = await cameraImage.planes.first.bytes;
 }

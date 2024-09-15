@@ -435,6 +435,17 @@ class CameraMlVisionState extends State<CameraMlVision>
         .contains(_getApplicableOrientation());
   }
 
+  Future<List<DetObject>> getDetectCamera(CameraImage cameraImage) async {
+    if ([EnumTaskMode.cowFaceRegister, EnumTaskMode.cowFaceIdentify].contains(widget.mTaskMode)) {
+      return await DetFFI.getInstance().detectFaceCamera(cameraImage);
+    } else if ([EnumTaskMode.cowBodyRegister, EnumTaskMode.cowBodyIdentify].contains(widget.mTaskMode)) {
+      return DetFFI.getInstance().detectBodyCamera(cameraImage);
+    } else if ([EnumTaskMode.pigBodyRegister, EnumTaskMode.pigBodyIdentify].contains(widget.mTaskMode)) {
+      return DetFFI.getInstance().detectPigBodyCamera(cameraImage);
+    }
+    return await DetFFI.getInstance().detectFaceCamera(cameraImage);
+  }
+
   void _processImage(CameraImage cameraImage) async {
     if (!_alreadyCheckingImage && mounted && fps >= 15) {
       _alreadyCheckingImage = true;
@@ -442,34 +453,36 @@ class CameraMlVisionState extends State<CameraMlVision>
       Stopwatch stopwatch = Stopwatch();
       stopwatch.start(); // 开始计时
       debugPrint("test ${cameraImage.format.group.toString()}");
-      await DetFFI.getInstance().detectFaceCamera(cameraImage).then((value) {
-        stopwatch.stop(); // 停止计时
-        debugPrint('执行时间: ${stopwatch.elapsedMilliseconds} 毫秒');
-        setState(() {
-          isDetected = value.isNotEmpty;
-        });
-        if (value.isNotEmpty) {
-          DetObject object = value[0];
-
-          setState(() {
-            if (_mDetectionObject == null) {
-              _mDetectionObject =
-                  DetectionObject(prob: object.prob, rect: object.rect);
-            } else {
-              _mDetectionObject!.rect = object.rect;
-              _mDetectionObject!.prob = object.prob;
-            }
-          });
-        } else {
-          setState(() {
-            _mDetectionObject = null;
-          });
-          EasyLoading.showToast('未检测到目标',
-              toastPosition: EasyLoadingToastPosition.top);
-        }
-        _alreadyCheckingImage = false;
-        fps = 0;
+      
+      List<DetObject> value = await getDetectCamera(cameraImage);
+      stopwatch.stop(); // 停止计时
+      debugPrint('执行时间: ${stopwatch.elapsedMilliseconds} 毫秒');
+      
+      setState(() {
+        isDetected = value.isNotEmpty;
       });
+      if (value.isNotEmpty) {
+        DetObject object = value[0];
+
+        setState(() {
+          if (_mDetectionObject == null) {
+            _mDetectionObject =
+                DetectionObject(prob: object.prob, rect: object.rect);
+          } else {
+            _mDetectionObject!.rect = object.rect;
+            _mDetectionObject!.prob = object.prob;
+          }
+        });
+      } else {
+        setState(() {
+          _mDetectionObject = null;
+        });
+        EasyLoading.showToast('未检测到目标',
+            toastPosition: EasyLoadingToastPosition.top);
+      }
+      _alreadyCheckingImage = false;
+      fps = 0;
+      
     }
     ++fps;
   }

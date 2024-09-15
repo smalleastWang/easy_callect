@@ -162,6 +162,8 @@ class DetectionModel{
 class DetFFI {
   static DetFFI? _instance;
   IsolateManager? _isolateManagerFaceCamera;
+  IsolateManager? _isolateManagerBodyCamera;
+  IsolateManager? _isolateManagerPigBodyCamera;
 
   static DetFFI getInstance() {
     _instance ??= DetFFI._internal();
@@ -173,36 +175,79 @@ class DetFFI {
   }
 
   Future<bool> init() async{
-    final modelPath = await _copyAssetToLocal('assets/bestLite-optFP16.bin',
-        package: 'detection_plugin', notCopyIfExist: false);
-    final paramPath = await _copyAssetToLocal('assets/bestLite-optFP16.param',
-        package: 'detection_plugin', notCopyIfExist: false);
-    CameraxDetectorBean dataBean = CameraxDetectorBean();
-    dataBean.modelPath = modelPath;
-    dataBean.paramPath = paramPath;
+    // 牛脸
     _isolateManagerFaceCamera = IsolateManager.create(handleDetectFace);
     await _isolateManagerFaceCamera!.start();
-    dynamic flag = await _isolateManagerFaceCamera!.compute(dataBean);
-    if (flag is List) return true;
-    return flag;
+    await _isolateManagerFaceCamera!.compute(CameraxDetectorBean(
+      modelPath: await _copyAssetToLocal('assets/bestLite-optFP16.bin', package: 'detection_plugin', notCopyIfExist: false),
+      paramPath: await _copyAssetToLocal('assets/bestLite-optFP16.param', package: 'detection_plugin', notCopyIfExist: false)
+    ));
+    // 牛背
+    _isolateManagerBodyCamera = IsolateManager.create(handleDetectFace);
+    await _isolateManagerBodyCamera!.start();
+    await _isolateManagerBodyCamera!.compute(CameraxDetectorBean(
+      modelPath: await _copyAssetToLocal('assets/bestLiteBack-optFP16.bin', package: 'detection_plugin', notCopyIfExist: false),
+      paramPath: await _copyAssetToLocal('assets/bestLiteBack-optFP16.param', package: 'detection_plugin', notCopyIfExist: false)
+    ));
+    // 猪背
+    _isolateManagerPigBodyCamera = IsolateManager.create(handleDetectFace);
+    await _isolateManagerPigBodyCamera!.start();
+    await _isolateManagerPigBodyCamera!.compute(CameraxDetectorBean(
+      modelPath: await _copyAssetToLocal('assets/pig_body.bin', package: 'detection_plugin', notCopyIfExist: false),
+      paramPath: await _copyAssetToLocal('assets/pig_body.param', package: 'detection_plugin', notCopyIfExist: false)
+    ));
+    
+    return true;
   }
 
-
+  // 牛脸相机识别
   Future<List<DetObject>> detectFaceCamera(CameraImage image) async{
-    CameraxDetectorBean data = CameraxDetectorBean();
-    data.width = image.width;
-    data.height = image.height;
-
-    data.cameraImage = image;
-    return await _isolateManagerFaceCamera!.compute(data);
+    return await _isolateManagerFaceCamera!.compute(CameraxDetectorBean(
+      width: image.width,
+      height: image.height,
+      cameraImage: image
+    ));
+  }
+  // 牛脸图片识别
+  Future<List<DetObject>> detectFaceImage(ImagePackage.Image image) async{
+    return await _isolateManagerFaceCamera!.compute(CameraxDetectorBean(
+      width: image.width,
+      height: image.height,
+      imageBgr: image,
+    ));
   }
 
-  Future<List<DetObject>> detectFaceImage(ImagePackage.Image image) async{
-    CameraxDetectorBean data = CameraxDetectorBean();
-    data.width = image.width;
-    data.height = image.height;
-    data.imageBgr = image;
-    return await _isolateManagerFaceCamera!.compute(data);
+  // 牛背相机识别
+  Future<List<DetObject>> detectBodyCamera(CameraImage image) async{
+    return await _isolateManagerBodyCamera!.compute(CameraxDetectorBean(
+      width: image.width,
+      height: image.height,
+      cameraImage: image
+    ));
+  }
+  // 牛背图片识别
+  Future<List<DetObject>> detectBodyImage(ImagePackage.Image image) async{
+    return await _isolateManagerBodyCamera!.compute(CameraxDetectorBean(
+      width: image.width,
+      height: image.height,
+      imageBgr: image,
+    ));
+  }
+  // 猪背相机识别
+  Future<List<DetObject>> detectPigBodyCamera(CameraImage image) async{
+    return await _isolateManagerPigBodyCamera!.compute(CameraxDetectorBean(
+      width: image.width,
+      height: image.height,
+      cameraImage: image
+    ));
+  }
+  // 猪背图片识别
+  Future<List<DetObject>> detectPigBodyImage(ImagePackage.Image image) async{
+    return await _isolateManagerPigBodyCamera!.compute(CameraxDetectorBean(
+      width: image.width,
+      height: image.height,
+      imageBgr: image,
+    ));
   }
 
   void clear() async{

@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:chewie/chewie.dart';
-import 'package:collection/collection.dart';
 import 'package:easy_collect/api/insurance.dart';
 import 'package:easy_collect/enums/register.dart';
 import 'package:easy_collect/enums/route.dart';
@@ -19,7 +18,6 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:photo_view/photo_view.dart';
 import 'package:video_player/video_player.dart';
 
 import 'package:image/image.dart' as img;
@@ -185,6 +183,16 @@ class PickerImageFieldState extends State<PickerImageField> {
     }
     return result;
   }
+  Future<List<DetObject>> getDetectImage(img.Image cameraImage) async {
+    if ([EnumTaskMode.cowFaceRegister, EnumTaskMode.cowFaceIdentify].contains(widget.mTaskMode)) {
+      return await DetFFI.getInstance().detectFaceImage(cameraImage);
+    } else if ([EnumTaskMode.cowBodyRegister, EnumTaskMode.cowBodyIdentify].contains(widget.mTaskMode)) {
+      return DetFFI.getInstance().detectBodyImage(cameraImage);
+    } else if ([EnumTaskMode.pigBodyRegister, EnumTaskMode.pigBodyIdentify].contains(widget.mTaskMode)) {
+      return DetFFI.getInstance().detectPigBodyImage(cameraImage);
+    }
+    return await DetFFI.getInstance().detectFaceImage(cameraImage);
+  }
   // 选中或拍照完成处理
   void _handlePickImage(ImageSource source) async {
     final picker = ImagePicker();
@@ -216,7 +224,7 @@ class PickerImageFieldState extends State<PickerImageField> {
         try {
           for (var file in pickfiles) {
             img.Image? i = await img.decodeImageFile(file.path);
-            List<DetObject> checkResult = await DetFFI.getInstance().detectFaceImage(i!);
+            List<DetObject> checkResult = await getDetectImage(i!);
             if (checkResult.isEmpty) {
               EasyLoading.showToast('图片<${file.name}>未检测到目标');
               continue;
