@@ -10,6 +10,7 @@ import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/utils/camera/CameraxUtils.dart';
 import 'package:easy_collect/utils/camera/Config.dart';
 import 'package:easy_collect/utils/camera/DetectFFI.dart';
+import 'package:easy_collect/utils/camera/imageBean.dart';
 import 'package:easy_collect/utils/dialog.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
 import 'package:flutter/cupertino.dart';
@@ -48,7 +49,7 @@ class PickerImageField extends StatefulWidget {
   final PickerImageController controller;
   final EnumTaskMode mTaskMode;
   final int registerMedia;
-  const PickerImageField({super.key, this.maxNum = 9, this.onChange, required this.controller, this.label, this.uploadApi,  this.mTaskMode = EnumTaskMode.cowFaceRegister, required this.registerMedia});
+  const PickerImageField({super.key, this.maxNum = 9, this.onChange, required this.controller, this.label, this.uploadApi, required this.mTaskMode, required this.registerMedia});
 
   @override
   State<PickerImageField> createState() => PickerImageFieldState();
@@ -185,13 +186,12 @@ class PickerImageFieldState extends State<PickerImageField> {
   }
   Future<List<DetObject>> getDetectImage(img.Image cameraImage) async {
     if ([EnumTaskMode.cowFaceRegister, EnumTaskMode.cowFaceIdentify].contains(widget.mTaskMode)) {
-      return await DetFFI.getInstance().detectFaceImage(cameraImage);
+      return await DetFFI.getInstance().detectFaceImage(cameraImage, DetectionType.cowface);
     } else if ([EnumTaskMode.cowBodyRegister, EnumTaskMode.cowBodyIdentify].contains(widget.mTaskMode)) {
-      return DetFFI.getInstance().detectBodyImage(cameraImage);
-    } else if ([EnumTaskMode.pigBodyRegister, EnumTaskMode.pigBodyIdentify].contains(widget.mTaskMode)) {
-      return DetFFI.getInstance().detectPigBodyImage(cameraImage);
+      return DetFFI.getInstance().detectFaceImage(cameraImage, DetectionType.cowbody);
+    } else {
+      return DetFFI.getInstance().detectFaceImage(cameraImage, DetectionType.pigbody);
     }
-    return await DetFFI.getInstance().detectFaceImage(cameraImage);
   }
   // 选中或拍照完成处理
   void _handlePickImage(ImageSource source) async {

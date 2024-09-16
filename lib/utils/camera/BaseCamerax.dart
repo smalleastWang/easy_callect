@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:easy_collect/utils/camera/CameraxUtils.dart';
+import 'package:easy_collect/utils/camera/imageBean.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:camera/camera.dart';
 import 'package:device_info/device_info.dart';
@@ -311,7 +312,7 @@ class CameraMlVisionState extends State<CameraMlVision>
         _cameraController?.dispose();
       });
     }
-
+    DetFFI.getInstance().clear();
     super.dispose();
   }
 
@@ -348,8 +349,7 @@ class CameraMlVisionState extends State<CameraMlVision>
             children: [
               const SizedBox(width: 80, height: 80),
               isDetected ? InkWell(
-                onTap: () async {
-                  // await stop();
+                onTap: () {
                   photograph();
                 },
                 child: Container(
@@ -362,7 +362,7 @@ class CameraMlVisionState extends State<CameraMlVision>
                   ),
                 ),
               ) : const SizedBox.shrink(),
-              ElevatedButton(
+              _pickImages.isNotEmpty ? ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).primaryColor,
                   foregroundColor: Theme.of(context).primaryColor.withOpacity(0.3),
@@ -379,7 +379,7 @@ class CameraMlVisionState extends State<CameraMlVision>
                   context.pop(_pickImages);
                 },
                 child: const Text('完成', style: TextStyle(color: Colors.white)),
-              )
+              ) : const SizedBox(width: 80, height: 80),
             ],
           )
         ),
@@ -437,13 +437,12 @@ class CameraMlVisionState extends State<CameraMlVision>
 
   Future<List<DetObject>> getDetectCamera(CameraImage cameraImage) async {
     if ([EnumTaskMode.cowFaceRegister, EnumTaskMode.cowFaceIdentify].contains(widget.mTaskMode)) {
-      return await DetFFI.getInstance().detectFaceCamera(cameraImage);
+      return await DetFFI.getInstance().detectFaceCamera(cameraImage, DetectionType.cowface);
     } else if ([EnumTaskMode.cowBodyRegister, EnumTaskMode.cowBodyIdentify].contains(widget.mTaskMode)) {
-      return DetFFI.getInstance().detectBodyCamera(cameraImage);
-    } else if ([EnumTaskMode.pigBodyRegister, EnumTaskMode.pigBodyIdentify].contains(widget.mTaskMode)) {
-      return DetFFI.getInstance().detectPigBodyCamera(cameraImage);
+      return await DetFFI.getInstance().detectFaceCamera(cameraImage, DetectionType.cowface);
+    } else {
+      return await DetFFI.getInstance().detectFaceCamera(cameraImage, DetectionType.pigbody);
     }
-    return await DetFFI.getInstance().detectFaceCamera(cameraImage);
   }
 
   void _processImage(CameraImage cameraImage) async {

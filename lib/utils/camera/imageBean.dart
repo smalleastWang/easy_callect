@@ -1,9 +1,15 @@
 import 'package:camera/camera.dart';
 import 'package:image/image.dart' as ImagePackage;
 
-enum DetectionType{
-  cowface, cowbody, pigbody
+enum DetectionType {
+  cowface('bestLite-optFP16'),
+  cowbody('bestLiteBack-optFP16'),
+  pigbody('pig_body');
+  final String value;
+  
+  const DetectionType(this.value);
 }
+
 
 abstract class DataBean{
 

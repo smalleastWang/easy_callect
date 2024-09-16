@@ -4,6 +4,7 @@ import 'package:easy_collect/enums/Route.dart';
 import 'package:easy_collect/enums/index.dart';
 import 'package:easy_collect/enums/register.dart';
 import 'package:easy_collect/models/register/index.dart';
+import 'package:easy_collect/utils/camera/Config.dart';
 import 'package:easy_collect/widgets/Button/BlockButton.dart';
 import 'package:easy_collect/widgets/Form/PickerFormField.dart';
 import 'package:easy_collect/widgets/Form/PickerImageField.dart';
@@ -55,11 +56,11 @@ class _CountRegisterPageState extends ConsumerState<CountRegisterPage> {
   List<Widget> get _getImgWidget {
     if (countMedia == CountRegisterMediaEnum.img.value) {
       return [
-        PickerImageField(key: imgsWidgetState, controller: _imgsController, maxNum: 1, label: '图片', registerMedia: RegisterMediaEnum.img.value, uploadApi: RegisterApi.scanAmountUpload),
+        PickerImageField(key: imgsWidgetState, controller: _imgsController, maxNum: 1, label: '图片', registerMedia: RegisterMediaEnum.img.value, uploadApi: RegisterApi.scanAmountUpload, mTaskMode: EnumTaskMode.cowFaceRegister),
       ];
     } else if (countMedia == CountRegisterMediaEnum.video.value) {
       return [
-        PickerImageField(key: videoWidgetState, controller: _videoController, maxNum: 20, label: '视频', registerMedia: RegisterMediaEnum.video.value),
+        PickerImageField(key: videoWidgetState, controller: _videoController, maxNum: 20, label: '视频', registerMedia: RegisterMediaEnum.video.value, mTaskMode: EnumTaskMode.cowFaceRegister),
       ];
     }
     

@@ -2,10 +2,10 @@
 import 'package:easy_collect/api/insurance.dart';
 import 'package:easy_collect/api/pigRegister.dart';
 import 'package:easy_collect/enums/Route.dart';
-import 'package:easy_collect/enums/index.dart';
 import 'package:easy_collect/enums/register.dart';
 import 'package:easy_collect/models/register/PigRegister.dart';
 import 'package:easy_collect/models/register/index.dart';
+import 'package:easy_collect/utils/camera/Config.dart';
 import 'package:easy_collect/utils/dialog.dart';
 import 'package:easy_collect/utils/regExp.dart';
 import 'package:easy_collect/widgets/Button/BlockButton.dart';
@@ -13,7 +13,6 @@ import 'package:easy_collect/widgets/Form/PickerFormField.dart';
 import 'package:easy_collect/widgets/Form/PickerImageField.dart';
 import 'package:easy_collect/widgets/List/ListItem.dart';
 import 'package:easy_collect/widgets/List/PickerPastureWidget.dart';
-import 'package:easy_collect/widgets/Register/RegisterType.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -35,8 +34,7 @@ class _SurveyComparedPigPageState extends ConsumerState<SurveyComparedPigPage> {
   final GlobalKey _formKey = GlobalKey<FormState>();
   final TextEditingController _numController = TextEditingController();
   final PickerEditingController _enclosureController = PickerEditingController();
-  PickerImageController _faceImgsController = PickerImageController();
-  PickerImageController _bodyImgsController = PickerImageController();
+  final PickerImageController _bodyImgsController = PickerImageController();
 
   bool submitLoading = false;
   int registerMedia = RegisterMediaEnum.face.value;
@@ -44,21 +42,6 @@ class _SurveyComparedPigPageState extends ConsumerState<SurveyComparedPigPage> {
   @override
   void initState() {
     super.initState();
-  }
-  Widget get _getRegisterCnt {
-    onChange(value) {
-      setState(() {
-        registerMedia = value;
-        _faceImgsController = PickerImageController();
-        _bodyImgsController = PickerImageController();
-      });
-    }
-    return RegisterTypeWidget<int>(
-      label: '查勘方式',
-      options: enumsToOptions(PigSurveyMediaEnum.values),
-      onChange: onChange,
-      defaultValue: SurveyMediaEnum.drones.value
-    );
   }
 
   EnclosureModel? findNode(List<EnclosureModel> options) {
@@ -143,23 +126,6 @@ class _SurveyComparedPigPageState extends ConsumerState<SurveyComparedPigPage> {
     );
   }
 
-  
-
-  List<Widget> get _getImgWidget {
-    // 单个注册-猪脸注册
-    if (registerMedia == RegisterMediaEnum.face.value) {
-      return [PickerImageField(controller: _faceImgsController, maxNum: 1, label: '请上传猪脸图片', registerMedia: registerMedia)];
-    }
-    // 单个注册-猪背注册
-    if (registerMedia == RegisterMediaEnum.back.value) {
-      return [
-        PickerImageField(controller: _bodyImgsController, maxNum: 1, label: '请上传猪背图片', registerMedia: registerMedia),
-        PickerImageField(controller: _faceImgsController, maxNum: 1, label: '请上传猪脸图片', registerMedia: registerMedia),
-      ];
-    }
-    return [const SizedBox.shrink()];
-  }
-
   @override
   Widget build(BuildContext context) {
     final AsyncValue<List<EnclosureModel>> enclosureList = ref.watch(enclosureListProvider);
@@ -229,10 +195,7 @@ class _SurveyComparedPigPageState extends ConsumerState<SurveyComparedPigPage> {
                     ],
                   ),
                 ),
-                _getRegisterCnt,
-
-                
-                ..._getImgWidget,
+                PickerImageField(controller: _bodyImgsController, maxNum: 20, label: '请上传猪身图片', registerMedia: registerMedia, mTaskMode: EnumTaskMode.pigBodyIdentify),
 
                 const SizedBox(height: 50),
                 BlockButton(
