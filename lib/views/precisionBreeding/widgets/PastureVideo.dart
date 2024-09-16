@@ -5,9 +5,11 @@ import 'package:easy_collect/api/precisionBreeding.dart';
 import 'package:easy_collect/api/security.dart';
 import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/utils/dialog.dart';
+import 'package:easy_collect/widgets/Form/PickerFormField.dart';
 import 'package:easy_collect/widgets/List/PickerPastureWidget.dart';
 import 'package:fijkplayer/fijkplayer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:video_player/video_player.dart';
 
@@ -34,11 +36,12 @@ class PastureVideo extends ConsumerStatefulWidget {
 class _PastureVideoState extends ConsumerState<PastureVideo> {
 
   VideoType videoType = VideoType.demo;
+  final PickerEditingController _enclosureController = PickerEditingController();
   List<Map<String, dynamic>> cameraList = [];
   List<Map<String, dynamic>> checkedCameraList = [];
   List<VideoCardModel> _videoList = [];
 
-  _getCameraList(List<String> values) async {
+  _getCameraList(List<String> values, bool lastIsBld) async {
     List<Map<String, dynamic>> data = await getCameraListApi(values.last);
     setState(() {
       cameraList = data;
@@ -82,6 +85,10 @@ class _PastureVideoState extends ConsumerState<PastureVideo> {
   }
 
   _cameraBottomSheet() {
+    if (_enclosureController.value == null || _enclosureController.value!.isEmpty) {
+      EasyLoading.showToast('请选择先圈舍');
+      return;
+    }
     showConfirmModalBottomSheet(
       context: context,
       title: '缓存摄像头列表',
@@ -142,6 +149,7 @@ class _PastureVideoState extends ConsumerState<PastureVideo> {
               width: 300,
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
               child: PickerPastureWidget(
+                controller: _enclosureController,
                 selectLast: SelectLast.shed,
                 options: weightInfoTree.value ?? [],
                 onChange: _getCameraList

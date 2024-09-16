@@ -45,7 +45,7 @@ class PickModel {
 class PickerPastureWidget extends StatefulWidget {
   final List<EnclosureModel> options;
   final SelectLast selectLast;
-  final Function? onChange;
+  final Function(List<String>, bool)? onChange;
   final PickerEditingController? controller;
 
   const PickerPastureWidget({
@@ -271,6 +271,7 @@ class _PickerPastureWidgetState extends State<PickerPastureWidget> {
                     .join('/');
               });
               if (widget.onChange != null) {
+
                 widget.onChange!(values, lastIsBld(widget.options, values.last));
               }
               if (widget.controller != null) {
