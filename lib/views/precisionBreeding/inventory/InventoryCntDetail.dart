@@ -80,7 +80,7 @@ class _InventoryCntDetailPageState extends ConsumerState<InventoryCntDetailPage>
               Container(
                 color: Colors.white,
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 0),
+                  padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 8.0),
                   child: StatefulBuilder(
                     builder: (BuildContext context, StateSetter setState) {
                       return TextField(
@@ -166,14 +166,11 @@ Widget _buildDataList(BuildContext context, List<dynamic> dataList) {
       final rowData = dataList[index];
       return Column(
         children: [
-          InventoryCntDetailItem(
-            rowData: rowData,
-          ),
-          const Divider(
-            color: Color(0xFFE9E8E8),
-            height: 0.5,
-            indent: 12,
-            endIndent: 12,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6),
+            child: InventoryCntDetailItem(
+              rowData: rowData,
+            ),
           ),
         ],
       );
@@ -191,19 +188,28 @@ class InventoryCntDetailItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildInfoRow('序号', rowData["id"]),
-        _buildInfoRow('设备编号', rowData["easyCvrId"]),
-        _buildInfoRow('盘点数量', rowData["currentNum"]),
-      ],
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white, // 背景颜色白色
+        borderRadius: BorderRadius.circular(6.0), // 圆角 6px
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildInfoRow('序号', rowData["id"] ?? '-'),
+           const SizedBox(height: 12),
+          _buildInfoRow('设备编号', rowData["easyCvrId"] ?? '-'),
+           const SizedBox(height: 12),
+          _buildInfoRow('盘点数量', rowData["currentNum"] ?? '-'),
+        ],
+      ),
     );
   }
 
-  Widget _buildInfoRow(String label, String? value) {
+  Widget _buildInfoRow(String label, dynamic? value) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 0),
       child: Row(
         children: [
           Text(
@@ -212,7 +218,7 @@ class InventoryCntDetailItem extends StatelessWidget {
           ),
           Expanded(
             child: Text(
-              value == null || value.isEmpty ? '未知' : value,
+              value == null || value.toString().isEmpty ? '未知' : value.toString(),
               style: const TextStyle(color: Color(0xFF666666)),
               overflow: TextOverflow.ellipsis,
             ),
