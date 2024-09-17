@@ -8,6 +8,7 @@ import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/utils/OverlayManager.dart';
 import 'package:easy_collect/views/precisionBreeding/data.dart';
 import 'package:easy_collect/views/precisionBreeding/inventory/InventoryCntDetail.dart';
+import 'package:easy_collect/views/precisionBreeding/inventory/InventoryTotalAnimal.dart';
 import 'package:easy_collect/views/precisionBreeding/inventory/manual.dart';
 import 'package:easy_collect/widgets/Button/PrimaryActionButton.dart';
 import 'package:easy_collect/widgets/List/ListCard.dart';
@@ -192,6 +193,22 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
                 MoreActionWidget(
                   onSelected: (value) {
                     print(value);
+                    if(value == 0) {
+                       Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => InventoryTotalAnimalPage(buildingId: data['buildingId'], inventoryId: data['inventoryId']),
+                        ),
+                      );
+                    }
+                    if(value == 1) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => InventoryTotalAnimalPage(buildingId: data['buildingId'], inventoryId: data['inventoryId']),
+                        ),
+                      );
+                    }
                   },
                   items: MoreAction.values.map((e) => PopupMenuItem(
                     value: e.value,

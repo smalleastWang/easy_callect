@@ -88,3 +88,25 @@ Future<InventoryHistoryDataVo> inventoryHistoryDataApi(Map<String, dynamic> para
   Map<String, dynamic> data = await HttpUtils.post('/biz/inventory/history', params: params);
   return InventoryHistoryDataVo.fromJson(data);
 }
+
+// 识别盘点-盘点总数量
+@riverpod
+Future<PageVoModel> inventoryAnimalPage(InventoryAnimalPageRef ref, Map<String, dynamic> params) async {
+  Map<String, dynamic> res = await HttpUtils.get('/biz/inventoryAnimal/page', params: params);
+  PageVoModel data = PageVoModel.fromJson(res);
+  if (data.current != 1 && ref.state.hasValue) {
+    data.records.insertAll(0, ref.state.value!.records);
+  }
+  return data;
+}
+
+// 识别盘点-匹配失败数量
+@riverpod
+Future<PageVoModel> inventoryFailAnimalInfoPage(InventoryFailAnimalInfoPageRef ref, Map<String, dynamic> params) async {
+  Map<String, dynamic> res = await HttpUtils.get('/biz/inventoryFailAnimalnfo/page', params: params);
+  PageVoModel data = PageVoModel.fromJson(res);
+  if (data.current != 1 && ref.state.hasValue) {
+    data.records.insertAll(0, ref.state.value!.records);
+  }
+  return data;
+}
