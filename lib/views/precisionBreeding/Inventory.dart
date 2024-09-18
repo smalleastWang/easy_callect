@@ -41,6 +41,7 @@ class InventoryPage extends ConsumerStatefulWidget {
 
 class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  int currentIndex = 0;
   late TextEditingController _startTimeController;
   late TextEditingController _endTimeController;
   GlobalKey<ListWidgetState> imgWidgetKey = GlobalKey<ListWidgetState>();
@@ -74,7 +75,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
     return Scaffold(
       appBar: AppBar(
         title: Text(RouteEnum.inventory.title),
-        actions: _tabController.index == 0 ? [
+        actions: currentIndex == 0 ? [
           InkWell(
             onTap: () => context.push(RouteEnum.countRegister.fullpath),
             child: const Icon(Icons.add, color: MyColors.primaryColor, size: 30),
@@ -82,6 +83,11 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
         ] : null,
         bottom: TabBar(
           controller: _tabController,
+          onTap: (value) {
+            setState(() {
+              currentIndex = value;
+            });
+          },
           tabs: const [
             Tab(text: '图像盘点'),
             Tab(text: '识别盘点'),
