@@ -207,7 +207,7 @@ class InventoryCntDetailItem extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoRow(String label, dynamic? value) {
+  Widget _buildInfoRow(String label, dynamic value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 0),
       child: Row(

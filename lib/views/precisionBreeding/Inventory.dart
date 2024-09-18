@@ -6,6 +6,7 @@ import 'package:easy_collect/enums/register.dart';
 import 'package:easy_collect/models/dropDownMenu/DropDownMenu.dart';
 import 'package:easy_collect/models/register/index.dart';
 import 'package:easy_collect/utils/OverlayManager.dart';
+import 'package:easy_collect/utils/colors.dart';
 import 'package:easy_collect/views/precisionBreeding/data.dart';
 import 'package:easy_collect/views/precisionBreeding/inventory/InventoryCntDetail.dart';
 import 'package:easy_collect/views/precisionBreeding/inventory/InventoryTotalAnimal.dart';
@@ -69,9 +70,16 @@ class _InventoryPageState extends ConsumerState<InventoryPage> with SingleTicker
   @override
   Widget build(BuildContext context) {
     final AsyncValue<List<EnclosureModel>> weightInfoTree = ref.watch(weightInfoTreeProvider);
+    _tabController.index;
     return Scaffold(
       appBar: AppBar(
         title: Text(RouteEnum.inventory.title),
+        actions: _tabController.index == 0 ? [
+          InkWell(
+            onTap: () => context.push(RouteEnum.countRegister.fullpath),
+            child: const Icon(Icons.add, color: MyColors.primaryColor, size: 30),
+          )
+        ] : null,
         bottom: TabBar(
           controller: _tabController,
           tabs: const [

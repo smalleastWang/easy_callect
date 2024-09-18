@@ -44,6 +44,7 @@ final insuranceRoutes = GoRoute(
       path: RouteEnum.insuranceApplicant.path,
       builder: (context, state) => const InsuranceApplicantPage(),
     ),
+    // 计数盘点
     GoRoute(
       path: RouteEnum.countRegister.path,
       builder: (context, state) => const CountRegisterPage(),

@@ -91,7 +91,7 @@ class RegisterApi {
   // 计数盘点文件上传
   static Future<String> scanAmountUpload(XFile file) async {
     FormData formData = FormData.fromMap({'file': await MultipartFile.fromFile(file.path, filename: file.name)});
-    return await HttpUtils.post('biz/scanAmount/upload', params: formData, isformData: true);
+    return await HttpUtils.post('/biz/scanAmount/upload', params: formData, isformData: true);
   }
   // 计数盘点
   static Future<void> countInventory(Map<String, dynamic> params) async {
@@ -196,4 +196,12 @@ Future<void> editInsuranceApplicant(Map<String, dynamic> params) async {
 // 绑定
 Future<void> insurancedetailAdd(Map<String, dynamic> params) async {
   await HttpUtils.post('/biz/insurancedetail/add', params: params);
+}
+
+
+// 获取摄像头
+@riverpod
+  Future<List> getShedCameraList(GetShedCameraListRef ref) async {
+  List<dynamic> res = await HttpUtils.get('/biz/camera/getcvrId');
+  return res;
 }

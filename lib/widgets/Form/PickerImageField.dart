@@ -218,8 +218,8 @@ class PickerImageFieldState extends State<PickerImageField> {
         XFile? pickerVideo = await picker.pickVideo(source: source);
         if (pickerVideo != null) pickedFiles.add(pickerVideo);
       // 选照片 - 牛脸牛背 - 校验
-      } else if (widget.registerMedia == RegisterMediaEnum.face.value || widget.registerMedia == RegisterMediaEnum.back.value) {
-        List<XFile> pickfiles = await picker.pickMultiImage(limit: 9, maxWidth: 1000);
+      } else if ([RegisterMediaEnum.face.value, RegisterMediaEnum.back.value].contains(widget.registerMedia)) {
+        List<XFile> pickfiles = await picker.pickMultiImage(limit: widget.maxNum, maxWidth: 1000);
         EasyLoading.show(status: '图片校验中');
         try {
           for (var file in pickfiles) {

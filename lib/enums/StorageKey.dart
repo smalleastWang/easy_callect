@@ -7,7 +7,9 @@ enum StorageKeyEnum {
   password('password'),
   rememberMe('rememberMe'),
   refreshToken('refreshToken'),
-  isFirstApp('isFirstApp');
+  isFirstApp('isFirstApp'),
+  orgId('orgId'),
+  userId('userId');
 
   const StorageKeyEnum(this.value);
 

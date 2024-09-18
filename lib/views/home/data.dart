@@ -38,7 +38,7 @@ final List<ModuleModel> moduleList = [
       ModuleItemModel(route: RouteEnum.cattleRegiter, iconPath: 'assets/icon/finance/optimized/1.svg'),
       ModuleItemModel(route: RouteEnum.cattleDiscern, iconPath: 'assets/icon/finance/optimized/2.svg'),
       ModuleItemModel(route: RouteEnum.financeVideo, iconPath: 'assets/icon/finance/optimized/3.svg'),
-      ModuleItemModel(route: RouteEnum.financeCount, iconPath: 'assets/icon/finance/optimized/4.svg'),
+      ModuleItemModel(route: RouteEnum.countRegister, iconPath: 'assets/icon/finance/optimized/4.svg'),
     ]
   ),
   ModuleModel(

@@ -2,6 +2,7 @@ import 'package:dart_sm/dart_sm.dart';
 import 'package:easy_collect/api/my.dart';
 import 'package:easy_collect/enums/Route.dart';
 import 'package:easy_collect/enums/StorageKey.dart';
+import 'package:easy_collect/models/user/UserInfo.dart';
 import 'package:easy_collect/utils/const.dart';
 import 'package:easy_collect/utils/storage.dart';
 import 'package:easy_collect/widgets/Button/BlockButton.dart';
@@ -58,10 +59,14 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     // 保存token
-    SharedPreferencesManager().setString(StorageKeyEnum.token.value, token);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(StorageKeyEnum.token.value, token);
+    UserInfoModel userinfo = await MyApi.getUserInfoApi();
+    prefs.setString(StorageKeyEnum.orgId.value, userinfo.orgId ?? '');
+    prefs.setString(StorageKeyEnum.userId.value, userinfo.id);
 
     if (rememberMe) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
+      
       prefs.setString(StorageKeyEnum.username.value, _unameController.text);
       prefs.setString(StorageKeyEnum.password.value, _pwdController.text);
       prefs.setBool(StorageKeyEnum.rememberMe.value, true);

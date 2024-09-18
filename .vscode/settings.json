@@ -1,3 +1,5 @@
 {
-    "cmake.configureOnOpen": false
+    "cmake.configureOnOpen": false,
+    "workbench.settings.editor": "ui",
+    "dart.previewHotReloadOnSaveWatcher": false
 }

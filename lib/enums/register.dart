@@ -148,8 +148,12 @@ enum CountMediaEnum implements EnumStrOption {
 }
 
 enum CountRegisterMediaEnum implements EnumStrOption {
-  img('cattle-img', '图像盘点', ),
-  video('cattle-video', '视频盘点');
+  // AI模型类型，cattle-img牛只图片，cattle-video牛只视频，cattle-stream牛只流地址pig-img猪图片，pig-video猪视频，pig-stream猪视频流地址
+  cattleImg('cattle-img', '牛只图片'),
+  cattleVideo('cattle-video', '牛只视频'),
+  cattleStream('cattle-stream', '牛只流地址'),
+  pigVideo('pig-video', '猪视频'),
+  pigStream('pig-stream', '猪视频流地址');
   final String value;
   final String label;
 

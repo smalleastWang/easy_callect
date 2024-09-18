@@ -3,7 +3,6 @@
 import 'package:easy_collect/enums/route.dart';
 import 'package:easy_collect/views/precisionBreeding/Performance.dart';
 import 'package:easy_collect/views/precisionBreeding/Security.dart';
-import 'package:easy_collect/views/precisionBreeding/index.dart';
 import 'package:easy_collect/views/precisionBreeding/Inventory.dart';
 import 'package:easy_collect/views/precisionBreeding/Weight.dart';
 import 'package:easy_collect/views/precisionBreeding/Behavior.dart';
@@ -11,6 +10,7 @@ import 'package:easy_collect/views/precisionBreeding/Health.dart';
 import 'package:easy_collect/views/precisionBreeding/Intelligencewarn.dart';
 import 'package:easy_collect/views/precisionBreeding/Position.dart';
 import 'package:easy_collect/views/precisionBreeding/Milksidentify.dart';
+import 'package:easy_collect/views/precisionBreeding/index.dart';
 import 'package:easy_collect/views/precisionBreeding/inventory/HistoryData.dart';
 import 'package:easy_collect/views/precisionBreeding/inventory/SetTime.dart';
 import 'package:go_router/go_router.dart';

@@ -32,7 +32,6 @@ enum RouteEnum {
   // 养殖金融
   finance('/finance', '养殖金融', '/finance'),
   cattleRegiter('cattleRegiter', '牛只注册','/finance/cattleRegiter'),
-  financeCount('financeCount', '计数盘点','/finance/financeCount'),
   cattleDiscern('cattleDiscern', '牛只识别','/finance/cattleDiscern'),
   financeVideo('financeVideo', '实时视频','/finance/financeVideo'),
 

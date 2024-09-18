@@ -1,5 +1,6 @@
 import 'package:easy_collect/api/message.dart';
 import 'package:easy_collect/api/my.dart';
+import 'package:easy_collect/enums/StorageKey.dart';
 import 'package:easy_collect/enums/route.dart';
 import 'package:easy_collect/models/PageVo.dart';
 import 'package:easy_collect/models/message/JPushRegistration.dart';
@@ -17,6 +18,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jpush_flutter/jpush_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -135,10 +137,10 @@ class _MyAppState extends ConsumerState<MyApp> {
     jpush.getRegistrationID().then((rid) async {
       final registrationDetail = await getRegistrationInfoApi(RegistrationModel(registrationId: rid));
       if (registrationDetail == null) {
-        UserInfoModel userinfo = await MyApi.getUserInfoApi();
+        SharedPreferences prefs = await SharedPreferences.getInstance();
         await addRegistrationApi(RegistrationModel(
           registrationId: rid,
-          orgId: userinfo.orgId
+          orgId: prefs.getString(StorageKeyEnum.orgId.value)
         ));
       }
       print("flutter get registration id : $rid");
